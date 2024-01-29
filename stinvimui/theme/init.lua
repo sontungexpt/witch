@@ -11,9 +11,9 @@ local schedule = vim.schedule
 local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
 
-local PLUG_NAME = "stinvimui"
-
 local util = require("stinvimui.util")
+
+local PLUG_NAME = "stinvimui"
 local COLOR_DIR = "stinvimui.colors."
 local EXTRA_THEME_HIGHLIGHT = "stinvimui.theme.extra."
 
@@ -285,7 +285,7 @@ M.syntax = function(colors, theme_style)
 		StatusLine = { fg = colors.fg, bg = colors.bg_line },
 		-- status lines of not-current windows Note: if this is equal to "StatusLine"
 		-- Vim will use "^^^" in the status line of the current window.
-		StatusLineNC = { fg = colors.fg, bg = util.darken(colors.bg_line, 0.95) },
+		StatusLineNC = { fg = colors.fg, bg = util.darken(colors.bg_line, 0.98) },
 		TabLine = { fg = colors.fg, bg = colors.bg_line }, -- tab pages line, not active tab page label
 		-- TabLineFill = { bg = colors.black }, -- tab pages line, where there are no labels
 		-- TabLineSel = { fg = colors.black, bg = colors.blue }, -- tab pages line, active tab page label
