@@ -1,14 +1,16 @@
+local require = require
 local vim = vim
 local g = vim.g
 local api = vim.api
+local opts = vim.opt
+local cmd = api.nvim_command
 local hl = api.nvim_set_hl
-local uv = vim.uv or vim.loop
+
 local schedule = vim.schedule
 local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
+
 local PLUG_NAME = "stinvimui"
-local namespace_id = api.nvim_create_namespace(PLUG_NAME)
-local autocmd_group = augroup(PLUG_NAME, { clear = true })
 
 local util = require("stinvimui.util")
 local COLOR_DIR = "stinvimui.colors."
@@ -16,26 +18,39 @@ local COLOR_DIR = "stinvimui.colors."
 local M = {}
 
 M.setup = function(configs)
-	local colors = M.setup_colors(configs)
-	if g.colors_name then
-		vim.api.nvim_command("hi clear")
+	local group = augroup(PLUG_NAME, { clear = true })
+
+	if vim.fn.exists("syntax_on") then
+		cmd("syntax reset")
 	end
-	vim.o.termguicolors = true
-	g.colors_name = PLUG_NAME
+	if g.colors_name then
+		cmd("hi clear")
+	end
+	opts.termguicolors = true
+	vim.g.colors_name = PLUG_NAME
+
+	-- autocmd("ColorSchemePre", {
+	-- 	group = group,
+	-- 	callback = function()
+	-- 		api.nvim_del_augroup_by_id(group)
+	-- 	end,
+	-- })
+
+	local colors = M.setup_colors(configs)
 
 	M.terminal(colors)
 
 	schedule(function()
 		M.load_syntax(colors)
-	end, 10)
+	end, 100)
 
-	autocmd({ "BufEnter" }, {
-		pattern = "*",
-		group = autocmd_group,
-		callback = function()
-			M.load_syntax(colors, configs.theme.style)
-		end,
-	})
+	-- autocmd({ "BufEnter" }, {
+	-- 	pattern = "*",
+	-- 	group = autocmd_group,
+	-- 	callback = function()
+	-- 		M.load_syntax(colors, configs.theme.style)
+	-- 	end,
+	-- })
 end
 
 M.setup_colors = function(configs)
@@ -49,7 +64,7 @@ M.setup_colors = function(configs)
 		colors = require(COLOR_DIR .. theme_conf.default)
 	end
 	theme_conf.on_highlight(theme_conf.style, colors)
-	return colors
+	return colors, theme_conf.style
 end
 
 M.load_syntax = function(colors, theme_style)
@@ -198,8 +213,6 @@ M.syntax = function(colors, theme_style)
 		-- diff mode: Changed text within a changed line |diff.txt|
 		DiffText = { fg = colors.fg_dark },
 		-- filler lines (~) after the end of the buffer.
-		-- By default, this is highlighted like |hl-NonText|.
-		-- EndOfBuffer = { fg = colors.bg },
 		-- TermCursor = {}, -- cursor in a focused terminal
 		-- TermCursorNC = {}, -- cursor in an unfocused terminal
 
@@ -267,12 +280,17 @@ M.syntax = function(colors, theme_style)
 		-- that do not really exist in the text (e.g., ">" displayed when a double-wide character
 		-- doesn't fit at the end of the line). See also |hl-EndOfBuffer|.
 		NonText = { fg = colors.gray },
+		-- By default, this is highlighted like |hl-NonText|.
+		-- EndOfBuffer = { fg = colors.gray },
+
 		-- Unprintable characters: text displayed differently from what it really is.
 		-- But not 'listchars' whitespace. |hl-Whitespace|
 		SpecialKey = { fg = colors.gray },
 		WildMenu = { bg = colors.bg_visual }, -- current match in 'wildmenu' completion
 		WinBar = { link = "StatusLine" }, -- window bar
 		WinBarNC = { link = "StatusLineNC" }, -- window bar in inactive windows
+
+		helpCommand = { fg = colors.blue },
 
 		-- These groups are not listed as default vim groups,
 		-- but they are default standard group names for syntax highlighting.

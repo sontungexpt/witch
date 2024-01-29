@@ -42,7 +42,7 @@ local colors = {
 
 	teal = "#5cd0a0",
 
-	gray = "#626b84",
+	gray = "#596683",
 	graphite = "#738eaf",
 	light_gray = "#64739a",
 

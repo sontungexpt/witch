@@ -1,18 +1,22 @@
 local util = require("stinvimui.util")
 
 local colors = {
-	bg = "#dae3f3",
+	bg = "#daddea",
 	-- bg_dim = "#161730",
 	-- bg_alt = "#1c2141",
-	bg_line = "#2d3546",
-	bg_visual = "#c4cfe3",
-	bg_sidebar = "#272d48",
+	-- bg_line = "#2d3546",
+	bg_line = "#c6c9d6",
+	bg_visual = "#b6bfeb",
+	bg_dark = "#f8fbfc",
+	-- bg_sidebar = "#272d48",
+	-- bg_sidebar = "#f8f9fa",
 	bg_highlight = "#cad5eb",
 	bg_gutter = "#afbbd5",
 
 	fg = "#111120",
 	fg_dark = "#1b2039",
-	fg_sidebar = "#92a3c0",
+	-- fg_sidebar = "#9ba4b8",
+	-- fg_sidebar = "#1b2039",
 
 	yellow = "#ff7f1a",
 	yellow1 = "#ef8909",
@@ -73,6 +77,7 @@ local colors = {
 	unnecessary = "#afbcd7",
 }
 
-colors.bg_dark = util.darken(colors.bg, 0.93)
+-- colors.bg_dark = util.darken(colors.bg, 0.93)
+-- colors.bg_dark = util.lighten(colors.bg, 0.8)
 
 return colors
