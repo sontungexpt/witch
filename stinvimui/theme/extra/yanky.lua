@@ -1,0 +1,3 @@
+-- -- Yanky
+--   YankyPut = { link = "IncSearch" },
+--   YankyYanked = { link = "IncSearch" },

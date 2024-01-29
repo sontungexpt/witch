@@ -1,6 +1,6 @@
 local M = {}
 
-M.syntax = function(colors)
+M.syntax = function(colors, theme_style)
 	return {
 		-- ts-rainbow
 		rainbowcol1 = { fg = colors.red },

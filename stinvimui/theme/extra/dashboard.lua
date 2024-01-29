@@ -2,7 +2,7 @@
 
 local M = {}
 
-M.syntax = function(colors)
+M.syntax = function(colors, theme_style)
 	return {
 		DashboardShortCut = { fg = colors.cyan },
 		DashboardHeader = { fg = colors.blue },

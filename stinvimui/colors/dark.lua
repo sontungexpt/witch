@@ -29,13 +29,13 @@ local colors = {
 	term_green = "#4ad860",
 	green = "#5bcf75",
 
-	orange = "#FF8800",
+	orange = "#f99635",
 	orange1 = "#f78c6c",
 	orange2 = "#f78782",
 	light_orange = "#ffd59d",
 
 	blue = "#50bcef",
-	blue1 = "#42a2f2",
+	blue1 = "#629df2",
 	blue2 = "#698ff1",
 
 	link = "#8bdafe",

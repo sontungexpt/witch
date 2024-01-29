@@ -1,6 +1,6 @@
 local M = {}
 
-M.syntax = function(colors)
+M.syntax = function(colors, theme_style)
 	return {
 		-- neo-tree
 		NeoTreeNormal = { fg = colors.fg_dark, bg = colors.bg_dark },

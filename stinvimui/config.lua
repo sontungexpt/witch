@@ -11,7 +11,7 @@ local configs = {
 			-- explorer = true,
 			-- indentline = true,
 		},
-		on_highlight = function(stype, colors, highlight) end,
+		-- on_highlight = function(stype, colors, highlight) end,
 	},
 	dim_inactive = false, -- dims inactive windows
 	enable_switcher = false,

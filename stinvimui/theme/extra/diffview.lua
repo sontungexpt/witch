@@ -1,6 +1,6 @@
 local M = {}
 
-M.syntax = function(colors)
+M.syntax = function(colors, theme_style)
 	return {
 		diffAdded = { link = "DiffAdd" },
 		diffRemoved = { link = "DiffDelete" },

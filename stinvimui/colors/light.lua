@@ -1,13 +1,13 @@
-local util = require("stinvimui.util")
+-- local util = require("stinvimui.util")
 
 local colors = {
 	bg = "#daddea",
 	-- bg_dim = "#161730",
 	-- bg_alt = "#1c2141",
 	-- bg_line = "#2d3546",
-	bg_line = "#c6c9d6",
+	bg_line = "#bbbed6",
 	bg_visual = "#b6bfeb",
-	bg_dark = "#f8fbfc",
+	bg_dark = "#f8f9fa",
 	-- bg_sidebar = "#272d48",
 	-- bg_sidebar = "#f8f9fa",
 	bg_highlight = "#cad5eb",
@@ -18,10 +18,10 @@ local colors = {
 	-- fg_sidebar = "#9ba4b8",
 	-- fg_sidebar = "#1b2039",
 
-	yellow = "#ff7f1a",
-	yellow1 = "#ef8909",
-	yellow2 = "#e79d78",
-	bright_yellow = "#fc9521",
+	yellow = "#ff7722",
+	yellow1 = "#ec8a09",
+	yellow2 = "#e29d78",
+	bright_yellow = "#fc8c21",
 
 	red = "#fc3753",
 	red1 = "#f14057",
@@ -42,10 +42,10 @@ local colors = {
 	light_orange = "#d38a63",
 
 	blue = "#2419f4",
-	blue1 = "#5a81f2",
+	blue1 = "#647ee2",
 	blue2 = "#3873f0",
 	link = "#88d0fe",
-	teal = "#158fcb",
+	teal = "#2e7e9c",
 
 	gray = "#7c91a2",
 	graphite = "#707687",
@@ -65,13 +65,13 @@ local colors = {
 	dark_border = "#5c6bbf",
 	graphite_border = "#797d9a",
 
-	comment = "#8283b4",
-	string = "#b62ca6",
+	comment = "#7b81a6",
+	string = "#a235a6",
 	operator = "#a544e9",
 
 	error = "#d85374",
 	info = "#5b71f3",
-	warn = "#ff9632",
+	warn = "#ff6933",
 	hint = "#229ba0",
 	todo = "#ee7a6c",
 	unnecessary = "#afbcd7",

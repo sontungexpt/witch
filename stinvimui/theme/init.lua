@@ -1,3 +1,4 @@
+local type = type
 local require = require
 local vim = vim
 local g = vim.g
@@ -14,6 +15,7 @@ local PLUG_NAME = "stinvimui"
 
 local util = require("stinvimui.util")
 local COLOR_DIR = "stinvimui.colors."
+local EXTRA_THEME_HIGHLIGHT = "stinvimui.theme.extra."
 
 local M = {}
 
@@ -27,30 +29,39 @@ M.setup = function(configs)
 		cmd("hi clear")
 	end
 	opts.termguicolors = true
-	vim.g.colors_name = PLUG_NAME
+	g.colors_name = PLUG_NAME
 
-	-- autocmd("ColorSchemePre", {
-	-- 	group = group,
-	-- 	callback = function()
-	-- 		api.nvim_del_augroup_by_id(group)
-	-- 	end,
-	-- })
+	autocmd("ColorSchemePre", {
+		group = group,
+		callback = function()
+			api.nvim_del_augroup_by_id(group)
+		end,
+	})
 
 	local colors = M.setup_colors(configs)
 
 	M.terminal(colors)
 
 	schedule(function()
-		M.load_syntax(colors)
+		M.load_highlight(colors, configs)
 	end, 100)
 
-	-- autocmd({ "BufEnter" }, {
-	-- 	pattern = "*",
-	-- 	group = autocmd_group,
-	-- 	callback = function()
-	-- 		M.load_syntax(colors, configs.theme.style)
-	-- 	end,
-	-- })
+	local extra = configs.theme.extra
+	if next(extra) ~= nil then
+		--support for table and array
+		for name, enabled in pairs(extra) do
+			if type(name) == "number" then
+				name = enabled
+				enabled = true
+			end
+			if enabled then
+				local ok, module = pcall(require, EXTRA_THEME_HIGHLIGHT .. name)
+				if ok then
+					M.load_highlight(colors, configs, module)
+				end
+			end
+		end
+	end
 end
 
 M.setup_colors = function(configs)
@@ -63,12 +74,23 @@ M.setup_colors = function(configs)
 		theme_conf.style = theme_conf.default
 		colors = require(COLOR_DIR .. theme_conf.default)
 	end
-	theme_conf.on_highlight(theme_conf.style, colors)
+
+	if type(theme_conf.on_highlight) == "function" then
+		theme_conf.on_highlight(theme_conf.style, colors, {})
+	end
+
 	return colors, theme_conf.style
 end
 
-M.load_syntax = function(colors, theme_style)
-	local syntax = M.syntax(colors, theme_style)
+M.load_highlight = function(colors, configs, module)
+	local theme_conf = configs.theme
+
+	local syntax = module == nil and M.syntax(colors, theme_conf.style) or module.syntax(colors, theme_conf.style)
+
+	if type(theme_conf.on_highlight) == "function" then
+		theme_conf.on_highlight(theme_conf.style, colors, syntax)
+	end
+
 	for highlight_name, options in pairs(syntax) do
 		hl(0, highlight_name, options)
 	end
@@ -109,13 +131,11 @@ M.terminal = function(colors)
 end
 
 M.syntax = function(colors, theme_style)
-	return {
+	local highlight = {
 		-- normal text
 		Normal = { fg = colors.fg, bg = colors.bg },
 		-- normal text in non-current windows
 		NormalNC = { fg = colors.fg, bg = colors.bg },
-		-- normal text in sidebar
-		NormalSB = { fg = colors.fg_dark, bg = colors.bg_dark },
 		-- Normal text in floating windows.
 		NormalFloat = { fg = colors.fg_dark, bg = colors.bg_dark },
 		FloatBorder = { fg = colors.border, bg = colors.bg_dark },
@@ -160,13 +180,13 @@ M.syntax = function(colors, theme_style)
 		LspReferenceRead = { bg = colors.bg_gutter }, -- used for highlighting "read" references
 		LspReferenceWrite = { bg = colors.bg_gutter }, -- used for highlighting "write" references
 
-		-- LspSignatureActiveParameter = { bg = colors.bg_gutter, bold = true },
-		LspCodeLens = { fg = colors.comment },
+		LspSignatureActiveParameter = { bg = colors.bg_gutter, bold = true },
+		LspCodeLens = { fg = colors.gray },
 		LspInfoBorder = { fg = colors.border, bg = colors.bg_dark },
-		-- LspInlayHint = { bg = util.darken(colors.blue1, 0.1), fg = colors.dark3 },
+		LspCodeLensSeparator = { fg = colors.border },
 
-		ALEErrorSign = { fg = colors.error },
-		ALEWarningSign = { fg = colors.warn },
+		-- ALEErrorSign = { fg = colors.error },
+		-- ALEWarningSign = { fg = colors.warn },
 
 		-- Used as the base highlight group. Other Diagnostic highlights link to this by default
 		DiagnosticError = { fg = colors.error },
@@ -239,8 +259,6 @@ M.syntax = function(colors, theme_style)
 		FoldColumn = { bg = colors.bg, fg = colors.comment },
 		-- column where |signs| are displayed
 		SignColumn = {},
-		-- column where |signs| are displayed
-		SignColumnSB = {},
 		-- |:substitute| replacement text highlighting
 		Substitute = { bg = colors.red, fg = colors.black },
 		-- Line number for ":number" and ":#" commands, and when 'number' or 'relativenumber' option is set.
@@ -589,7 +607,7 @@ M.syntax = function(colors, theme_style)
 		IblScope = { fg = colors.purple, nocombine = true },
 
 		-- LspSaga
-		SagaVirtLine = { fg = colors.dark_border },
+		SagaVirtLine = { fg = colors.dark_border, bg = colors.bg_dark },
 		CodeActionNumber = { fg = colors.purple },
 		DiagnosticShowBorder = { fg = colors.border, bg = colors.bg_dark },
 
@@ -597,16 +615,45 @@ M.syntax = function(colors, theme_style)
 		CmpDocumentation = { fg = colors.fg_dark, bg = colors.bg_dark },
 		CmpDocumentationBorder = { fg = colors.border, bg = colors.bg_dark },
 		CmpGhostText = { fg = colors.light_gray },
-		CmpItemAbbr = { fg = colors.fg_dark, bg = "NONE" },
-		CmpItemAbbrDeprecated = { fg = colors.graphite, bg = "NONE", strikethrough = true },
-		CmpItemAbbrMatch = { fg = colors.blue1, bg = "NONE" },
-		CmpItemAbbrMatchFuzzy = { fg = colors.blue1, bg = "NONE" },
-		CmpItemMenu = { fg = colors.comment, bg = "NONE" },
-		CmpItemKindDefault = { fg = colors.fg_dark, bg = "NONE" },
-		CmpItemKindCodeium = { fg = colors.teal, bg = "NONE" },
-		CmpItemKindCopilot = { fg = colors.teal, bg = "NONE" },
-		CmpItemKindTabNine = { fg = colors.teal, bg = "NONE" },
+		CmpItemAbbr = { fg = colors.fg_dark },
+		CmpItemAbbrDeprecated = { fg = colors.graphite, strikethrough = true },
+		CmpItemAbbrMatch = { link = "Special" },
+		CmpItemAbbrMatchFuzzy = { link = "Special" },
+		CmpItemMenu = { fg = colors.comment },
+		CmpItemKindDefault = { fg = colors.fg_dark },
+		CmpItemKindCodeium = { fg = colors.teal },
+		CmpItemKindCopilot = { fg = colors.teal },
+		CmpItemKindTabNine = { fg = colors.teal },
+
+		-- TreesitterContext = { bg = colors.bg_gutter },
 	}
+
+	local kinds = require("stinvimui.theme.kind")
+	for kind, hl_opts in pairs(kinds) do
+		highlight["LspKind" .. kind] = hl_opts
+		highlight["CmpItemKind" .. kind] = hl_opts
+	end
+
+	return highlight
+end
+
+M.link_kind = function(highlight, prefixs, kinds)
+	highlight = highlight or {}
+	kinds = type(kinds) == "table" and kinds or require("stinvimui.theme.kind")
+
+	if type(prefixs) == "string" then
+		for kind, hl_opts in pairs(kinds) do
+			highlight[prefixs .. kind] = hl_opts
+		end
+	elseif type(prefixs) == "table" then
+		for _, prefix in ipairs(prefixs) do
+			for kind, hl_opts in pairs(kinds) do
+				highlight[prefix .. kind] = { link = hl_opts }
+			end
+		end
+	end
+
+	return highlight
 end
 
 return M
