@@ -27,7 +27,7 @@ local colors = {
 	white = "#ffffff",
 
 	term_green = "#4ad860",
-	green = "#57cc75",
+	green = "#5bcf75",
 
 	orange = "#FF8800",
 	orange1 = "#f78c6c",
@@ -35,12 +35,12 @@ local colors = {
 	light_orange = "#ffd39b",
 
 	blue = "#50bcef",
-	blue1 = "#40aef2",
+	blue1 = "#42a2f2",
 	blue2 = "#698ff1",
 
 	link = "#8bdafe",
 
-	teal = "#55c5a2",
+	teal = "#5cd0a0",
 
 	gray = "#626b84",
 	graphite = "#738eaf",
@@ -49,7 +49,7 @@ local colors = {
 	pink = "#f36cde",
 	pink1 = "#ed66c2",
 
-	purple = "#a661ea",
+	purple = "#b278ea",
 
 	brown = "#c17e70",
 
@@ -58,11 +58,11 @@ local colors = {
 
 	border = "#3d88c4",
 	dark_border = "#37518d",
-	purple_border = "#b278ea",
 	graphite_border = "#465968",
 
 	comment = "#6675ae",
 	string = "#ffd39b",
+	operator = "#7bc0cc",
 
 	error = "#e64152",
 	info = "#59d1f2",

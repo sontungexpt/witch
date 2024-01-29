@@ -174,14 +174,14 @@ M.syntax = function(colors, theme_style)
 
 		-- used for the columns set with 'colorcolumn'
 		-- ColorColumn = { bg = colors.black },
-		-- -- placeholder characters substituted for concealed text (see 'conceallevel')
+		-- placeholder characters substituted for concealed text (see 'conceallevel')
 		Conceal = { fg = colors.magenta1, bg = "NONE" },
-		-- -- character under the cursor
-		-- Cursor = { fg = colors.bg, bg = colors.fg },
+		-- character under the cursor
+		Cursor = { fg = colors.bg, bg = colors.fg },
 		-- -- the character under the cursor when |language-mapping| is used (see 'guicursor')
-		-- lCursor = { fg = colors.bg, bg = colors.fg },
+		lCursor = { fg = colors.bg, bg = colors.fg },
 		-- -- like Cursor, but used when in IME mode |CursorIM|
-		-- CursorIM = { fg = colors.bg, bg = colors.fg },
+		CursorIM = { fg = colors.bg, bg = colors.fg },
 		-- Screen-column at the cursor, when 'cursorcolumn' is set.
 		CursorColumn = { bg = colors.bg_highlight },
 		-- Screen-line at the cursor, when 'cursorline' is set.
@@ -342,7 +342,7 @@ M.syntax = function(colors, theme_style)
 		-- default link: will be comment by default
 		["@annotation"] = { link = "PreProc" },
 		-- For any operator: `+`, but also `->` and `*` in C.
-		["@operator"] = { fg = colors.purple },
+		["@operator"] = { fg = colors.operator },
 		["@attribute"] = { link = "PreProc" },
 		-- ["@boolean"] = { link = "Boolean" },
 		-- ["@character"] = { link = "Character" },
@@ -553,7 +553,9 @@ M.syntax = function(colors, theme_style)
 		NvimTreeFolderIcon = { bg = "NONE", fg = colors.graphite },
 		NvimTreeOpenedFolderName = { bg = "NONE", fg = colors.orange1 },
 		NvimTreeFolderName = { fg = colors.blue1 },
-		NvimTreeOpenedFile = { bg = colors.bg_highlight },
+		-- NvimTreeOpenedFile = { bg = colors.bg_highlight, fg = colors.blue },
+		-- NvimTreeOpenedHL = { bg = colors.bg_highlight, fg = colors.blue },
+		NvimTreeLiveFilterPrefix = { fg = colors.pink },
 
 		-- WhichKey
 		WhichKey = { fg = colors.cyan },
@@ -566,7 +568,7 @@ M.syntax = function(colors, theme_style)
 
 		-- Indent Blankline v3
 		IblIndent = { fg = colors.graphite_border, nocombine = true },
-		IblScope = { fg = colors.purple_border, nocombine = true },
+		IblScope = { fg = colors.purple, nocombine = true },
 
 		-- LspSaga
 		SagaVirtLine = { fg = colors.dark_border, bold = false, bg = "NONE" },

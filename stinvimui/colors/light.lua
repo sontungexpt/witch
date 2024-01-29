@@ -59,11 +59,11 @@ local colors = {
 
 	border = "#3951aa",
 	dark_border = "#5c6bbf",
-	purple_border = "#b278ea",
 	graphite_border = "#797d9a",
 
 	comment = "#8283b4",
 	string = "#b62ca6",
+	operator = "#a544e9",
 
 	error = "#d85374",
 	info = "#5b71f3",
