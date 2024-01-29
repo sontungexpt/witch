@@ -1,0 +1,27 @@
+local colors = {
+	bg = "#1e2030",
+	bg_dark = "#1f2335",
+	fg = "#c9d1f5",
+	fg_dark = "#a9b1d6",
+	yellow = "#f0a421",
+	bright_yellow = "#ffc021",
+	red = "#e7324e",
+	bright_red = "#ee2c4a",
+	cyan = "#7dcfff",
+	black = "#000000",
+	white = "#ffffff",
+	green = "#47d864",
+	orange = "#FF8800",
+	blue = "#51afef",
+	weight_blue = "#2f86eb",
+	darkblue = "#081633",
+	gray = "#5c6370",
+	pink = "#eb7fdc",
+	violet = "#a9a1e1",
+	purple = "#c688eb",
+	magenta = "#c678dd",
+	magenta1 = "#ff007c",
+	border = "#737aa2",
+}
+
+return colors
