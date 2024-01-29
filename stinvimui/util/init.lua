@@ -2,7 +2,7 @@ local tonumber = tonumber
 local M = {}
 local blend_bg = "#000000"
 local blend_fg = "#ffffff"
-local day_brightness = 0.3
+-- local day_brightness = 0.3
 
 --- Convert hex color to rgb
 ---@param hex_color string : hex color code e.g. #ffffff or #fff
@@ -70,6 +70,19 @@ M.merge_tb = function(to, from)
 		to = from
 	end
 	return to
+end
+
+M.read_only = function(table, error_msg)
+	return setmetatable({}, {
+		__index = table,
+		__newindex = function(metatable, key, value)
+			error(
+				type(error_msg) == "function" and error_msg(metatable, key, value)
+					or error_msg
+					or "Attempt to modify read-only table"
+			)
+		end,
+	})
 end
 
 return M

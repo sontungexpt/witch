@@ -1,3 +1,4 @@
+local type = type
 local M = {}
 
 local configs = {
@@ -14,7 +15,6 @@ local configs = {
 	},
 	dim_inactive = false, -- dims inactive windows
 	enable_switcher = false,
-	-- sidebars = { "qf", "vista_kind", "terminal", "packer" }, -- sidebars to be "dimmed"
 	styles = {
 		comments = { italic = true },
 		keywords = { italic = true },
@@ -51,12 +51,7 @@ M.merge_config = function(default_opts, user_opts)
 end
 
 M.get_config = function()
-	return setmetatable({}, {
-		__index = configs,
-		__newindex = function(_, k, v)
-			error(("Attempt to modify key: %s to value: %s, config is read only"):format(tostring(k), tostring(v)), 2)
-		end,
-	})
+	return require("stinvimui.util").read_only(configs, "Attempt to modify config, this is a read-only table")
 end
 
 return M

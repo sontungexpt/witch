@@ -33,7 +33,7 @@ M.setup = function(configs)
 		pattern = "*",
 		group = autocmd_group,
 		callback = function()
-			M.load_syntax(colors)
+			M.load_syntax(colors, configs.theme.style)
 		end,
 	})
 end
@@ -42,15 +42,18 @@ M.setup_colors = function(configs)
 	local theme_conf = configs.theme
 	local valid, colors = pcall(require, COLOR_DIR .. theme_conf.style)
 	if not valid then
-		require("stinvimui.util.notify").warn("Theme " .. theme_conf .. " not found. Using default theme")
+		require("stinvimui.util.notify").warn(
+			"Theme " .. theme_conf.style .. " not found. Using default theme" .. theme_conf.default
+		)
+		theme_conf.style = theme_conf.default
 		colors = require(COLOR_DIR .. theme_conf.default)
 	end
 	theme_conf.on_highlight(theme_conf.style, colors)
 	return colors
 end
 
-M.load_syntax = function(colors)
-	local syntax = M.syntax(colors)
+M.load_syntax = function(colors, theme_style)
+	local syntax = M.syntax(colors, theme_style)
 	for highlight_name, options in pairs(syntax) do
 		hl(0, highlight_name, options)
 	end
@@ -90,9 +93,8 @@ M.terminal = function(colors)
 	g.terminal_color_14 = colors.cyan
 end
 
-M.syntax = function(colors)
+M.syntax = function(colors, theme_style)
 	return {
-		-- Foo = { bg = colors.magenta1, fg = colors.fg },
 		-- normal text
 		Normal = { fg = colors.fg, bg = colors.bg },
 		-- normal text in non-current windows
@@ -101,8 +103,8 @@ M.syntax = function(colors)
 		NormalSB = { fg = colors.fg_dark, bg = colors.bg_dark },
 		-- Normal text in floating windows.
 		NormalFloat = { fg = colors.fg_dark, bg = colors.bg_dark },
-		FloatBorder = { fg = colors.border, bg = colors.bg },
-		FloatTitle = { fg = colors.border_highlight, bg = colors.bg },
+		FloatBorder = { fg = colors.border, bg = colors.bg_dark },
+		FloatTitle = { fg = colors.fg_dark, bg = colors.bg_dark },
 		-- Popup menu: normal item.
 		Pmenu = { bg = colors.bg_dark, fg = colors.fg_dark },
 		-- Popup menu: selected item.
@@ -120,6 +122,8 @@ M.syntax = function(colors)
 
 		QuickFixLine = { bg = colors.bg_visual, bold = true },
 
+		-- Foo = { bg = colors.magenta1, fg = colors.fg },
+
 		-- Current |quickfix| item in the quickfix window.
 		-- Combined with |hl-CursorLine| when the cursor is there.
 		-- Last search pattern highlighting (see 'hlsearch').
@@ -133,7 +137,6 @@ M.syntax = function(colors)
 		healthError = { fg = colors.error },
 		healthSuccess = { fg = colors.green },
 		healthWarning = { fg = colors.warn },
-		-- healthHeadingChar = { fg = colors.blue, bg = "NONE" },
 
 		-- These groups are for the native LSP client. Some other LSP clients may
 		-- use these groups, or use their own. Consult your LSP client's
@@ -172,7 +175,7 @@ M.syntax = function(colors)
 		-- used for the columns set with 'colorcolumn'
 		-- ColorColumn = { bg = colors.black },
 		-- -- placeholder characters substituted for concealed text (see 'conceallevel')
-		-- Conceal = { fg = colors.dark },
+		Conceal = { fg = colors.magenta1, bg = "NONE" },
 		-- -- character under the cursor
 		-- Cursor = { fg = colors.bg, bg = colors.fg },
 		-- -- the character under the cursor when |language-mapping| is used (see 'guicursor')
@@ -281,9 +284,9 @@ M.syntax = function(colors)
 		-- (preferred) any constant
 		Constant = { fg = colors.orange },
 		-- A string constant: "this is a string"
-		String = { fg = colors.light_orange },
+		String = { fg = colors.string },
 		-- A character constant: 'c', '\n'
-		Character = { fg = colors.light_orange },
+		Character = { fg = colors.string },
 		-- A number constant: 234, 0xff
 		Number = { fg = colors.orange1 },
 		--  a boolean constant: TRUE, false
@@ -317,7 +320,7 @@ M.syntax = function(colors)
 		-- Structure     = { }, --  struct, union, enum, etcolors.
 		-- Typedef       = { }, --  A typedef
 
-		Special = { fg = colors.blue1 }, -- (preferred) any special symbol
+		Special = { fg = colors.orange2 }, -- (preferred) any special symbol
 		-- SpecialChar   = { }, --  special character in a constant
 		-- Tag           = { }, --    you can use CTRL-] on this
 		-- Delimiter     = { }, --  character that needs attention
@@ -339,7 +342,7 @@ M.syntax = function(colors)
 		-- default link: will be comment by default
 		["@annotation"] = { link = "PreProc" },
 		-- For any operator: `+`, but also `->` and `*` in C.
-		["@operator"] = { fg = colors.cyan1 },
+		["@operator"] = { fg = colors.purple },
 		["@attribute"] = { link = "PreProc" },
 		-- ["@boolean"] = { link = "Boolean" },
 		-- ["@character"] = { link = "Character" },
@@ -488,7 +491,7 @@ M.syntax = function(colors)
 		["@lsp.type.string"] = { link = "@string" },
 		["@lsp.type.typeAlias"] = { link = "@type.definition" },
 		["@lsp.type.unresolvedReference"] = { undercurl = true, sp = colors.error },
-		["@lsp.type.variable"] = { link = "@variable" }, -- use treesitter styles for regular variables
+		["@lsp.type.variable"] = {}, -- use treesitter styles for regular variables
 		["@lsp.typemod.class.defaultLibrary"] = { link = "@type.builtin" },
 		["@lsp.typemod.enum.defaultLibrary"] = { link = "@type.builtin" },
 		["@lsp.typemod.enumMember.defaultLibrary"] = { link = "@constant.builtin" },
@@ -521,19 +524,24 @@ M.syntax = function(colors)
 		GitSignsAdd = { link = "DiffAdd" },
 		GitSignsChange = { link = "DiffChange" },
 		GitSignsDelete = { link = "DiffDelete" },
+		GitSignsCurrentLineBlame = { link = "NonText" },
 
 		-- Lazy
 		LazyProgressDone = { bold = true, fg = colors.magenta1 },
 		LazyProgressTodo = { bold = true, fg = colors.bg_gutter },
 
 		-- Telescope
-		TelescopeBorder = { fg = colors.border },
-		TelescopeNormal = { fg = colors.fg, bg = colors.bg_dark },
+		TelescopeBorder = { fg = colors.border, bg = colors.bg_dark },
+		TelescopeNormal = { fg = colors.fg_dark, bg = colors.bg_dark },
+		-- TelescopePromptBorder = { fg = colors.border },
+		-- TelescopePromptNormal = { fg = colors.fg, bg = colors.bg_dark },
+		-- TelescopePromptTitle = { fg = colors.red, bg = colors.bg_dark },
+		-- TelescopeResultsNormal = { fg = colors.fg_dark, bg = colors.bg_dark },
 
 		-- NvimTree
-		NvimTreeNormal = { fg = colors.fg_dark, bg = colors.bg_dark },
-		NvimTreeWinSeparator = { fg = colors.dark_border, bg = colors.bg_dark },
-		NvimTreeNormalNC = { fg = colors.fg_dark, bg = colors.bg_dark },
+		NvimTreeNormal = { fg = colors.fg_sidebar or colors.fg_dark, bg = colors.bg_sidebar or colors.bg_dark },
+		NvimTreeWinSeparator = { fg = colors.dark_border, bg = colors.bg_sidebar or colors.bg_dark },
+		NvimTreeNormalNC = { fg = colors.fg_sidebar or colors.fg_dark, bg = colors.bg_sidebar or colors.bg_dark },
 		NvimTreeRootFolder = { fg = colors.cyan1, bold = true },
 		NvimTreeGitDirty = { link = "DiffChange" },
 		NvimTreeGitNew = { link = "DiffAdd" },
@@ -544,7 +552,7 @@ M.syntax = function(colors)
 		NvimTreeSymlink = { fg = colors.blue },
 		NvimTreeFolderIcon = { bg = "NONE", fg = colors.graphite },
 		NvimTreeOpenedFolderName = { bg = "NONE", fg = colors.orange1 },
-		NvimTreeFolderName = { fg = colors.blue },
+		NvimTreeFolderName = { fg = colors.blue1 },
 		NvimTreeOpenedFile = { bg = colors.bg_highlight },
 
 		-- WhichKey
@@ -558,7 +566,7 @@ M.syntax = function(colors)
 
 		-- Indent Blankline v3
 		IblIndent = { fg = colors.graphite_border, nocombine = true },
-		IblScope = { fg = colors.purple, nocombine = true },
+		IblScope = { fg = colors.purple_border, nocombine = true },
 
 		-- LspSaga
 		SagaVirtLine = { fg = colors.dark_border, bold = false, bg = "NONE" },
