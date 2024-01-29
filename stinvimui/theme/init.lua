@@ -175,7 +175,7 @@ M.syntax = function(colors, theme_style)
 		-- used for the columns set with 'colorcolumn'
 		-- ColorColumn = { bg = colors.black },
 		-- placeholder characters substituted for concealed text (see 'conceallevel')
-		Conceal = { fg = colors.magenta1, bg = "NONE" },
+		Conceal = { fg = colors.orange2 },
 		-- character under the cursor
 		Cursor = { fg = colors.bg, bg = colors.fg },
 		-- -- the character under the cursor when |language-mapping| is used (see 'guicursor')
@@ -571,9 +571,9 @@ M.syntax = function(colors, theme_style)
 		IblScope = { fg = colors.purple, nocombine = true },
 
 		-- LspSaga
-		SagaVirtLine = { fg = colors.dark_border, bold = false, bg = "NONE" },
+		SagaVirtLine = { fg = colors.dark_border },
 		CodeActionNumber = { fg = colors.purple },
-		DiagnosticShowBorder = { fg = colors.border },
+		DiagnosticShowBorder = { fg = colors.border, bg = colors.bg_dark },
 
 		-- Cmp
 		CmpDocumentation = { fg = colors.fg_dark, bg = colors.bg_dark },

@@ -18,7 +18,7 @@ local colors = {
 
 	red = "#dc4154",
 	red1 = "#ff5874",
-	red2 = "#ee4091",
+	red2 = "#ee4c96",
 
 	cyan = "#7dcfff",
 	cyan1 = "#75c8cc",
@@ -31,8 +31,8 @@ local colors = {
 
 	orange = "#FF8800",
 	orange1 = "#f78c6c",
-	orange2 = "#f78682",
-	light_orange = "#ffd39b",
+	orange2 = "#f78782",
+	light_orange = "#ffd59d",
 
 	blue = "#50bcef",
 	blue1 = "#42a2f2",
@@ -54,7 +54,7 @@ local colors = {
 	brown = "#c17e70",
 
 	magenta = "#da87ea",
-	magenta1 = "#ff2c83",
+	magenta1 = "#ff3483",
 
 	border = "#3d88c4",
 	dark_border = "#37518d",
