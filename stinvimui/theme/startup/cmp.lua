@@ -16,13 +16,13 @@ M.syntax = function(colors, theme_style)
 		CmpItemKindTabNine = { fg = colors.teal },
 	}
 
-	require("stinvimui.theme.api").link_kind({ "LspKind", "CmpItemKind" }, options)
-
-	-- local kinds = require("stinvimui.theme.kind")
-	-- for kind, hl_opts in pairs(kinds) do
-	-- 	options["LspKind" .. kind] = hl_opts
-	-- 	options["CmpItemKind" .. kind] = hl_opts
-	-- end
+	require("stinvimui.theme.api").link_kind({
+		"LspKind%s",
+		"CmpItemKind%s",
+		-- "NavicIcons%s",
+		-- "Aerial%sIcon"
+		-- "NoiceCompletionItemKind%s",
+	}, options)
 
 	return options
 end

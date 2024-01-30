@@ -3,7 +3,11 @@ local M = {}
 
 local configs = {
 	theme = {
-		style = "dark", -- "dark" or "light"
+		-- default style of the theme
+		-- "dark", "light"
+		style = "dark",
+
+		-- more module that you want it should be loaded
 		extras = {
 			-- bracket = true,
 			-- dashboard = true,
@@ -11,16 +15,47 @@ local configs = {
 			-- explorer = true,
 			-- indentline = true,
 		},
+
+		-- custome your highlight module
+		-- see: stinvimui.theme.example
 		customs = {
 			-- require("stinvimui.theme.example"),
 		},
-		-- on_highlight = function(stype, colors, highlight) end,
+
+		-- this function will be called when stinvimui start highlight
+		-- this is the unique way to change the default highlight of stinvimui
+		-- when you want to change the default highlight groups
+		-- you can do something like this
+		-- on_highlight = function(style, colors, highlight)
+		-- 	if style == "dark" then
+		-- 		-- change the default background of stinvimui
+		-- 		colors.bg = "#000000"
+
+		-- 		-- change the Normal highlight group of stinvimui
+		-- 		highlight.Normal = { fg = "#ffffff", bg = "#000000" }
+		-- 	elseif style == "light" then
+		-- 		-- change the default background of stinvimui
+		-- 		colors.bg = "#ffffff"
+
+		-- 		-- change the Normal highlight group of stinvimui
+		-- 		highlight.Normal = { fg = "#000000", bg = "#ffffff" }
+		-- 	end
+		-- end,
 	},
-	dim_inactive = false, -- dims inactive windows
-	switcher = false,
-	styles = {
-		comments = { italic = true },
-		keywords = { italic = true },
+
+	-- dim_inactive = false, -- dims inactive windows
+
+	-- true if you want to use command StinvimUISwitch
+	switcher = true,
+
+	-- add your custom themes here
+	more_themes = {
+
+		-- the key is the name of the theme must be in PascalCase
+		-- the value is the table of colors to be passed to the theme
+		-- with following format in stinvimui.colors.example
+		Custom1 = {},
+		-- Custom2 = {},
 	},
 }
 

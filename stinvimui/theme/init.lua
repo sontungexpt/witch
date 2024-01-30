@@ -45,13 +45,41 @@ local rand_unique_name = function()
 	return string.format("%s_%s_%s", PLUG_NAME, now, rand)
 end
 
-local get_colors = function(style, alt_style, on_highlight)
+-- local get_colors = function(style, alt_style, on_highlight)
+-- 	local valid, colors = pcall(require, COLOR_DIR .. style)
+
+-- 	if not valid then
+-- 		require("stinvimui.util.notify").warn("Theme " .. style .. " not found. Using default theme" .. alt_style)
+-- 		style = alt_style
+-- 		colors = require(COLOR_DIR .. alt_style)
+-- 	end
+
+-- 	if type(on_highlight) == "function" then
+-- 		on_highlight(style, colors, {})
+-- 	end
+
+-- 	return colors, style
+-- end
+--
+local get_colors = function(style, configs)
+	local theme_conf = configs.theme
+	local on_highlight = theme_conf.on_highlight
+
 	local valid, colors = pcall(require, COLOR_DIR .. style)
 
 	if not valid then
-		require("stinvimui.util.notify").warn("Theme " .. style .. " not found. Using default theme" .. alt_style)
-		style = alt_style
-		colors = require(COLOR_DIR .. alt_style)
+		-- change style to PascalCase
+		local pascal_style = style:sub(1, 1):upper() .. style:sub(2)
+		if configs.more_themes[pascal_style] then
+			colors = configs.more_themes[pascal_style]
+			style = pascal_style
+		else
+			require("stinvimui.util.notify").warn(
+				"Theme " .. style .. " not found. Using default theme" .. theme_conf.default
+			)
+			style = theme_conf.default
+			colors = require(COLOR_DIR .. theme_conf.default)
+		end
 	end
 
 	if type(on_highlight) == "function" then
@@ -667,10 +695,17 @@ local load_custom_modules = function(customs, colors, on_highlight)
 end
 
 M.switch_style = function(configs, new_style)
-	if new_style == current_theme_style then
-		return
+	if new_style ~= current_theme_style then
+		M.load(configs, new_style)
 	end
-	M.load(configs, new_style)
+end
+
+M.enable_switcher = function(configs)
+	api.nvim_create_user_command("StinvimUiSwitch", function(args)
+		M.switch_style(configs, args.args)
+	end, {
+		nargs = 1,
+	})
 end
 
 M.load = function(configs, theme_style)
@@ -679,7 +714,7 @@ M.load = function(configs, theme_style)
 
 	local colors = nil
 
-	colors, current_theme_style = get_colors(theme_style or theme_conf.style, theme_conf.default, on_highlight)
+	colors, current_theme_style = get_colors(theme_style or theme_conf.style, configs)
 
 	load_default(colors, on_highlight)
 
@@ -700,7 +735,7 @@ M.setup = function(configs)
 	autocmd("ColorSchemePre", {
 		group = get_global_group_id(),
 		callback = function()
-			for id, exists in pairs(autocmd_group_ids) do
+			for id, existed in pairs(autocmd_group_ids) do
 				api.nvim_del_augroup_by_id(id)
 			end
 			api.nvim_del_augroup_by_id(global_group_id)
@@ -709,11 +744,7 @@ M.setup = function(configs)
 	})
 
 	if configs.switcher then
-		api.nvim_create_user_command("StinvimuiSwitch", function(args)
-			M.switch_style(configs, args.args)
-		end, {
-			nargs = 1,
-		})
+		M.enable_switcher(configs)
 	end
 
 	M.load(configs)
