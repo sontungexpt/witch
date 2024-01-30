@@ -3,6 +3,7 @@ local require = require
 local vim = vim
 local g = vim.g
 local api = vim.api
+local uv = vim.uv or vim.loop
 local opts = vim.opt
 local cmd = api.nvim_command
 local hl = api.nvim_set_hl
@@ -10,128 +11,172 @@ local hl = api.nvim_set_hl
 local schedule = vim.schedule
 local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
+local del_augroup_by_id = api.nvim_del_augroup_by_id
 
 local util = require("stinvimui.util")
 
 local PLUG_NAME = "stinvimui"
 local COLOR_DIR = "stinvimui.colors."
 local EXTRA_THEME_HIGHLIGHT = "stinvimui.theme.extra."
+local STARTUP_MODULE_DIR = "stinvimui.theme.startup."
+local STARTUP_MODULE = {
+	"nvimtree",
+	"terminal",
+	"cmp",
+}
+
+local autocmd_group_ids = {}
+local global_group_id = nil
+
+local current_theme_style = nil
 
 local M = {}
 
-M.setup = function(configs)
-	local group = augroup(PLUG_NAME, { clear = true })
-
-	if vim.fn.exists("syntax_on") then
-		cmd("syntax reset")
+local get_global_group_id = function()
+	if global_group_id == nil then
+		global_group_id = augroup(PLUG_NAME, { clear = true })
 	end
-	if g.colors_name then
-		cmd("hi clear")
+	return global_group_id
+end
+
+local rand_unique_name = function()
+	local now = uv.hrtime()
+	local rand = math.random(1000000, 9999999)
+	return string.format("%s_%s_%s", PLUG_NAME, now, rand)
+end
+
+local get_colors = function(style, alt_style, on_highlight)
+	local valid, colors = pcall(require, COLOR_DIR .. style)
+
+	if not valid then
+		require("stinvimui.util.notify").warn("Theme " .. style .. " not found. Using default theme" .. alt_style)
+		style = alt_style
+		colors = require(COLOR_DIR .. alt_style)
 	end
-	opts.termguicolors = true
-	g.colors_name = PLUG_NAME
 
-	autocmd("ColorSchemePre", {
-		group = group,
-		callback = function()
-			api.nvim_del_augroup_by_id(group)
-		end,
-	})
+	if type(on_highlight) == "function" then
+		on_highlight(style, colors, {})
+	end
 
-	local colors = M.setup_colors(configs)
+	return colors, style
+end
 
-	M.terminal(colors)
-
+local highlight = function(get_syntax, colors, on_highlight)
+	local syntax = get_syntax(colors, current_theme_style)
 	schedule(function()
-		M.load_highlight(colors, configs)
-	end, 100)
+		if type(syntax) ~= "table" then
+			return
+		end
 
-	local extra = configs.theme.extra
-	if next(extra) ~= nil then
-		--support for table and array
-		for name, enabled in pairs(extra) do
-			if type(name) == "number" then
-				name = enabled
-				enabled = true
+		if type(on_highlight) == "function" then
+			on_highlight(current_theme_style, colors, syntax)
+		end
+
+		for group_name, options in pairs(syntax) do
+			hl(0, group_name, options)
+		end
+	end)
+end
+
+local load_module_highlight = function(module, colors, on_highlight)
+	local module_autocmd_group = augroup(rand_unique_name(), { clear = true })
+	local side_autocmd_group = augroup(rand_unique_name(), { clear = true })
+
+	local has_syntax = type(module.syntax) == "function"
+	colors = module.colors or colors
+	on_highlight = module.on_highlight or on_highlight
+
+	local function setup_type_autocmds(event, types)
+		if type(types) ~= "table" then
+			return
+		end
+
+		-- name
+		-- name : fuction
+		for pattern, get_syntax in pairs(types) do
+			local group = module_autocmd_group
+
+			if type(pattern) == "number" and has_syntax then
+				has_syntax = false -- not need to call module.syntax in start time
+				pattern = get_syntax
+				get_syntax = module.syntax
+			elseif type(get_syntax) == "function" then
+				group = side_autocmd_group
+			else
+				return
 			end
-			if enabled then
-				local ok, module = pcall(require, EXTRA_THEME_HIGHLIGHT .. name)
-				if ok then
-					M.load_highlight(colors, configs, module)
-				end
-			end
+
+			autocmd_group_ids[group] = true
+
+			autocmd(event, {
+				group = group,
+				pattern = pattern,
+				once = true,
+				callback = function()
+					highlight(get_syntax, colors, on_highlight)
+					autocmd_group_ids[group] = nil
+					del_augroup_by_id(group)
+				end,
+			})
 		end
 	end
-end
 
-M.setup_colors = function(configs)
-	local theme_conf = configs.theme
-	local valid, colors = pcall(require, COLOR_DIR .. theme_conf.style)
-	if not valid then
-		require("stinvimui.util.notify").warn(
-			"Theme " .. theme_conf.style .. " not found. Using default theme" .. theme_conf.default
-		)
-		theme_conf.style = theme_conf.default
-		colors = require(COLOR_DIR .. theme_conf.default)
+	local function setup_event_autocmds(events)
+		if type(events) ~= "table" then
+			return
+		end
+
+		-- name
+		-- name : fuction
+		-- name : { pattern = "pattern", syntax = function }
+		for event, get_syntax in pairs(events) do
+			local group = module_autocmd_group
+			local pattern = "*"
+
+			if type(event) == "number" and has_syntax then
+				has_syntax = false -- not need to call module.syntax in start time
+				event = get_syntax
+				get_syntax = module.syntax
+			elseif type(get_syntax) == "function" then
+				group = side_autocmd_group
+			elseif
+				type(get_syntax) == "table"
+				and type(get_syntax.syntax) == "function"
+				and (type(get_syntax.pattern) == "table" or type(get_syntax.pattern) == "string")
+			then
+				group = side_autocmd_group
+				pattern = get_syntax.pattern
+				get_syntax = get_syntax.syntax
+			else
+				return
+			end
+
+			autocmd_group_ids[group] = true
+
+			autocmd(event, {
+				group = group,
+				pattern = pattern,
+				once = true,
+				callback = function()
+					highlight(get_syntax, colors, on_highlight)
+					autocmd_group_ids[group] = nil
+					del_augroup_by_id(group)
+				end,
+			})
+		end
 	end
 
-	if type(theme_conf.on_highlight) == "function" then
-		theme_conf.on_highlight(theme_conf.style, colors, {})
+	setup_type_autocmds("FileType", module.filetypes)
+	setup_type_autocmds("BufEnter", module.buftypes)
+	setup_event_autocmds(module.events)
+
+	if has_syntax then
+		highlight(module.syntax, colors, on_highlight)
 	end
-
-	return colors, theme_conf.style
-end
-
-M.load_highlight = function(colors, configs, module)
-	local theme_conf = configs.theme
-
-	local syntax = module == nil and M.syntax(colors, theme_conf.style) or module.syntax(colors, theme_conf.style)
-
-	if type(theme_conf.on_highlight) == "function" then
-		theme_conf.on_highlight(theme_conf.style, colors, syntax)
-	end
-
-	for highlight_name, options in pairs(syntax) do
-		hl(0, highlight_name, options)
-	end
-end
-
-M.terminal = function(colors)
-	-- Set the color for normal and bright black.
-	g.terminal_color_0 = colors.black
-	g.terminal_color_8 = colors.gray
-
-	-- Set the color for normal and bright white.
-	g.terminal_color_7 = colors.fg
-	g.terminal_color_15 = colors.fg_dark
-
-	-- Set the color for red and bright red.
-	g.terminal_color_1 = colors.red
-	g.terminal_color_9 = colors.red
-
-	-- Set the color for green and bright green.
-	g.terminal_color_2 = colors.term_green
-	g.terminal_color_10 = colors.term_green
-
-	-- Set the color for yellow and bright yellow.
-	g.terminal_color_3 = colors.yellow
-	g.terminal_color_11 = colors.yellow
-
-	-- Set the color for blue and bright blue.
-	g.terminal_color_4 = colors.blue
-	g.terminal_color_12 = colors.blue
-
-	-- Set the color for magenta and bright magenta.
-	g.terminal_color_5 = colors.magenta
-	g.terminal_color_13 = colors.magenta
-
-	-- Set the color for cyan and bright cyan.
-	g.terminal_color_6 = colors.cyan
-	g.terminal_color_14 = colors.cyan
 end
 
 M.syntax = function(colors, theme_style)
-	local highlight = {
+	local options = {
 		-- normal text
 		Normal = { fg = colors.fg, bg = colors.bg },
 		-- normal text in non-current windows
@@ -157,8 +202,6 @@ M.syntax = function(colors, theme_style)
 
 		QuickFixLine = { bg = colors.bg_visual, bold = true },
 
-		-- Foo = { bg = colors.magenta1, fg = colors.fg },
-
 		-- Current |quickfix| item in the quickfix window.
 		-- Combined with |hl-CursorLine| when the cursor is there.
 		-- Last search pattern highlighting (see 'hlsearch').
@@ -179,7 +222,6 @@ M.syntax = function(colors, theme_style)
 		LspReferenceText = { bg = colors.bg_gutter }, -- used for highlighting "text" references
 		LspReferenceRead = { bg = colors.bg_gutter }, -- used for highlighting "read" references
 		LspReferenceWrite = { bg = colors.bg_gutter }, -- used for highlighting "write" references
-
 		LspSignatureActiveParameter = { bg = colors.bg_gutter, bold = true },
 		LspCodeLens = { fg = colors.gray },
 		LspInfoBorder = { fg = colors.border, bg = colors.bg_dark },
@@ -248,7 +290,6 @@ M.syntax = function(colors, theme_style)
 		MsgSeparator = { fg = colors.border },
 		-- |more-prompt|
 		MoreMsg = { fg = colors.blue },
-
 		-- the column separating vertically split windows
 		VertSplit = { fg = colors.dark_border },
 		-- the column separating vertically split windows
@@ -287,8 +328,8 @@ M.syntax = function(colors, theme_style)
 		-- Vim will use "^^^" in the status line of the current window.
 		StatusLineNC = { fg = colors.fg, bg = util.darken(colors.bg_line, 0.98) },
 		TabLine = { fg = colors.fg, bg = colors.bg_line }, -- tab pages line, not active tab page label
-		-- TabLineFill = { bg = colors.black }, -- tab pages line, where there are no labels
-		-- TabLineSel = { fg = colors.black, bg = colors.blue }, -- tab pages line, active tab page label
+		TabLineFill = { bg = colors.black }, -- tab pages line, where there are no labels
+		TabLineSel = { fg = colors.black, bg = colors.blue }, -- tab pages line, active tab page label
 
 		-- titles for output from ":set all", ":autocmd" etcolors.
 		Title = { fg = colors.orange1, bold = true },
@@ -307,8 +348,6 @@ M.syntax = function(colors, theme_style)
 		WildMenu = { bg = colors.bg_visual }, -- current match in 'wildmenu' completion
 		WinBar = { link = "StatusLine" }, -- window bar
 		WinBarNC = { link = "StatusLineNC" }, -- window bar in inactive windows
-
-		helpCommand = { fg = colors.blue },
 
 		-- These groups are not listed as default vim groups,
 		-- but they are default standard group names for syntax highlighting.
@@ -346,7 +385,7 @@ M.syntax = function(colors, theme_style)
 		-- Exception = { fg = colors.magenta }, --  try, catch, throw
 		Keyword = { fg = colors.magenta },
 		-- (preferred) generic Preprocessor
-		PreProc = { fg = colors.cyan1, bg = "NONE" },
+		PreProc = { fg = colors.cyan1 },
 		-- Include = { fg = colors.orange }, --  preprocessor #include
 		-- Macro = {},
 		-- PreCondit = {}, --  preprocessor #if, #else, #endif, etcolors.
@@ -574,25 +613,6 @@ M.syntax = function(colors, theme_style)
 		-- TelescopePromptTitle = { fg = colors.red, bg = colors.bg_dark },
 		-- TelescopeResultsNormal = { fg = colors.fg_dark, bg = colors.bg_dark },
 
-		-- NvimTree
-		NvimTreeNormal = { fg = colors.fg_sidebar or colors.fg_dark, bg = colors.bg_sidebar or colors.bg_dark },
-		NvimTreeWinSeparator = { fg = colors.dark_border, bg = colors.bg_sidebar or colors.bg_dark },
-		NvimTreeNormalNC = { fg = colors.fg_sidebar or colors.fg_dark, bg = colors.bg_sidebar or colors.bg_dark },
-		NvimTreeRootFolder = { fg = colors.cyan1, bold = true },
-		NvimTreeGitDirty = { link = "DiffChange" },
-		NvimTreeGitNew = { link = "DiffAdd" },
-		NvimTreeGitDeleted = { link = "DiffDelete" },
-		NvimTreeSpecialFile = { fg = colors.magenta1, underline = true },
-		NvimTreeIndentMarker = { fg = colors.border },
-		NvimTreeImageFile = { bg = "NONE", fg = colors.pink1 },
-		NvimTreeSymlink = { fg = colors.blue },
-		NvimTreeFolderIcon = { bg = "NONE", fg = colors.graphite },
-		NvimTreeOpenedFolderName = { bg = "NONE", fg = colors.orange1 },
-		NvimTreeFolderName = { fg = colors.blue1 },
-		-- NvimTreeOpenedFile = { bg = colors.bg_highlight, fg = colors.blue },
-		-- NvimTreeOpenedHL = { bg = colors.bg_highlight, fg = colors.blue },
-		NvimTreeLiveFilterPrefix = { fg = colors.pink },
-
 		-- WhichKey
 		WhichKey = { fg = colors.cyan },
 		WhichKeyGroup = { fg = colors.blue },
@@ -610,50 +630,93 @@ M.syntax = function(colors, theme_style)
 		SagaVirtLine = { fg = colors.dark_border, bg = colors.bg_dark },
 		CodeActionNumber = { fg = colors.purple },
 		DiagnosticShowBorder = { fg = colors.border, bg = colors.bg_dark },
-
-		-- Cmp
-		CmpDocumentation = { fg = colors.fg_dark, bg = colors.bg_dark },
-		CmpDocumentationBorder = { fg = colors.border, bg = colors.bg_dark },
-		CmpGhostText = { fg = colors.light_gray },
-		CmpItemAbbr = { fg = colors.fg_dark },
-		CmpItemAbbrDeprecated = { fg = colors.graphite, strikethrough = true },
-		CmpItemAbbrMatch = { link = "Special" },
-		CmpItemAbbrMatchFuzzy = { link = "Special" },
-		CmpItemMenu = { fg = colors.comment },
-		CmpItemKindDefault = { fg = colors.fg_dark },
-		CmpItemKindCodeium = { fg = colors.teal },
-		CmpItemKindCopilot = { fg = colors.teal },
-		CmpItemKindTabNine = { fg = colors.teal },
-
-		-- TreesitterContext = { bg = colors.bg_gutter },
 	}
 
-	local kinds = require("stinvimui.theme.kind")
-	for kind, hl_opts in pairs(kinds) do
-		highlight["LspKind" .. kind] = hl_opts
-		highlight["CmpItemKind" .. kind] = hl_opts
-	end
-
-	return highlight
+	return options
 end
 
-M.link_kind = function(highlight, prefixs, kinds)
-	highlight = highlight or {}
-	kinds = type(kinds) == "table" and kinds or require("stinvimui.theme.kind")
+local load_default = function(colors, on_highlight)
+	highlight(M.syntax, colors, on_highlight)
 
-	if type(prefixs) == "string" then
-		for kind, hl_opts in pairs(kinds) do
-			highlight[prefixs .. kind] = hl_opts
+	for _, name in ipairs(STARTUP_MODULE) do
+		load_module_highlight(require(STARTUP_MODULE_DIR .. name), colors, on_highlight)
+	end
+end
+
+local load_extra_modules = function(extras, colors, on_highlight)
+	--support for table and array
+	for name, enabled in pairs(extras) do
+		if type(name) == "number" then
+			name = enabled
+			enabled = true
 		end
-	elseif type(prefixs) == "table" then
-		for _, prefix in ipairs(prefixs) do
-			for kind, hl_opts in pairs(kinds) do
-				highlight[prefix .. kind] = { link = hl_opts }
+		if enabled then
+			local ok, module = pcall(require, EXTRA_THEME_HIGHLIGHT .. name)
+			if ok then
+				load_module_highlight(module, colors, on_highlight)
 			end
 		end
 	end
+end
 
-	return highlight
+local load_custom_modules = function(customs, colors, on_highlight)
+	local read_only_colors = util.read_only(colors)
+	for _, module in ipairs(customs) do
+		load_module_highlight(module, read_only_colors, on_highlight)
+	end
+end
+
+M.switch_style = function(configs, new_style)
+	if new_style == current_theme_style then
+		return
+	end
+	M.load(configs, new_style)
+end
+
+M.load = function(configs, theme_style)
+	local theme_conf = configs.theme
+	local on_highlight = theme_conf.on_highlight
+
+	local colors = nil
+
+	colors, current_theme_style = get_colors(theme_style or theme_conf.style, theme_conf.default, on_highlight)
+
+	load_default(colors, on_highlight)
+
+	load_extra_modules(theme_conf.extras, colors, on_highlight)
+	load_custom_modules(theme_conf.customs, colors, on_highlight)
+end
+
+M.setup = function(configs)
+	if vim.fn.exists("syntax_on") then
+		cmd("syntax reset")
+	end
+	if g.colors_name then
+		cmd("hi clear")
+	end
+	opts.termguicolors = true
+	g.colors_name = PLUG_NAME
+
+	autocmd("ColorSchemePre", {
+		group = get_global_group_id(),
+		callback = function()
+			for id, exists in pairs(autocmd_group_ids) do
+				api.nvim_del_augroup_by_id(id)
+			end
+			api.nvim_del_augroup_by_id(global_group_id)
+			global_group_id = nil
+		end,
+	})
+
+	if configs.switcher then
+		api.nvim_create_user_command("StinvimuiSwitch", function(args)
+			M.switch_style(configs, args.args)
+		end, {
+			nargs = 1,
+		})
+	end
+
+	M.load(configs)
 end
 
 return M

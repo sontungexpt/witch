@@ -4,17 +4,20 @@ local M = {}
 local configs = {
 	theme = {
 		style = "dark", -- "dark" or "light"
-		extra = {
+		extras = {
 			-- bracket = true,
 			-- dashboard = true,
 			-- diffview = true,
 			-- explorer = true,
 			-- indentline = true,
 		},
+		customs = {
+			-- require("stinvimui.theme.example"),
+		},
 		-- on_highlight = function(stype, colors, highlight) end,
 	},
 	dim_inactive = false, -- dims inactive windows
-	enable_switcher = false,
+	switcher = false,
 	styles = {
 		comments = { italic = true },
 		keywords = { italic = true },

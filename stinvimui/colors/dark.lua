@@ -26,7 +26,6 @@ local colors = {
 	black = "#000000",
 	white = "#ffffff",
 
-	term_green = "#4ad860",
 	green = "#5bcf75",
 
 	orange = "#f99635",
@@ -70,6 +69,8 @@ local colors = {
 	hint = "#1abc9c",
 	todo = "#f78c6c",
 	unnecessary = "#375172",
+
+	term_green = "#4ad860",
 }
 
 colors.bg_dark = util.darken(colors.bg, 0.84)

@@ -1,7 +1,7 @@
 -- local util = require("stinvimui.util")
 
 local colors = {
-	bg = "#daddea",
+	bg = "#dbe1ea",
 	-- bg_dim = "#161730",
 	-- bg_alt = "#1c2141",
 	-- bg_line = "#2d3546",
@@ -33,7 +33,6 @@ local colors = {
 	black = "#000000",
 	white = "#ffffff",
 
-	term_green = "#0cb241",
 	green = "#37a16f",
 
 	orange = "#ee4b14",
@@ -75,6 +74,8 @@ local colors = {
 	hint = "#229ba0",
 	todo = "#ee7a6c",
 	unnecessary = "#afbcd7",
+
+	term_green = "#0cb241",
 }
 
 -- colors.bg_dark = util.darken(colors.bg, 0.93)
