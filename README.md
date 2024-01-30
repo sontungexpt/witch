@@ -16,6 +16,10 @@ It's still in development, so there are some bugs. If you find any bug, please r
 
 😁 Easy to switch between themes easily with `:Stinvimui <theme_name>` command
 
+## Preview
+
+![stinvimui](./docs/readme/preview1.png)
+
 ## Installation
 
 ```lua
