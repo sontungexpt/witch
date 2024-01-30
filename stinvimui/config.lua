@@ -54,7 +54,7 @@ local configs = {
 		-- the key is the name of the theme must be in PascalCase
 		-- the value is the table of colors to be passed to the theme
 		-- with following format in stinvimui.colors.example
-		Custom1 = {},
+		-- Custom1 = {},
 		-- Custom2 = {},
 	},
 }

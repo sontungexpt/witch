@@ -21,13 +21,13 @@ local EXTRA_THEME_HIGHLIGHT = "stinvimui.theme.extra."
 local STARTUP_MODULE_DIR = "stinvimui.theme.startup."
 local STARTUP_MODULE = {
 	"nvimtree",
+	"markdown",
 	"terminal",
 	"cmp",
 }
 
 local autocmd_group_ids = {}
 local global_group_id = nil
-
 local current_theme_style = nil
 
 local M = {}
@@ -204,7 +204,7 @@ local load_module_highlight = function(module, colors, on_highlight)
 end
 
 M.syntax = function(colors, theme_style)
-	local options = {
+	local highlights = {
 		-- normal text
 		Normal = { fg = colors.fg, bg = colors.bg },
 		-- normal text in non-current windows
@@ -444,6 +444,7 @@ M.syntax = function(colors, theme_style)
 		-- These groups are for the Neovim tree-sitter highlights.
 		-- default link: will be comment by default
 		["@annotation"] = { link = "PreProc" },
+		["@conceal"] = { link = "Conceal" },
 		-- For any operator: `+`, but also `->` and `*` in C.
 		["@operator"] = { fg = colors.operator },
 		["@attribute"] = { link = "PreProc" },
@@ -525,32 +526,7 @@ M.syntax = function(colors, theme_style)
 		-- Variable names that are defined by the languages, like `this` or `self`.
 		["@module.builtin"] = { fg = colors.red1 },
 
-		--- Markdown
 		["@markup"] = { link = "@none" },
-		-- For special punctutation that does not fall in the catagories before.
-		["@markup.list"] = { fg = colors.blue },
-		["@markup.list.markdown"] = { fg = colors.orange, bold = true },
-		["@markup.raw"] = { link = "String" },
-		["@markup.raw.markdown"] = { fg = colors.orange },
-		["@markup.raw.markdown_inline"] = { fg = colors.red1, bg = colors.bg },
-		["@markup.link"] = { fg = colors.link },
-		["@markup.link.url"] = { link = "Underlined" },
-		["@markup.link.label.markdown_inline"] = { fg = colors.pink1 },
-		["@markup.link.label"] = { link = "SpecialChar" },
-		["@markup.link.label.symbol"] = { link = "Identifier" },
-		["@markup.environment"] = { link = "Macro" },
-		["@markup.environment.name"] = { link = "Type" },
-		["@markup.math"] = { link = "Special" },
-		["@markup.strong"] = { bold = true },
-		["@markup.emphasis"] = { italic = true },
-		["@markup.strikethrough"] = { strikethrough = true },
-		["@markup.underline"] = { underline = true },
-		["@markup.heading"] = { link = "Title" },
-		-- For brackets and parens.
-		["@markup.list.checked"] = { fg = colors.green },
-		-- For brackets and parens.
-		["@markup.list.unchecked"] = { fg = colors.red },
-
 		--- Punctuation
 		-- For delimiters ie: `.`
 		["@punctuation.delimiter"] = { fg = colors.blue },
@@ -660,7 +636,7 @@ M.syntax = function(colors, theme_style)
 		DiagnosticShowBorder = { fg = colors.border, bg = colors.bg_dark },
 	}
 
-	return options
+	return highlights
 end
 
 local load_default = function(colors, on_highlight)
@@ -701,7 +677,7 @@ M.switch_style = function(configs, new_style)
 end
 
 M.enable_switcher = function(configs)
-	api.nvim_create_user_command("StinvimUiSwitch", function(args)
+	api.nvim_create_user_command("Stinvimui", function(args)
 		M.switch_style(configs, args.args)
 	end, {
 		nargs = 1,

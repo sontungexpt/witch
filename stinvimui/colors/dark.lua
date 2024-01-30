@@ -37,7 +37,7 @@ local colors = {
 	blue1 = "#629df2",
 	blue2 = "#698ff1",
 
-	link = "#8bdafe",
+	link = "#90d2fa",
 
 	teal = "#5cd0a0",
 
@@ -46,7 +46,7 @@ local colors = {
 	light_gray = "#64739a",
 
 	pink = "#f36cde",
-	pink1 = "#ed66c2",
+	pink1 = "#e95cc2",
 
 	purple = "#b278ea",
 

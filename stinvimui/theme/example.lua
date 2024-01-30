@@ -37,7 +37,7 @@ M.filetypes = {
 
 	-- if you provide a filetype here like a key and a value is a function
 	-- so the function like other M.syntax and will be called when this filetype is loaded
-	md = function(colors, theme_style) end,
+	markdown = function(colors, theme_style) end,
 }
 
 M.buftypes = {
