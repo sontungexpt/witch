@@ -61,7 +61,8 @@ It's still in development, so there are some bugs. If you find any bug, please r
                 -- require("stinvimui.theme.example"),
             },
 
-            -- this function will be called when stinvimui start highlight
+            -- this function will be called after nvim load the syntax options
+            -- and before highlight the syntax
             -- this is the unique way to change the default highlight of stinvimui
             -- when you want to change the default highlight groups
             -- you can do something like this

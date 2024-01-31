@@ -43,7 +43,26 @@ local configs = {
 		-- end,
 	},
 
-	-- dim_inactive = false, -- dims inactive windows
+	-- dims inactive windows
+	dim_inactive = {
+		enabled = true,
+
+		-- don't dim the last left window when enter to the window has filetype and
+		-- buftype listed in excluded table
+		-- The idea of this option is when you open a window like NvimTree, Telescope, ...
+		-- I think that the NvimTree, Telescope, is just a tool to help you so the
+		-- last left window still your main window and it shouldn't be dimmed
+		excluded = {
+			filetypes = {
+				NvimTree = true,
+			},
+			buftypes = {
+				nofile = true,
+				prompt = true,
+			},
+		},
+	},
+	sidebars = { "lazy" },
 
 	-- true if you want to use command StinvimUISwitch
 	switcher = true,
