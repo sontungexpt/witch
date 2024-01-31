@@ -1,13 +1,13 @@
 -- local util = require("stinvimui.util")
 
 local colors = {
-	bg = "#dbe1ea",
+	bg = "#dee2ea",
 	-- bg_dim = "#161730",
 	-- bg_alt = "#1c2141",
 	-- bg_line = "#2d3546",
 	bg_line = "#bbbed6",
 	bg_visual = "#b6bfeb",
-	bg_dark = "#f8f9fa",
+	bg_dark = "#f4f6f7",
 	-- bg_sidebar = "#272d48",
 	-- bg_sidebar = "#f8f9fa",
 	bg_highlight = "#cad5eb",
