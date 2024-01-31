@@ -77,7 +77,7 @@ local function async_load_syntax_batch(syntax, batch_size, step_delay)
 	local coroutine = coroutine
 	local co
 
-	local function resumeCoroutine()
+	local function resume_coroutine()
 		if coroutine.status(co) ~= "dead" then
 			local success, errorMsg = coroutine.resume(co)
 			if not success then
@@ -94,14 +94,14 @@ local function async_load_syntax_batch(syntax, batch_size, step_delay)
 			step = step - 1
 			if step == 0 then
 				step = batch_size or 10
-				defer_fn(resumeCoroutine, step_delay or 100)
+				defer_fn(resume_coroutine, step_delay or 100)
 				coroutine.yield()
 			end
 		end
 		api.nvim_exec_autocmds("User", { pattern = "StinvimuiHighlightDone", modeline = false })
 	end)
 
-	resumeCoroutine()
+	resume_coroutine()
 end
 
 local highlight = function(get_syntax, colors, on_highlight)
