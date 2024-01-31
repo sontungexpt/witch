@@ -42,6 +42,8 @@ M.filetypes = {
 
 M.buftypes = {
 	-- same as M.filetypes but for buftypes
+
+	"terminal",
 }
 
 M.events = {
@@ -53,6 +55,16 @@ M.events = {
 	-- },
 	-- the syntax property is same as M.syntax
 	-- the pattern will be used to match the pattern of the event
+	--
+
+	"InsertEnter",
+
+	InsertEnter = function(colors, theme_style) end,
+
+	User = {
+		syntax = function(colors, theme_style) end,
+		pattern = { "VeryLazy" },
+	},
 }
 
 return M

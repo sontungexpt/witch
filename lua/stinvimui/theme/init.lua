@@ -1,3 +1,4 @@
+local coroutine = coroutine
 local type = type
 local require = require
 local vim = vim
@@ -6,12 +7,12 @@ local api = vim.api
 local uv = vim.uv or vim.loop
 local opts = vim.opt
 local cmd = api.nvim_command
+local defer_fn = vim.defer_fn
 local hl = api.nvim_set_hl
 
-local schedule = vim.schedule
 local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
-local del_augroup_by_id = api.nvim_del_augroup_by_id
+local del_augroup = api.nvim_del_augroup_by_id
 
 local util = require("stinvimui.util")
 
@@ -45,31 +46,15 @@ local rand_unique_name = function()
 	return string.format("%s_%s_%s", PLUG_NAME, now, rand)
 end
 
--- local get_colors = function(style, alt_style, on_highlight)
--- 	local valid, colors = pcall(require, COLOR_DIR .. style)
-
--- 	if not valid then
--- 		require("stinvimui.util.notify").warn("Theme " .. style .. " not found. Using default theme" .. alt_style)
--- 		style = alt_style
--- 		colors = require(COLOR_DIR .. alt_style)
--- 	end
-
--- 	if type(on_highlight) == "function" then
--- 		on_highlight(style, colors, {})
--- 	end
-
--- 	return colors, style
--- end
---
 local get_colors = function(style, configs)
 	local theme_conf = configs.theme
-	local on_highlight = theme_conf.on_highlight
 
 	local valid, colors = pcall(require, COLOR_DIR .. style)
 
 	if not valid then
 		-- change style to PascalCase
-		local pascal_style = style:sub(1, 1):upper() .. style:sub(2)
+		local pascal_style = style:gsub("^%l", string.upper)
+
 		if configs.more_themes[pascal_style] then
 			colors = configs.more_themes[pascal_style]
 			style = pascal_style
@@ -82,28 +67,56 @@ local get_colors = function(style, configs)
 		end
 	end
 
-	if type(on_highlight) == "function" then
-		on_highlight(style, colors, {})
+	if type(theme_conf.on_highlight) == "function" then
+		theme_conf.on_highlight(style, colors, {})
 	end
 
 	return colors, style
 end
 
+local function async_load_syntax_batch(syntax, batch_size, step_delay)
+	local co
+
+	local function resumeCoroutine()
+		if coroutine.status(co) ~= "dead" then
+			local success, errorMsg = coroutine.resume(co)
+			if not success then
+				require("stinvimui.util.notify").error("Error in coroutine:", errorMsg)
+			end
+		end
+	end
+
+	co = coroutine.create(function()
+		local step = batch_size or 10
+
+		for groupName, options in pairs(syntax) do
+			hl(0, groupName, options)
+			step = step - 1
+			if step == 0 and next(syntax) then
+				step = batch_size or 10
+				defer_fn(resumeCoroutine, step_delay or 100)
+				coroutine.yield()
+			end
+		end
+	end)
+
+	resumeCoroutine()
+end
+
 local highlight = function(get_syntax, colors, on_highlight)
 	local syntax = get_syntax(colors, current_theme_style)
-	schedule(function()
-		if type(syntax) ~= "table" then
-			return
-		end
 
+	if type(syntax) == "table" then
 		if type(on_highlight) == "function" then
 			on_highlight(current_theme_style, colors, syntax)
 		end
 
-		for group_name, options in pairs(syntax) do
-			hl(0, group_name, options)
-		end
-	end)
+		async_load_syntax_batch(syntax, 25, 100)
+
+		-- for group_name, options in pairs(syntax) do
+		-- 	hl(0, group_name, options)
+		-- end
+	end
 end
 
 local load_module_highlight = function(module, colors, on_highlight)
@@ -114,88 +127,79 @@ local load_module_highlight = function(module, colors, on_highlight)
 	colors = module.colors or colors
 	on_highlight = module.on_highlight or on_highlight
 
+	local function create_autocmd(event, group, pattern, get_syntax)
+		autocmd_group_ids[group] = true
+		autocmd(event, {
+			group = group,
+			pattern = pattern,
+			once = true,
+			callback = function()
+				highlight(get_syntax, colors, on_highlight)
+				autocmd_group_ids[group] = nil
+				del_augroup(group)
+			end,
+		})
+	end
+
 	local function setup_type_autocmds(event, types)
-		if type(types) ~= "table" then
-			return
-		end
-
-		-- name
-		-- name : fuction
-		for pattern, get_syntax in pairs(types) do
-			local group = module_autocmd_group
-
-			if type(pattern) == "number" and has_syntax then
-				has_syntax = false -- not need to call module.syntax in start time
-				pattern = get_syntax
-				get_syntax = module.syntax
-			elseif type(get_syntax) == "function" then
-				group = side_autocmd_group
-			else
-				return
+		if type(types) == "table" then
+			-- name
+			-- name : fuction
+			for pattern, get_syntax in pairs(types) do
+				if type(pattern) == "number" and has_syntax then
+					has_syntax = false -- not need to call module.syntax in start time
+					-- pattern = get_syntax
+					-- group = module_autocmd_group
+					-- get_syntax = module.syntax
+					create_autocmd(event, module_autocmd_group, get_syntax, module.syntax)
+				elseif type(get_syntax) == "function" then
+					-- pattern = pattern
+					-- group = side_autocmd_group
+					-- get_syntax = get_syntax
+					create_autocmd(event, side_autocmd_group, pattern, get_syntax)
+				end
 			end
-
-			autocmd_group_ids[group] = true
-
-			autocmd(event, {
-				group = group,
-				pattern = pattern,
-				once = true,
-				callback = function()
-					highlight(get_syntax, colors, on_highlight)
-					autocmd_group_ids[group] = nil
-					del_augroup_by_id(group)
-				end,
-			})
 		end
 	end
 
 	local function setup_event_autocmds(events)
-		if type(events) ~= "table" then
-			return
-		end
+		if type(events) == "table" then
+			-- name
+			-- name : fuction
+			-- name : { pattern = "pattern", syntax = function }
+			for event, get_syntax in pairs(events) do
+				if type(event) == "number" and has_syntax then
+					-- not need to call module.syntax in start time
+					has_syntax = false
 
-		-- name
-		-- name : fuction
-		-- name : { pattern = "pattern", syntax = function }
-		for event, get_syntax in pairs(events) do
-			local group = module_autocmd_group
-			local pattern = "*"
-
-			if type(event) == "number" and has_syntax then
-				has_syntax = false -- not need to call module.syntax in start time
-				event = get_syntax
-				get_syntax = module.syntax
-			elseif type(get_syntax) == "function" then
-				group = side_autocmd_group
-			elseif
-				type(get_syntax) == "table"
-				and type(get_syntax.syntax) == "function"
-				and (type(get_syntax.pattern) == "table" or type(get_syntax.pattern) == "string")
-			then
-				group = side_autocmd_group
-				pattern = get_syntax.pattern
-				get_syntax = get_syntax.syntax
-			else
-				return
+					-- event = get_syntax
+					-- get_syntax = module.syntax
+					-- group = module_autocmd_group
+					-- pattern = "*"
+					create_autocmd(get_syntax, module_autocmd_group, "*", module.syntax)
+				elseif type(get_syntax) == "function" then
+					-- event = event
+					-- get_syntax = get_syntax
+					-- group = side_autocmd_group
+					-- pattern = "*"
+					create_autocmd(event, side_autocmd_group, "*", get_syntax)
+				elseif
+					type(get_syntax) == "table"
+					and type(get_syntax.syntax) == "function"
+					and (type(get_syntax.pattern) == "table" or type(get_syntax.pattern) == "string")
+				then
+					-- event = event
+					-- get_syntax = get_syntax.syntax
+					-- group = side_autocmd_group
+					-- pattern = get_syntax.pattern
+					create_autocmd(event, side_autocmd_group, get_syntax.pattern, get_syntax.syntax)
+				end
 			end
-
-			autocmd_group_ids[group] = true
-
-			autocmd(event, {
-				group = group,
-				pattern = pattern,
-				once = true,
-				callback = function()
-					highlight(get_syntax, colors, on_highlight)
-					autocmd_group_ids[group] = nil
-					del_augroup_by_id(group)
-				end,
-			})
 		end
 	end
 
 	setup_type_autocmds("FileType", module.filetypes)
-	setup_type_autocmds("BufEnter", module.buftypes)
+	setup_type_autocmds("BufReadPre", module.buftypes)
 	setup_event_autocmds(module.events)
 
 	if has_syntax then
@@ -282,12 +286,12 @@ M.syntax = function(colors, theme_style)
 		-- placeholder characters substituted for concealed text (see 'conceallevel')
 		Conceal = { fg = colors.orange2 },
 		-- character under the cursor
-		Cursor = { fg = colors.bg, bg = colors.fg },
-		-- -- the character under the cursor when |language-mapping| is used (see 'guicursor')
-		lCursor = { fg = colors.bg, bg = colors.fg },
-		-- -- like Cursor, but used when in IME mode |CursorIM|
-		CursorIM = { fg = colors.bg, bg = colors.fg },
-		-- Screen-column at the cursor, when 'cursorcolumn' is set.
+		-- Cursor = { fg = colors.bg, bg = colors.fg },
+		-- -- -- the character under the cursor when |language-mapping| is used (see 'guicursor')
+		-- lCursor = { fg = colors.bg, bg = colors.fg },
+		-- -- -- like Cursor, but used when in IME mode |CursorIM|
+		-- CursorIM = { fg = colors.bg, bg = colors.fg },
+		-- -- Screen-column at the cursor, when 'cursorcolumn' is set.
 		CursorColumn = { bg = colors.bg_highlight },
 		-- Screen-line at the cursor, when 'cursorline' is set.
 		-- Low-priority if foreground (ctermfg OR guifg) is not set.
@@ -355,9 +359,17 @@ M.syntax = function(colors, theme_style)
 		-- status lines of not-current windows Note: if this is equal to "StatusLine"
 		-- Vim will use "^^^" in the status line of the current window.
 		StatusLineNC = { fg = colors.fg, bg = util.darken(colors.bg_line, 0.98) },
-		TabLine = { fg = colors.fg, bg = colors.bg_line }, -- tab pages line, not active tab page label
-		TabLineFill = { bg = colors.black }, -- tab pages line, where there are no labels
-		TabLineSel = { fg = colors.black, bg = colors.blue }, -- tab pages line, active tab page label
+		-- TabLine = { link = "StatusLine" }, -- tab pages line, not active tab page label
+		-- tab pages line, not active tab page label
+		TabLine = { fg = colors.fg, bg = colors.bg_line },
+		-- tab pages line, where there are no labels
+		TabLineFill = { bg = colors.black },
+		-- tab pages line, active tab page label
+		TabLineSel = { fg = colors.black, bg = colors.blue },
+		-- window bar
+		WinBar = { link = "StatusLine" },
+		-- window bar in inactive windows
+		WinBarNC = { link = "StatusLineNC" },
 
 		-- titles for output from ":set all", ":autocmd" etcolors.
 		Title = { fg = colors.orange1, bold = true },
@@ -373,9 +385,8 @@ M.syntax = function(colors, theme_style)
 		-- Unprintable characters: text displayed differently from what it really is.
 		-- But not 'listchars' whitespace. |hl-Whitespace|
 		SpecialKey = { fg = colors.gray },
-		WildMenu = { bg = colors.bg_visual }, -- current match in 'wildmenu' completion
-		WinBar = { link = "StatusLine" }, -- window bar
-		WinBarNC = { link = "StatusLineNC" }, -- window bar in inactive windows
+		-- current match in 'wildmenu' completion
+		WildMenu = { bg = colors.bg_visual },
 
 		-- These groups are not listed as default vim groups,
 		-- but they are default standard group names for syntax highlighting.
@@ -526,7 +537,6 @@ M.syntax = function(colors, theme_style)
 		-- Variable names that are defined by the languages, like `this` or `self`.
 		["@module.builtin"] = { fg = colors.red1 },
 
-		["@markup"] = { link = "@none" },
 		--- Punctuation
 		-- For delimiters ie: `.`
 		["@punctuation.delimiter"] = { fg = colors.blue },
@@ -696,6 +706,8 @@ M.load = function(configs, theme_style)
 
 	load_extra_modules(theme_conf.extras, colors, on_highlight)
 	load_custom_modules(theme_conf.customs, colors, on_highlight)
+
+	api.nvim_exec_autocmds("User", { pattern = "StinvimuiDone", modeline = false })
 end
 
 M.setup = function(configs)
@@ -712,9 +724,9 @@ M.setup = function(configs)
 		group = get_global_group_id(),
 		callback = function()
 			for id, existed in pairs(autocmd_group_ids) do
-				api.nvim_del_augroup_by_id(id)
+				del_augroup(id)
 			end
-			api.nvim_del_augroup_by_id(global_group_id)
+			del_augroup(global_group_id)
 			global_group_id = nil
 		end,
 	})
