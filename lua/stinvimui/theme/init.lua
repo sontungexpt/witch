@@ -98,6 +98,7 @@ local function async_load_syntax_batch(syntax, batch_size, step_delay)
 				coroutine.yield()
 			end
 		end
+		api.nvim_exec_autocmds("User", { pattern = "StinvimuiHighlightDone", modeline = false })
 	end)
 
 	resumeCoroutine()
@@ -706,8 +707,6 @@ M.load = function(configs, theme_style)
 
 	load_extra_modules(theme_conf.extras, colors, on_highlight)
 	load_custom_modules(theme_conf.customs, colors, on_highlight)
-
-	api.nvim_exec_autocmds("User", { pattern = "StinvimuiDone", modeline = false })
 end
 
 M.setup = function(configs)
