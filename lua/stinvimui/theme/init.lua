@@ -1,4 +1,3 @@
-local coroutine = coroutine
 local type = type
 local require = require
 local vim = vim
@@ -75,6 +74,7 @@ local get_colors = function(style, configs)
 end
 
 local function async_load_syntax_batch(syntax, batch_size, step_delay)
+	local coroutine = coroutine
 	local co
 
 	local function resumeCoroutine()
@@ -92,7 +92,7 @@ local function async_load_syntax_batch(syntax, batch_size, step_delay)
 		for groupName, options in pairs(syntax) do
 			hl(0, groupName, options)
 			step = step - 1
-			if step == 0 and next(syntax) then
+			if step == 0 then
 				step = batch_size or 10
 				defer_fn(resumeCoroutine, step_delay or 100)
 				coroutine.yield()
@@ -112,7 +112,7 @@ local highlight = function(get_syntax, colors, on_highlight)
 			on_highlight(current_theme_style, colors, syntax)
 		end
 
-		async_load_syntax_batch(syntax, 28, 100)
+		async_load_syntax_batch(syntax, 30, 80)
 
 		-- for group_name, options in pairs(syntax) do
 		-- 	hl(0, group_name, options)
