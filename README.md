@@ -16,6 +16,8 @@ It's still in development, so there are some bugs. If you find any bug, please r
 
 😁 Easy to switch between themes easily with `:Stinvimui <theme_name>` command
 
+👀 Try to load highlighting incrementally, so it will not slow down your vim startup time.
+
 ## Preview
 
 ![stinvimui](./docs/readme/preview1.png)

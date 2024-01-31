@@ -111,7 +111,7 @@ local highlight = function(get_syntax, colors, on_highlight)
 			on_highlight(current_theme_style, colors, syntax)
 		end
 
-		async_load_syntax_batch(syntax, 25, 100)
+		async_load_syntax_batch(syntax, 28, 100)
 
 		-- for group_name, options in pairs(syntax) do
 		-- 	hl(0, group_name, options)
