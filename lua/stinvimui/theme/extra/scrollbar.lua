@@ -1,20 +1,28 @@
--- -- Scrollbar
---    ScrollbarHandle = { fg = c.none, bg = c.bg_highlight },
+local M = {}
 
---    ScrollbarSearchHandle = { fg = c.orange, bg = c.bg_highlight },
---    ScrollbarSearch = { fg = c.orange, bg = c.none },
+M.syntax = function(colors, theme_style)
+	return {
+		-- Scrollbar
+		ScrollbarHandle = { bg = colors.bg_highlight },
 
---    ScrollbarErrorHandle = { fg = c.error, bg = c.bg_highlight },
---    ScrollbarError = { fg = c.error, bg = c.none },
+		ScrollbarSearchHandle = { fg = colors.orange, bg = colors.bg_highlight },
+		ScrollbarSearch = { fg = colors.orange },
 
---    ScrollbarWarnHandle = { fg = c.warning, bg = c.bg_highlight },
---    ScrollbarWarn = { fg = c.warning, bg = c.none },
+		ScrollbarErrorHandle = { fg = colors.error, bg = colors.bg_highlight },
+		ScrollbarError = { fg = colors.error },
 
---    ScrollbarInfoHandle = { fg = c.info, bg = c.bg_highlight },
---    ScrollbarInfo = { fg = c.info, bg = c.none },
+		ScrollbarWarnHandle = { fg = colors.warn, bg = colors.bg_highlight },
+		ScrollbarWarn = { fg = colors.warn },
 
---    ScrollbarHintHandle = { fg = c.hint, bg = c.bg_highlight },
---    ScrollbarHint = { fg = c.hint, bg = c.none },
+		ScrollbarInfoHandle = { fg = colors.info, bg = colors.bg_highlight },
+		ScrollbarInfo = { fg = colors.info },
 
---    ScrollbarMiscHandle = { fg = c.purple, bg = c.bg_highlight },
---    ScrollbarMisc = { fg = c.purple, bg = c.none },
+		ScrollbarHintHandle = { fg = colors.hint, bg = colors.bg_highlight },
+		ScrollbarHint = { fg = colors.hint },
+
+		ScrollbarMiscHandle = { fg = colors.purple, bg = colors.bg_highlight },
+		ScrollbarMisc = { fg = colors.purple },
+	}
+end
+
+return M

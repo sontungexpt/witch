@@ -29,6 +29,8 @@ local STARTUP_MODULE = {
 local autocmd_group_ids = {}
 local global_group_id = nil
 local current_theme_style = nil
+local dimmed_ns = nil
+local dim_level = 0.46
 
 local M = {}
 
@@ -89,8 +91,24 @@ local function async_load_syntax_batch(syntax, batch_size, step_delay)
 	co = coroutine.create(function()
 		local step = batch_size or 10
 
-		for groupName, options in pairs(syntax) do
-			hl(0, groupName, options)
+		for group_name, options in pairs(syntax) do
+			hl(0, group_name, options)
+
+			if dimmed_ns then
+				local dimmed_opts = util.merge_tb({}, options)
+				if group_name ~= "VertSplit" and group_name ~= "WinSeparator" then
+					local fg = dimmed_opts.fg
+					local bg = dimmed_opts.bg
+					if fg and fg ~= "NONE" then
+						dimmed_opts.fg = util.darken(fg, dim_level)
+					end
+					if bg and bg ~= "NONE" then
+						dimmed_opts.bg = util.darken(bg, dim_level)
+					end
+				end
+				hl(dimmed_ns, group_name, dimmed_opts)
+			end
+
 			step = step - 1
 			if step == 0 then
 				step = batch_size or 10
@@ -216,6 +234,7 @@ M.syntax = function(colors, theme_style)
 		NormalNC = { fg = colors.fg, bg = colors.bg },
 		-- Normal text in floating windows.
 		NormalFloat = { fg = colors.fg_dark, bg = colors.bg_dark },
+
 		FloatBorder = { fg = colors.border, bg = colors.bg_dark },
 		FloatTitle = { fg = colors.fg_dark, bg = colors.bg_dark },
 		-- Popup menu: normal item.
@@ -359,7 +378,7 @@ M.syntax = function(colors, theme_style)
 		StatusLine = { fg = colors.fg, bg = colors.bg_line },
 		-- status lines of not-current windows Note: if this is equal to "StatusLine"
 		-- Vim will use "^^^" in the status line of the current window.
-		StatusLineNC = { fg = colors.fg, bg = util.darken(colors.bg_line, 0.98) },
+		StatusLineNC = { fg = colors.fg, bg = util.darken(colors.bg_line, 0.95) },
 		-- TabLine = { link = "StatusLine" }, -- tab pages line, not active tab page label
 		-- tab pages line, not active tab page label
 		TabLine = { fg = colors.fg, bg = colors.bg_line },
@@ -709,6 +728,52 @@ M.load = function(configs, theme_style)
 	load_custom_modules(theme_conf.customs, colors, on_highlight)
 end
 
+M.enable_dim = function(excluded)
+	local get_buf_option = api.nvim_buf_get_option
+	local win_get_buf = api.nvim_win_get_buf
+	local excluded_filetypes = excluded.filetypes
+	local excluded_buftypes = excluded.buftypes
+	local get_current_win = api.nvim_get_current_win
+
+	-- check if a window is not a floating window
+	local is_floating = function(win_id)
+		return api.nvim_win_get_config(win_id).relative ~= ""
+	end
+
+	-- dim other windows except current window by setting their winhighlight to
+	-- NormalDimmed except some special windows like NvimTree
+	local dim = function()
+		if excluded_filetypes[get_buf_option(0, "filetype")] or excluded_buftypes[get_buf_option(0, "buftype")] then
+			return
+		end
+
+		local curr_win_id = get_current_win()
+		local win_ids = api.nvim_list_wins()
+
+		for _, win_id in ipairs(win_ids) do
+			local bufnr = win_get_buf(win_id)
+			if
+				win_id ~= curr_win_id
+				and not is_floating(win_id)
+				and not excluded_filetypes[get_buf_option(bufnr, "filetype")]
+				and not excluded_buftypes[get_buf_option(bufnr, "buftype")]
+			then
+				api.nvim_win_set_hl_ns(win_id, dimmed_ns)
+			end
+		end
+		api.nvim_win_set_hl_ns(curr_win_id, 0)
+	end
+
+	autocmd({ "WinEnter" }, {
+		group = get_global_group_id(),
+		callback = function()
+			vim.schedule(function()
+				dim()
+			end, 400)
+		end,
+	})
+end
+
 M.setup = function(configs)
 	if vim.fn.exists("syntax_on") then
 		cmd("syntax reset")
@@ -732,6 +797,12 @@ M.setup = function(configs)
 
 	if configs.switcher then
 		M.enable_switcher(configs)
+	end
+
+	if configs.dim_inactive.enabled then
+		dimmed_ns = api.nvim_create_namespace(PLUG_NAME .. "_dimmed")
+		dim_level = configs.dim_inactive.level or dim_level
+		M.enable_dim(configs.dim_inactive.excluded)
 	end
 
 	M.load(configs)

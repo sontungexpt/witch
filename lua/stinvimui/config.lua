@@ -14,6 +14,9 @@ local configs = {
 			-- diffview = true,
 			-- explorer = true,
 			-- indentline = true,
+			-- yanky = true,
+			-- scrollbar = true,
+			-- navic = true,
 		},
 
 		-- custome your highlight module
@@ -22,10 +25,16 @@ local configs = {
 			-- require("stinvimui.theme.example"),
 		},
 
-		-- this function will be called when stinvimui start highlight
-		-- this is the unique way to change the default highlight of stinvimui
-		-- when you want to change the default highlight groups
+		-- This function is called when stinvimui starts highlighting.
+		-- It provides a unique opportunity to modify the default highlight groups.
+		-- If you wish to customize the default highlight groups, you can do so here.
+		-- This function is invoked after loading all colors and highlight options
+		-- but before applying the highlights, allowing users to adjust undesired highlights.
 		-- you can do something like this
+		--
+		-- @param style string : the current style of the theme
+		-- @param colors table : the current colors of the theme
+		-- @param highlight table : the current highlights of the theme
 		-- on_highlight = function(style, colors, highlight)
 		-- 	if style == "dark" then
 		-- 		-- change the default background of stinvimui
@@ -43,7 +52,31 @@ local configs = {
 		-- end,
 	},
 
-	-- dim_inactive = false, -- dims inactive windows
+	-- dims inactive windows
+	dim_inactive = {
+		enabled = true,
+		-- from 0 to 1
+		-- as nearer to 1 the dimming will be lighter
+		level = 0.46,
+
+		-- Prevent dimming the last active window when switching to a window
+		-- with specific filetypes or buftypes listed in the excluded table.
+		--
+		-- The idea of this option is when change to a window like NvimTree, Telescope, ...
+		-- where these windows are considered auxiliary tools.
+		-- the last active window retains its status as the main window
+		-- and should not be dimmed upon switching.
+		excluded = {
+			filetypes = {
+				NvimTree = true,
+			},
+			buftypes = {
+				nofile = true,
+				prompt = true,
+				terminal = true,
+			},
+		},
+	},
 
 	-- true if you want to use command StinvimUISwitch
 	switcher = true,
