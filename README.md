@@ -22,6 +22,11 @@ It's still in development, so there are some bugs. If you find any bug, please r
 
 ![stinvimui](./docs/readme/preview1.png)
 
+
+https://github.com/sontungexpt/stinvimui/assets/92097639/87de0d77-676d-465d-bcaa-01fc869e4da7
+
+
+
 ## Installation
 
 ```lua
