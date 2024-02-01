@@ -14,6 +14,9 @@ local configs = {
 			-- diffview = true,
 			-- explorer = true,
 			-- indentline = true,
+			-- yanky = true,
+			-- scrollbar = true,
+			-- navic = true,
 		},
 
 		-- custome your highlight module

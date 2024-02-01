@@ -1,8 +1,14 @@
+local M = {}
 
--- -- navic
--- NavicSeparator = { fg = colors.fg, bg = colors.none },
--- NavicText = { fg = colors.fg, bg = colors.none },
+M.syntax = function(colors, theme_style)
+	return {
+		NavicSeparator = { fg = colors.fg },
+		NavicText = { fg = colors.fg },
 
--- AerialNormal = { fg = colors.fg, bg = colors.none },
--- AerialGuide = { fg = colors.fg_gutter },
--- AerialLine = { link = "LspInlayHint" },
+		AerialNormal = { fg = colors.fg },
+		AerialGuide = { fg = colors.bg_gutter },
+		AerialLine = { link = "LspInlayHint" },
+	}
+end
+
+return M

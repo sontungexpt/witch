@@ -238,7 +238,7 @@ The module should has the structure like this: [example](./lua/stinvimui/theme/e
     return M
 ```
 
-We also provide some default highlight module that you can use to extend the theme
+🤗 We also provide some default highlight module that you can use to extend the theme
 see [here](./lua/stinvimui/theme/extra).
 So to enable these module, you can add the name of module to the `extras` option
 
@@ -260,7 +260,7 @@ So to enable these module, you can add the name of module to the `extras` option
 
 With stinvimui, you can also add your custom theme to the theme.
 
-Unfortunately, it's not really flexible you just can change the colors of the
+😢 Unfortunately, it's not really flexible you just can change the colors of the
 table colors rigidly.
 
 You can see the colors format in [here](./lua/stinvimui/colors/example.lua)
