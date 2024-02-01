@@ -16,12 +16,13 @@ It's still in development, so there are some bugs. If you find any bug, please r
 
 😁 Easy to switch between themes easily with `:Stinvimui <theme_name>` command
 
-👀 Try to load highlighting incrementally, so it will not slow down your vim startup time.
+👀 Try to load highlighting incrementally to hopefully reduce the time it takes to load the neovim
 
 ## Preview
 
-![stinvimui](./docs/readme/preview1.png)
+The colors in the preview may appear different from those in your Vim due to potential errors during color conversion
 
+![stinvimui](./docs/readme/preview1.png)
 
 https://github.com/sontungexpt/stinvimui/assets/92097639/ebf730fc-3218-427f-b8a5-ae0fa5895532
 

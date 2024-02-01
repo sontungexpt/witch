@@ -96,13 +96,15 @@ local function async_load_syntax_batch(syntax, batch_size, step_delay)
 
 			if dimmed_ns then
 				local dimmed_opts = util.merge_tb({}, options)
-				local fg = dimmed_opts.fg
-				local bg = dimmed_opts.bg
-				if fg and fg ~= "NONE" then
-					dimmed_opts.fg = util.darken(fg, dim_level)
-				end
-				if bg and bg ~= "NONE" then
-					dimmed_opts.bg = util.darken(bg, dim_level)
+				if group_name ~= "VertSplit" and group_name ~= "WinSeparator" then
+					local fg = dimmed_opts.fg
+					local bg = dimmed_opts.bg
+					if fg and fg ~= "NONE" then
+						dimmed_opts.fg = util.darken(fg, dim_level)
+					end
+					if bg and bg ~= "NONE" then
+						dimmed_opts.bg = util.darken(bg, dim_level)
+					end
 				end
 				hl(dimmed_ns, group_name, dimmed_opts)
 			end
@@ -232,11 +234,6 @@ M.syntax = function(colors, theme_style)
 		NormalNC = { fg = colors.fg, bg = colors.bg },
 		-- Normal text in floating windows.
 		NormalFloat = { fg = colors.fg_dark, bg = colors.bg_dark },
-
-		NormalDimmed = {
-			fg = colors.fg_dimmed or util.darken(colors.fg, 0.2),
-			bg = colors.bg_dimmed or util.darken(colors.bg, 0.2),
-		},
 
 		FloatBorder = { fg = colors.border, bg = colors.bg_dark },
 		FloatTitle = { fg = colors.fg_dark, bg = colors.bg_dark },
