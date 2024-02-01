@@ -16,7 +16,6 @@ local del_augroup = api.nvim_del_augroup_by_id
 local util = require("stinvimui.util")
 
 local PLUG_NAME = "stinvimui"
-local DIMMED_NAMESPACE = api.nvim_create_namespace(PLUG_NAME .. "_dimmed")
 local COLOR_DIR = "stinvimui.colors."
 local EXTRA_THEME_HIGHLIGHT = "stinvimui.theme.extra."
 local STARTUP_MODULE_DIR = "stinvimui.theme.startup."
@@ -30,6 +29,8 @@ local STARTUP_MODULE = {
 local autocmd_group_ids = {}
 local global_group_id = nil
 local current_theme_style = nil
+local dimmed_ns = nil
+local dim_level = 0.46
 
 local M = {}
 
@@ -93,16 +94,18 @@ local function async_load_syntax_batch(syntax, batch_size, step_delay)
 		for group_name, options in pairs(syntax) do
 			hl(0, group_name, options)
 
-			local dimmed_opts = util.merge_tb({}, options)
-			local fg = dimmed_opts.fg
-			local bg = dimmed_opts.bg
-			if fg and fg ~= "NONE" then
-				dimmed_opts.fg = util.darken(fg, 0.9)
+			if dimmed_ns then
+				local dimmed_opts = util.merge_tb({}, options)
+				local fg = dimmed_opts.fg
+				local bg = dimmed_opts.bg
+				if fg and fg ~= "NONE" then
+					dimmed_opts.fg = util.darken(fg, dim_level)
+				end
+				if bg and bg ~= "NONE" then
+					dimmed_opts.bg = util.darken(bg, dim_level)
+				end
+				hl(dimmed_ns, group_name, dimmed_opts)
 			end
-			if bg and bg ~= "NONE" then
-				dimmed_opts.bg = util.darken(bg, 0.9)
-			end
-			hl(DIMMED_NAMESPACE, group_name, dimmed_opts)
 
 			step = step - 1
 			if step == 0 then
@@ -378,7 +381,7 @@ M.syntax = function(colors, theme_style)
 		StatusLine = { fg = colors.fg, bg = colors.bg_line },
 		-- status lines of not-current windows Note: if this is equal to "StatusLine"
 		-- Vim will use "^^^" in the status line of the current window.
-		StatusLineNC = { fg = colors.fg, bg = util.darken(colors.bg_line, 0.98) },
+		StatusLineNC = { fg = colors.fg, bg = util.darken(colors.bg_line, 0.95) },
 		-- TabLine = { link = "StatusLine" }, -- tab pages line, not active tab page label
 		-- tab pages line, not active tab page label
 		TabLine = { fg = colors.fg, bg = colors.bg_line },
@@ -728,7 +731,7 @@ M.load = function(configs, theme_style)
 	load_custom_modules(theme_conf.customs, colors, on_highlight)
 end
 
-M.dim_inactive = function(excluded)
+M.enable_dim = function(excluded)
 	local get_buf_option = api.nvim_buf_get_option
 	local win_get_buf = api.nvim_win_get_buf
 	local excluded_filetypes = excluded.filetypes
@@ -758,7 +761,7 @@ M.dim_inactive = function(excluded)
 				and not excluded_filetypes[get_buf_option(bufnr, "filetype")]
 				and not excluded_buftypes[get_buf_option(bufnr, "buftype")]
 			then
-				api.nvim_win_set_hl_ns(win_id, DIMMED_NAMESPACE)
+				api.nvim_win_set_hl_ns(win_id, dimmed_ns)
 			end
 		end
 		api.nvim_win_set_hl_ns(curr_win_id, 0)
@@ -800,7 +803,9 @@ M.setup = function(configs)
 	end
 
 	if configs.dim_inactive.enabled then
-		M.dim_inactive(configs.dim_inactive.excluded)
+		dimmed_ns = api.nvim_create_namespace(PLUG_NAME .. "_dimmed")
+		dim_level = configs.dim_inactive.level or dim_level
+		M.enable_dim(configs.dim_inactive.excluded)
 	end
 
 	M.load(configs)
