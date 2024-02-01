@@ -2,8 +2,6 @@
 
 local colors = {
 	bg = "#dee2ea",
-	-- bg_dim = "#161730",
-	-- bg_alt = "#1c2141",
 	-- bg_line = "#2d3546",
 	bg_line = "#bbbed6",
 	bg_visual = "#b6bfeb",

@@ -1,16 +1,15 @@
-local util = require("stinvimui.util")
-
 local colors = {
-	bg = "#161f31",
-	-- bg_dim = "#161730",
-	-- bg_alt = "#1c2141",
-	bg_line = "#0d1829",
-	bg_visual = "#253557",
-	bg_highlight = "#1f2b49",
-	bg_gutter = "#1b305d",
+	bg = "#161f31", -- the background color
+	bg_dark = "#0d1829", -- the background color of floating windows
+	bg_line = "#0d1829", -- the background color of the statusline and tabline
+	bg_visual = "#253557", -- the background color of the visual selection
+	bg_highlight = "#1f2b49", -- the background color of the line the cursor is on
+	bg_gutter = "#1b305d", -- the background color of fold
+	bg_sidebar = "#1b305d", -- the background color of the sidebar, fallback to bf_dark if not defined
 
-	fg = "#c9d8ee",
-	fg_dark = "#a9bad6",
+	fg = "#c9d8ee", -- the foreground color
+	fg_dark = "#a9bad6", -- the foreground color of floating windows
+	fg_sidebar = "#a9bad6", -- the foreground color of the sidebar, fallback to fg_dark if not defined
 
 	yellow = "#f0a421",
 	yellow1 = "#e6cc4c",
@@ -59,9 +58,9 @@ local colors = {
 	dark_border = "#37518d",
 	graphite_border = "#465968",
 
-	comment = "#6675ae",
-	string = "#ffd39b",
-	operator = "#7bc0cc",
+	comment = "#6675ae", -- the color of comments
+	string = "#ffd39b", -- the color of strings
+	operator = "#7bc0cc", -- the color of operators
 
 	error = "#e64152",
 	info = "#59d1f2",
@@ -70,10 +69,55 @@ local colors = {
 	todo = "#f78c6c",
 	unnecessary = "#375172",
 
-	term_green = "#4ad860",
-	-- term_blue = "#1e9eff",
-}
+	-- if you want to change the terminal colors, you can do so here
+	-- the term_0 - term_15 colors has the priority over the term_black - term_bright_white colors
+	term_0 = "#000000",
+	term_8 = "#4d4d4d",
 
-colors.bg_dark = util.darken(colors.bg, 0.84)
+	term_7 = "#ffffff",
+	term_15 = "#ffffff",
+
+	term_1 = "#fc3753",
+	term_9 = "#fc3753",
+
+	term_2 = "#37a16f",
+	term_10 = "#4ad860",
+
+	term_3 = "#f0a421",
+	term_11 = "#f0a421",
+
+	term_4 = "#1e9eff",
+	term_12 = "#1e9eff",
+
+	term_5 = "#f36cde",
+	term_13 = "#f36cde",
+
+	term_6 = "#7dcfff",
+	term_14 = "#7dcfff",
+
+	term_black = "#000000",
+	term_bright_black = "#4d4d4d",
+
+	term_white = "#ffffff",
+	term_bright_white = "#ffffff",
+
+	term_red = "#fc3753",
+	term_bright_red = "#fc3753",
+
+	term_green = "#4ad860",
+	term_bright_green = "#4ad860",
+
+	term_yellow = "#f0a421",
+	term_bright_yellow = "#f0a421",
+
+	term_blue = "#1e9eff",
+	term_bright_blue = "#1e9eff",
+
+	term_magenta = "#f36cde",
+	term_bright_magenta = "#f36cde",
+
+	term_cyan = "#7dcfff",
+	term_bright_cyan = "#7dcfff",
+}
 
 return colors

@@ -1,10 +1,10 @@
 local M = {}
 
---- This function is called when the theme is loaded if no filetypes or buftypes
---- or events are specified in the config.
---- This function that returns the highlight table with following structure:
+--- This function is invoked when the theme is loaded if no filetypes, buftypes, or events
+--- are specified in the configuration of this module.
+--- This function must returns the highlight table with following structure:
 --- key: highlight group name
---- value: highlight group options
+--- value: highlight options
 ---
 --- e.g.
 --- return {
@@ -44,6 +44,8 @@ M.buftypes = {
 	-- same as M.filetypes but for buftypes
 
 	"terminal",
+
+	terminal = function(colors, theme_style) end,
 }
 
 M.events = {
