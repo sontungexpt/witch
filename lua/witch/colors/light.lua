@@ -1,4 +1,4 @@
--- local util = require("stinvimui.util")
+-- local util = require("witch.util")
 
 local colors = {
 	bg = "#dee2ea",

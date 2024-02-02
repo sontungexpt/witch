@@ -1,5 +1,5 @@
-local theme = require("stinvimui.theme")
-local config = require("stinvimui.config")
+local theme = require("witch.theme")
+local config = require("witch.config")
 
 local M = {}
 

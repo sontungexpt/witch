@@ -5,7 +5,7 @@ local ipairs = ipairs
 local M = {}
 
 M.link_kind = function(formatable_strings, highlight, kinds)
-	kinds = type(kinds) == "table" and kinds or require("stinvimui.theme.kind")
+	kinds = type(kinds) == "table" and kinds or require("witch.theme.kind")
 
 	local function linkPrefix(formatable_string)
 		if highlight[1] == nil then
