@@ -3,6 +3,10 @@ local M = {}
 
 local configs = {
 	theme = {
+		-- if you disable the theme, no default highlight styles will be set by default
+		-- you must to add a customs module or extras module to set the highlight styles
+		enabled = true,
+
 		-- default style of the theme
 		-- "dark", "light"
 		style = "dark",
