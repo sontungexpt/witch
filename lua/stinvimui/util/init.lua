@@ -7,8 +7,6 @@ local blend_fg = "#ffffff"
 --- Convert hex color to rgb
 ---@param hex_color string : hex color code e.g. #ffffff or #fff
 local hex2rgb = function(hex_color)
-	hex_color = string.lower(hex_color)
-
 	if hex_color:len() == 4 then
 		local r = (tonumber(hex_color:sub(2, 2), 16) * 17) % 256
 		local g = (tonumber(hex_color:sub(3, 3), 16) * 17) % 256
@@ -26,6 +24,8 @@ end
 ---@param background string background color
 ---@param alpha number|string number between 0 and 1. 0 results in bg, 1 results in fg
 M.blend = function(foreground, background, alpha)
+	if foreground == nil or foreground:sub(1, 1) ~= "#" then return foreground end
+
 	alpha = type(alpha) == "string" and (tonumber(alpha, 16) / 0xff) or alpha
 	local rgb_bg = hex2rgb(background)
 	local rgb_fg = hex2rgb(foreground)
@@ -38,13 +38,9 @@ M.blend = function(foreground, background, alpha)
 	return string.format("#%02x%02x%02x", blendChannel(1), blendChannel(2), blendChannel(3))
 end
 
-M.darken = function(hex, amount, background)
-	return M.blend(hex, background or blend_bg, amount)
-end
+M.darken = function(hex, amount, background) return M.blend(hex, background or blend_bg, amount) end
 
-M.lighten = function(hex, amount, foreground)
-	return M.blend(hex, foreground or blend_fg, amount)
-end
+M.lighten = function(hex, amount, foreground) return M.blend(hex, foreground or blend_fg, amount) end
 
 --- Merge two tables recursively
 --
