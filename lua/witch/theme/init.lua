@@ -126,7 +126,6 @@ local async_load_syntax_batch = function(syntaxs, batch_size, step_delay)
 			end
 		end
 
-
 		api.nvim_exec_autocmds("User", { pattern = "WitchHighlightDone", modeline = false })
 	end)
 
@@ -258,7 +257,6 @@ M.switch_style = function(configs, new_style)
 end
 
 M.enable_switcher = function(configs)
-
 	api.nvim_create_user_command("Witch", function(args) M.switch_style(configs, args.args) end, {
 		nargs = 1,
 	})

@@ -1,6 +1,5 @@
 local M = {}
 
-
 --- @function syntax(colors, theme_style) : table
 --- @author SonTung
 --- @description
