@@ -22,20 +22,20 @@ It's still in development, so there are some bugs. If you find any bug, please r
 
 The colors in the preview may appear different from those in your Vim due to potential errors during color conversion
 
-![stinvimui](./docs/readme/preview1.png)
+![witch](./docs/readme/preview1.png)
 
-https://github.com/sontungexpt/stinvimui/assets/92097639/ebf730fc-3218-427f-b8a5-ae0fa5895532
+https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0fa5895532
 
 ## Installation
 
 ```lua
     -- lazy
     {
-        "sontungexpt/stinvimui",
+        "sontungexpt/witch",
         priority = 1000,
         lazy = false,
         config = function(_, opts)
-            require("stinvimui").setup(opts)
+            require("witch").setup(opts)
         end,
     },
 
@@ -44,7 +44,7 @@ https://github.com/sontungexpt/stinvimui/assets/92097639/ebf730fc-3218-427f-b8a5
 ## Options
 
 ```lua
-    require("stinvimui").setup {
+    require("witch").setup {
         theme = {
             -- default style of the theme
             -- "dark", "light"
@@ -60,12 +60,12 @@ https://github.com/sontungexpt/stinvimui/assets/92097639/ebf730fc-3218-427f-b8a5
             },
 
             -- custome your highlight module
-            -- see: stinvimui.theme.example
+            -- see: witch.theme.example
             customs = {
-                -- require("stinvimui.theme.example"),
+                -- require("witch.theme.example"),
             },
 
-            -- This function is called when stinvimui starts highlighting.
+            -- This function is called when witch starts highlighting.
             -- It provides a unique opportunity to modify the default highlight groups.
             -- If you wish to customize the default highlight groups, you can do so here.
             -- This function is invoked after loading all colors and highlight options
@@ -74,16 +74,16 @@ https://github.com/sontungexpt/stinvimui/assets/92097639/ebf730fc-3218-427f-b8a5
             --
             -- on_highlight = function(style, colors, highlight)
             -- 	if style == "dark" then
-            -- 		-- change the default background of stinvimui
+            -- 		-- change the default background of witch
             -- 		colors.bg = "#000000"
 
-            -- 		-- change the Normal highlight group of stinvimui
+            -- 		-- change the Normal highlight group of witch
             -- 		highlight.Normal = { fg = "#ffffff", bg = "#000000" }
             -- 	elseif style == "light" then
-            -- 		-- change the default background of stinvimui
+            -- 		-- change the default background of witch
             -- 		colors.bg = "#ffffff"
 
-            -- 		-- change the Normal highlight group of stinvimui
+            -- 		-- change the Normal highlight group of witch
             -- 		highlight.Normal = { fg = "#000000", bg = "#ffffff" }
             -- 	end
             -- end,
@@ -129,7 +129,7 @@ https://github.com/sontungexpt/stinvimui/assets/92097639/ebf730fc-3218-427f-b8a5
 
             -- the key is the name of the theme must be in PascalCase
             -- the value is the table of colors to be passed to the theme
-            -- with following format in stinvimui.colors.example
+            -- with following format in witch.colors.example
             -- Custom1 = {},
             -- Custom2 = {},
         },
@@ -144,28 +144,28 @@ https://github.com/sontungexpt/stinvimui/assets/92097639/ebf730fc-3218-427f-b8a5
 
 ## Events
 
-| Event                    | Description                                                                                                                                           |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `StinvimuiHighlightDone` | This event is fired when stinvimui has finished highlighting. You can use this to reload highlight of some plugin such as NvimTree after change theme |
+| Event                    | Description                                                                                                                                       |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `StinvimuiHighlightDone` | This event is fired when witch has finished highlighting. You can use this to reload highlight of some plugin such as NvimTree after change theme |
 
 ## Custom Highlight
 
-With stinvimui, you can easily add your custom highlight to the theme
+With witch, you can easily add your custom highlight to the theme
 by creating a new module in some where in your config and add it to the `customs` option.
 
 ```lua
-    require("stinvimui").setup {
+    require("witch").setup {
         theme = {
             customs = {
                 -- your module
-                require("stinvimui.theme.example"),
+                require("witch.theme.example"),
                 -- ...
             },
         },
     }
 ```
 
-The module should has the structure like this: [example](./lua/stinvimui/theme/example.lua)
+The module should has the structure like this: [example](./lua/witch/theme/example.lua)
 
 ```lua
     local M = {}
@@ -183,7 +183,7 @@ The module should has the structure like this: [example](./lua/stinvimui/theme/e
     ---   NormalNC = { fg = colors.fg, bg = colors.bg },
     ---   -- ...
     --- }
-    ---@param colors table : The readonly color table from stinvimui or the colors in this module
+    ---@param colors table : The readonly color table from witch or the colors in this module
     ---@param theme_style any : The current style of the theme
     ---@return table : The highlight table
     M.syntax = function(colors, theme_style)
@@ -192,12 +192,12 @@ The module should has the structure like this: [example](./lua/stinvimui/theme/e
 
     -- If you provide M.colors here,
     -- the colors argument in M.syntax will be the M.colors
-    -- else the colors argument in M.syntax will be the stinvimui.colors from stinvimui
+    -- else the colors argument in M.syntax will be the witch.colors from witch
     M.colors = {}
 
     -- If you provide M.on_highlight here,
     -- the on_highlight argument in M.syntax will be the M.on_highlight
-    -- else the on_highlight argument in M.syntax will be the config.theme.on_highlight from opts in stinvimui.setup(opts)
+    -- else the on_highlight argument in M.syntax will be the config.theme.on_highlight from opts in witch.setup(opts)
     M.on_highlight = function(stype, colors, highlight) end
 
     M.filetypes = {
@@ -243,11 +243,11 @@ The module should has the structure like this: [example](./lua/stinvimui/theme/e
 ```
 
 🤗 We also provide some default highlight module that you can use to extend the theme
-see [here](./lua/stinvimui/theme/extra).
+see [here](./lua/witch/theme/extra).
 So to enable these module, you can add the name of module to the `extras` option
 
 ```lua
-    require("stinvimui").setup {
+    require("witch").setup {
         theme = {
             extras = {
                 bracket = true,
@@ -262,17 +262,17 @@ So to enable these module, you can add the name of module to the `extras` option
 
 ## Custom Theme
 
-With stinvimui, you can also add your custom theme to the theme.
+With witch, you can also add your custom theme to the theme.
 
 😢 Unfortunately, it's not really flexible you just can change the colors of the
 table colors rigidly.
 
-You can see the colors format in [here](./lua/stinvimui/colors/example.lua)
+You can see the colors format in [here](./lua/witch/colors/example.lua)
 
 So, if you have any idea to make it more flexible, please let me know.
 
 ```lua
-    require("stinvimui").setup {
+    require("witch").setup {
         more_themes = {
             -- the key is the name of the theme must be in PascalCase
             Custom1 = {

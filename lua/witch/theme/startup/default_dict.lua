@@ -1,5 +1,7 @@
-local util = require("stinvimui.util")
+local util = require("witch.util")
+
 local M = {}
+
 M.syntax = function(colors, theme_style)
 	local highlights = {
 		-- normal text
@@ -442,4 +444,5 @@ M.syntax = function(colors, theme_style)
 
 	return highlights
 end
+
 return M
