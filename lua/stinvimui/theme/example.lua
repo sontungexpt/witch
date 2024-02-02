@@ -16,9 +16,7 @@ local M = {}
 ---@param colors table : The readonly color table from stinvimui
 ---@param theme_style any : The theme style from stinvimui
 ---@return table : The highlight table
-M.syntax = function(colors, theme_style)
-	return {}
-end
+M.syntax = function(colors, theme_style) return {} end
 
 -- If you provide M.colors here,
 -- the colors argument in M.syntax will be the M.colors

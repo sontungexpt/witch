@@ -93,9 +93,7 @@ local configs = {
 }
 
 --- The config properties are read-only
-local keep_default_values = function()
-	configs.theme.default = "dark"
-end
+local keep_default_values = function() configs.theme.default = "dark" end
 
 M.setup = function(user_opts)
 	M.merge_config(configs, user_opts)
@@ -122,7 +120,10 @@ M.merge_config = function(default_opts, user_opts)
 end
 
 M.get_config = function()
-	return require("stinvimui.util").read_only(configs, "Attempt to modify config, this is a read-only table")
+	return require("stinvimui.util").read_only(
+		configs,
+		"Attempt to modify config, this is a read-only table"
+	)
 end
 
 return M
