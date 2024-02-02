@@ -270,7 +270,7 @@ M.load = function(configs, theme_style)
 
 	colors, current_theme_style = get_colors(theme_style or theme_conf.style, configs)
 
-	load_default(colors, on_highlight)
+	if theme_conf.enabled then load_default(colors, on_highlight) end
 
 	load_extra_modules(theme_conf.extras, colors, on_highlight)
 	load_custom_modules(theme_conf.customs, colors, on_highlight)
