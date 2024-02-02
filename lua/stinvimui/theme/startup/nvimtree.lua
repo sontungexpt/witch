@@ -7,10 +7,12 @@ M.syntax = function(colors, theme_style)
 			fg = colors.fg_sidebar or colors.fg_dark,
 			bg = colors.bg_sidebar or colors.bg_dark,
 		},
+
 		NvimTreeWinSeparator = {
 			fg = colors.dark_border,
 			bg = colors.bg_sidebar or colors.bg_dark,
 		},
+
 		NvimTreeNormalNC = {
 			fg = colors.fg_sidebar or colors.fg_dark,
 			bg = colors.bg_sidebar or colors.bg_dark,
