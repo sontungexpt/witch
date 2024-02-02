@@ -10,7 +10,10 @@ M.link_kind = function(formatable_strings, highlight, kinds)
 
 	local function linkPrefix(formatable_string)
 		for kind, hl_opts in pairs(kinds) do
-			highlight[formatable_string:format(kind)] = hl_opts
+			highlight[#highlight + 1] = {
+				group = formatable_string:format(kind),
+				styles = hl_opts,
+			}
 		end
 	end
 

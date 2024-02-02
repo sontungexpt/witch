@@ -2,39 +2,155 @@ local M = {}
 
 M.syntax = function(colors, theme_style)
 	local highlights = {
+		{
+			group = "@markup",
+			styles = {
+				link = "@none",
+			},
+		},
+		{
+			group = "@markup.list",
+			styles = {
+				fg = colors.blue,
+			},
+		},
+		{
+			group = "@markup.list.markdown",
+			styles = {
+				fg = colors.orange,
+				bold = true,
+			},
+		},
 
-		-- For special punctutation that does not fall in the catagories before.
-		["@markup"] = { link = "@none" },
-		["@markup.list"] = { fg = colors.blue },
-		["@markup.list.markdown"] = { fg = colors.orange, bold = true },
-		["@markup.raw"] = { link = "String" },
-		["@markup.raw.markdown"] = { fg = colors.orange },
-		["@markup.raw.markdown_inline"] = { fg = colors.red1, bg = colors.bg_line },
-		["@markup.link"] = { fg = colors.link },
-		["@markup.link.url"] = { link = "Underlined" },
-		["@markup.link.label.markdown_inline"] = { fg = colors.pink1 },
-		["@markup.link.label"] = { link = "SpecialChar" },
-		["@markup.link.label.symbol"] = { link = "Identifier" },
-		["@markup.environment"] = { link = "Macro" },
-		["@markup.environment.name"] = { link = "Type" },
-		["@markup.math"] = { link = "Special" },
-		["@markup.strong"] = { bold = true },
-		["@markup.emphasis"] = { italic = true },
-		["@markup.strikethrough"] = { strikethrough = true },
-		["@markup.underline"] = { underline = true },
-		["@markup.heading"] = { link = "Title" },
-		-- For brackets and parens.
-		["@markup.list.checked"] = { fg = colors.green },
-		-- For brackets and parens.
-		["@markup.list.unchecked"] = { fg = colors.red },
+		{
+			group = "@markup.raw",
+			styles = {
+				link = "String",
+			},
+		},
+		{
+			group = "@markup.raw.markdown",
+			styles = {
+				fg = colors.orange,
+			},
+		},
+		{
+			group = "@markup.raw.markdown_inline",
+			styles = {
+				fg = colors.red1,
+				bg = colors.bg_line,
+			},
+		},
+
+		{
+			group = "@markup.link",
+			styles = {
+				fg = colors.link,
+			},
+		},
+		{
+			group = "@markup.link.url",
+			styles = {
+				link = "Underlined",
+			},
+		},
+		{
+			group = "@markup.link.label.markdown_inline",
+			styles = {
+				fg = colors.pink1,
+			},
+		},
+		{
+			group = "@markup.link.label",
+			styles = {
+				link = "SpecialChar",
+			},
+		},
+		{
+			group = "@markup.link.label.symbol",
+			styles = {
+				link = "Identifier",
+			},
+		},
+		{
+			group = "@markup.environment",
+			styles = {
+				link = "Macro",
+			},
+		},
+		{
+			group = "@markup.environment.name",
+			styles = {
+				link = "Type",
+			},
+		},
+		{
+			group = "@markup.math",
+			styles = {
+				link = "Special",
+			},
+		},
+		{
+			group = "@markup.strong",
+			styles = {
+				bold = true,
+			},
+		},
+		{
+			group = "@markup.emphasis",
+			styles = {
+				italic = true,
+			},
+		},
+		{
+			group = "@markup.strikethrough",
+			styles = {
+				strikethrough = true,
+			},
+		},
+		{
+			group = "@markup.underline",
+			styles = {
+				underline = true,
+			},
+		},
+		{
+			group = "@markup.heading",
+			styles = {
+				link = "Title",
+			},
+		},
+		{
+			group = "@markup.list.checked",
+			styles = {
+				fg = colors.green,
+			},
+		},
+		{
+			group = "@markup.list.unchecked",
+			styles = {
+				fg = colors.red,
+			},
+		},
 	}
 
 	local markdown_rainbows = { colors.blue, colors.yellow, colors.red2, colors.teal, colors.cyan1, colors.purlple }
 
 	for i, color in ipairs(markdown_rainbows) do
 		local heading_group_name = "@markup.heading." .. i .. ".markdown"
-		highlights[heading_group_name] = { fg = color, bold = true }
-		highlights["@markup.heading." .. i .. ".marker.markdown"] = { link = heading_group_name }
+		highlights[#highlights + 1] = {
+			group = heading_group_name,
+			styles = {
+				fg = color,
+				bold = true,
+			},
+		}
+		highlights[#highlights + 1] = {
+			group = "@markup.heading." .. i .. ".marker.markdown",
+			styles = {
+				link = heading_group_name,
+			},
+		}
 	end
 
 	return highlights
