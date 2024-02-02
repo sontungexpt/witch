@@ -20,7 +20,7 @@ local COLOR_DIR = "stinvimui.colors."
 local EXTRA_THEME_HIGHLIGHT = "stinvimui.theme.extra."
 local STARTUP_MODULE_DIR = "stinvimui.theme.startup."
 local STARTUP_MODULE = {
-	"default",
+	"default_array",
 	"nvimtree",
 	"markdown",
 	"terminal",
@@ -75,7 +75,7 @@ local get_colors = function(style, configs)
 	return colors, style
 end
 
-local function async_load_syntax_batch(syntax, batch_size, step_delay)
+local function async_load_syntax_batch(syntaxs, batch_size, step_delay)
 	local coroutine = coroutine
 	local co
 
@@ -86,25 +86,42 @@ local function async_load_syntax_batch(syntax, batch_size, step_delay)
 		end
 	end
 
-	co = coroutine.create(function()
-		for i = 1, #syntax do
-			local group_name = syntax[i].group
-			local styles = syntax[i].styles
-			hl(0, group_name, styles)
+	local highlight = function(group_name, styles)
+		hl(0, group_name, styles)
 
-			if dimmed_ns then
-				if group_name == "VertSplit" or group_name == "WinSeparator" then
-					hl(dimmed_ns, group_name, styles)
-				else
-					styles.fg = util.darken(styles.fg, dim_level)
-					styles.bg = util.darken(styles.bg, dim_level)
-					hl(dimmed_ns, group_name, styles)
+		if dimmed_ns then
+			if group_name == "VertSplit" or group_name == "WinSeparator" then
+				hl(dimmed_ns, group_name, styles)
+			else
+				styles.fg = util.darken(styles.fg, dim_level)
+				styles.bg = util.darken(styles.bg, dim_level)
+				hl(dimmed_ns, group_name, styles)
+			end
+		end
+	end
+
+	co = coroutine.create(function()
+		if syntaxs[1] == nil then
+			local index = 1
+
+			for group_name, styles in pairs(syntaxs) do
+				highlight(group_name, styles)
+
+				index = index + 1
+				if index % (batch_size or 10) == 0 then
+					defer_fn(resume_coroutine, step_delay or 100)
+					coroutine.yield()
 				end
 			end
+		else
+			local len = #syntaxs
+			for i = 1, len do
+				highlight(syntaxs[i][1], syntaxs[i][2])
 
-			if i % (batch_size or 10) == 0 then
-				defer_fn(resume_coroutine, step_delay or 100)
-				coroutine.yield()
+				if i % (batch_size or 10) == 0 then
+					defer_fn(resume_coroutine, step_delay or 100)
+					coroutine.yield()
+				end
 			end
 		end
 
@@ -120,11 +137,7 @@ local highlight = function(get_syntax, colors, on_highlight)
 	if type(syntax) == "table" then
 		if type(on_highlight) == "function" then on_highlight(current_theme_style, colors, syntax) end
 
-		async_load_syntax_batch(syntax, 30, 100)
-
-		-- for group_name, options in pairs(syntax) do
-		-- 	hl(0, group_name, options)
-		-- end
+		async_load_syntax_batch(syntax, 30, 80)
 	end
 end
 

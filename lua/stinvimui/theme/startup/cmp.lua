@@ -3,79 +3,79 @@ local M = {}
 M.syntax = function(colors, theme_style)
 	local options = {
 		{
-			group = "CmpDocumentation",
-			styles = {
+			"CmpDocumentation",
+			{
 				fg = colors.fg_dark,
 				bg = colors.bg_dark,
 			},
 		},
 		{
-			group = "CmpDocumentationBorder",
-			styles = {
+			"CmpDocumentationBorder",
+			{
 				fg = colors.border,
 				bg = colors.bg_dark,
 			},
 		},
 		{
-			group = "CmpGhostText",
-			styles = {
+			"CmpGhostText",
+			{
 				fg = colors.light_gray,
 			},
 		},
 		{
-			group = "CmpItemAbbr",
-			styles = {
+			"CmpItemAbbr",
+			{
 				fg = colors.fg_dark,
 			},
 		},
 		{
-			group = "CmpItemAbbrDeprecated",
-			styles = {
+			"CmpItemAbbrDeprecated",
+			{
 				fg = colors.graphite,
 				strikethrough = true,
 			},
 		},
 		{
-			group = "CmpItemAbbrMatch",
-			styles = {
+			"CmpItemAbbrMatch",
+			{
 				link = "Special",
 			},
 		},
 		{
-			group = "CmpItemAbbrMatchFuzzy",
-			styles = {
+			"CmpItemAbbrMatchFuzzy",
+			{
 				link = "Special",
 			},
 		},
 		{
-			group = "CmpItemMenu",
-			styles = {
+			"CmpItemMenu",
+			{
 				fg = colors.comment,
 			},
 		},
 
 		{
-			group = "CmpItemKindDefault",
-			styles = {
+			"CmpItemKindDefault",
+			{
 				fg = colors.fg_dark,
 			},
 		},
 
 		{
-			group = "CmpItemKindCodeium",
-			styles = {
+			"CmpItemKindCodeium",
+			{
 				fg = colors.teal,
 			},
 		},
 		{
-			group = "CmpItemKindCopilot",
-			styles = {
+			"CmpItemKindCopilot",
+			{
 				fg = colors.teal,
 			},
 		},
 		{
-			group = "CmpItemKindTabNine",
-			styles = {
+			"CmpItemKindTabNine",
+			{
 				fg = colors.teal,
 			},
 		},
