@@ -70,7 +70,9 @@ local colors = {
 	unnecessary = "#375172",
 
 	-- if you want to change the terminal colors, you can do so here
-	-- the term_0 - term_15 colors has the priority over the term_black - term_bright_white colors
+	-- the term_0 - term_15 colors has the priority over
+	-- the term_black - term_bright_white colors
+	-- if yout set it the term_black - term_bright_white colors will be ignored
 	term_0 = "#000000",
 	term_8 = "#4d4d4d",
 

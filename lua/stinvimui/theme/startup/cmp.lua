@@ -2,6 +2,7 @@ local M = {}
 
 M.syntax = function(colors, theme_style)
 	local options = {
+
 		{
 			"CmpDocumentation",
 			{

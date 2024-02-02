@@ -8,7 +8,6 @@ local opts = vim.opt
 local cmd = api.nvim_command
 local defer_fn = vim.defer_fn
 local hl = api.nvim_set_hl
-
 local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
 local del_augroup = api.nvim_del_augroup_by_id
@@ -56,6 +55,8 @@ local get_colors = function(style, configs)
 	local valid, colors = pcall(require, COLOR_DIR .. style)
 
 	if not valid then
+		-- check user custom themes
+
 		-- change style to PascalCase
 		local pascal_style = style:gsub("^%l", string.upper)
 
@@ -70,15 +71,18 @@ local get_colors = function(style, configs)
 			colors = require(COLOR_DIR .. theme_conf.default)
 		end
 	end
+
 	if type(theme_conf.on_highlight) == "function" then theme_conf.on_highlight(style, colors, {}) end
 
 	return colors, style
 end
 
-local function async_load_syntax_batch(syntaxs, batch_size, step_delay)
+local async_load_syntax_batch = function(syntaxs, batch_size, step_delay)
 	local coroutine = coroutine
 	local co
 
+ 
+  
 	local function resume_coroutine()
 		if coroutine.status(co) ~= "dead" then
 			local success, errorMsg = coroutine.resume(co)
@@ -86,7 +90,7 @@ local function async_load_syntax_batch(syntaxs, batch_size, step_delay)
 		end
 	end
 
-	local highlight = function(group_name, styles)
+	 local highlight = function(group_name, styles)
 		hl(0, group_name, styles)
 
 		if dimmed_ns then
@@ -101,6 +105,7 @@ local function async_load_syntax_batch(syntaxs, batch_size, step_delay)
 	end
 
 	co = coroutine.create(function()
+
 		if syntaxs[1] == nil then
 			local index = 1
 
@@ -117,7 +122,6 @@ local function async_load_syntax_batch(syntaxs, batch_size, step_delay)
 			local len = #syntaxs
 			for i = 1, len do
 				highlight(syntaxs[i][1], syntaxs[i][2])
-
 				if i % (batch_size or 10) == 0 then
 					defer_fn(resume_coroutine, step_delay or 100)
 					coroutine.yield()
