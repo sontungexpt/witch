@@ -120,7 +120,7 @@ local highlight = function(get_syntax, colors, on_highlight)
 	if type(syntax) == "table" then
 		if type(on_highlight) == "function" then on_highlight(current_theme_style, colors, syntax) end
 
-		async_load_syntax_batch(syntax, 40, 80)
+		async_load_syntax_batch(syntax, 30, 100)
 
 		-- for group_name, options in pairs(syntax) do
 		-- 	hl(0, group_name, options)

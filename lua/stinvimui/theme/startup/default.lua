@@ -5,68 +5,468 @@ local M = {}
 M.syntax = function(colors, theme_style)
 	return {
 		{
-			group = "@lsp.typemod.function.defaultLibrary",
+			group = "Normal",
 			styles = {
-				link = "@function.builtin",
+				bg = colors.bg,
+				fg = colors.fg,
 			},
 		},
 		{
-			group = "@lsp.typemod.enumMember.defaultLibrary",
+			group = "NormalNC",
 			styles = {
-				link = "@constant.builtin",
+				bg = colors.bg,
+				fg = colors.fg,
 			},
 		},
 		{
-			group = "@constant.builtin",
+			group = "NormalFloat",
 			styles = {
-				link = "Special",
+				bg = colors.bg_dark,
+				fg = colors.fg_dark,
 			},
 		},
 		{
-			group = "@lsp.typemod.enum.defaultLibrary",
+			group = "StatusLine",
 			styles = {
-				link = "@type.builtin",
+				bg = colors.bg_line,
+				fg = colors.fg,
 			},
 		},
 		{
-			group = "@lsp.typemod.class.defaultLibrary",
+			group = "StatusLineNC",
 			styles = {
-				link = "@type.builtin",
+				bg = util.darken(colors.bg_line, 0.95),
+				fg = colors.fg,
 			},
 		},
 		{
-			group = "@lsp.type.variable",
+			group = "WinBarNC",
+			styles = {
+				link = "StatusLineNC",
+			},
+		},
+		{
+			group = "WinBar",
+			styles = {
+				link = "StatusLine",
+			},
+		},
+		{
+			group = "TabLine",
+			styles = {
+				bg = colors.bg_line,
+				fg = colors.fg,
+			},
+		},
+		{
+			group = "TabLineSel",
+			styles = {
+				bg = colors.blue,
+				fg = colors.black,
+			},
+		},
+		{
+			group = "SignColumn",
 			styles = {},
 		},
 		{
-			group = "@lsp.type.unresolvedReference",
+			group = "WinSeparator",
 			styles = {
-				sp = colors.error,
-				undercurl = true,
+				fg = colors.dark_border,
 			},
 		},
 		{
-			group = "@lsp.type.typeAlias",
+			group = "VertSplit",
 			styles = {
-				link = "@type.definition",
+				fg = colors.dark_border,
 			},
 		},
 		{
-			group = "@lsp.type.string",
+			group = "LineNr",
 			styles = {
-				link = "@string",
+				fg = colors.light_gray,
 			},
 		},
 		{
-			group = "@lsp.type.selfTypeKeyword",
+			group = "TabLineFill",
 			styles = {
-				link = "@variable.builtin",
+				bg = colors.black,
+			},
+		},
+		{
+			group = "CursorLineNr",
+			styles = {
+				fg = colors.pink,
 			},
 		},
 		{
 			group = "CursorColumn",
 			styles = {
 				bg = colors.bg_highlight,
+			},
+		},
+		{
+			group = "CursorLine",
+			styles = {
+				bg = colors.bg_highlight,
+			},
+		},
+		{
+			group = "Pmenu",
+			styles = {
+				bg = colors.bg_dark,
+				fg = colors.fg_dark,
+			},
+		},
+		{
+			group = "PmenuSel",
+			styles = {
+				bg = colors.bg_highlight,
+			},
+		},
+		{
+			group = "PmenuThumb",
+			styles = {},
+		},
+		{
+			group = "PmenuSbar",
+			styles = {
+				bg = colors.light_gray,
+			},
+		},
+		{
+			group = "Comment",
+			styles = {
+				fg = colors.comment,
+				italic = true,
+			},
+		},
+		{
+			group = "Question",
+			styles = {
+				fg = colors.blue,
+			},
+		},
+		{
+			group = "VisualNOS",
+			styles = {
+				bg = colors.bg_visual,
+			},
+		},
+		{
+			group = "Visual",
+			styles = {
+				bg = colors.bg_visual,
+			},
+		},
+		{
+			group = "QuickFixLine",
+			styles = {
+				bg = colors.bg_visual,
+				bold = true,
+			},
+		},
+		{
+			group = "PreProc",
+			styles = {
+				fg = colors.cyan1,
+			},
+		},
+		{
+			group = "Boolean",
+			styles = {
+				fg = colors.red2,
+				italic = true,
+			},
+		},
+		{
+			group = "FloatTitle",
+			styles = {
+				bg = colors.bg_dark,
+				fg = colors.fg_dark,
+			},
+		},
+		{
+			group = "FloatBorder",
+			styles = {
+				bg = colors.bg_dark,
+				fg = colors.border,
+			},
+		},
+		{
+			group = "SpellRare",
+			styles = {
+				sp = colors.hint,
+				undercurl = true,
+			},
+		},
+		{
+			group = "SpellLocal",
+			styles = {
+				sp = colors.info,
+				undercurl = true,
+			},
+		},
+		{
+			group = "SpellCap",
+			styles = {
+				sp = colors.warn,
+				undercurl = true,
+			},
+		},
+		{
+			group = "SpellBad",
+			styles = {
+				sp = colors.error,
+				undercurl = true,
+			},
+		},
+		{
+			group = "MatchParen",
+			styles = {
+				bold = true,
+				fg = colors.orange,
+			},
+		},
+		{
+			group = "Search",
+			styles = {
+				bg = colors.light_orange,
+				fg = colors.black,
+			},
+		},
+		{
+			group = "Substitute",
+			styles = {
+				bg = colors.red,
+				fg = colors.black,
+			},
+		},
+		{
+			group = "FoldColumn",
+			styles = {
+				bg = colors.bg,
+				fg = colors.comment,
+			},
+		},
+		{
+			group = "Folded",
+			styles = {
+				bg = colors.bg_gutter,
+				fg = colors.blue,
+			},
+		},
+		{
+			group = "MsgArea",
+			styles = {
+				fg = colors.fg_dark,
+			},
+		},
+		{
+			group = "ModeMsg",
+			styles = {
+				fg = colors.fg_dark,
+			},
+		},
+		{
+			group = "MsgSeparator",
+			styles = {
+				fg = colors.border,
+			},
+		},
+		{
+			group = "MoreMsg",
+			styles = {
+				fg = colors.blue,
+			},
+		},
+		{
+			group = "WarningMsg",
+			styles = {
+				fg = colors.warn,
+			},
+		},
+		{
+			group = "ErrorMsg",
+			styles = {
+				fg = colors.error,
+			},
+		},
+		{
+			group = "Directory",
+			styles = {
+				fg = colors.blue,
+			},
+		},
+
+		{
+			group = "Identifier",
+			styles = {
+				fg = colors.magenta,
+			},
+		},
+		{
+			group = "Constant",
+			styles = {
+				fg = colors.orange,
+			},
+		},
+		{
+			group = "Title",
+			styles = {
+				bold = true,
+				fg = colors.orange1,
+			},
+		},
+		{
+			group = "NonText",
+			styles = {
+				fg = colors.gray,
+			},
+		},
+		{
+			group = "Number",
+			styles = {
+				fg = colors.orange1,
+			},
+		},
+		{
+			group = "Special",
+			styles = {
+				fg = colors.orange2,
+			},
+		},
+		{
+			group = "Function",
+			styles = {
+				fg = colors.blue,
+			},
+		},
+		{
+			group = "Debug",
+			styles = {
+				fg = colors.orange,
+			},
+		},
+		{
+			group = "Repeat",
+			styles = {
+				fg = colors.magenta,
+			},
+		},
+		{
+			group = "Conditional",
+			styles = {
+				fg = colors.magenta,
+			},
+		},
+		{
+			group = "Conceal",
+			styles = {
+				fg = colors.orange2,
+			},
+		},
+		{
+			group = "Todo",
+			styles = {
+				bg = colors.yellow,
+				fg = colors.bg,
+			},
+		},
+		{
+			group = "Label",
+			styles = {
+				fg = colors.brown,
+			},
+		},
+		{
+			group = "Statement",
+			styles = {
+				fg = colors.magenta,
+			},
+		},
+		{
+			group = "Keyword",
+			styles = {
+				fg = colors.magenta,
+			},
+		},
+		{
+			group = "Type",
+			styles = {
+				fg = colors.cyan,
+			},
+		},
+		{
+			group = "Character",
+			styles = {
+				fg = colors.string,
+			},
+		},
+		{
+			group = "String",
+			styles = {
+				fg = colors.string,
+			},
+		},
+		{
+			group = "WildMenu",
+			styles = {
+				bg = colors.bg_visual,
+			},
+		},
+		{
+			group = "SpecialKey",
+			styles = {
+				fg = colors.gray,
+			},
+		},
+		{
+			group = "Whitespace",
+			styles = {
+				fg = colors.light_gray,
+			},
+		},
+		{
+			group = "Italic",
+			styles = {
+				italic = true,
+			},
+		},
+		{
+			group = "Underlined",
+			styles = {
+				underline = true,
+			},
+		},
+		{
+			group = "Bold",
+			styles = {
+				bold = true,
+			},
+		},
+		{
+			group = "DiffAdd",
+			styles = {
+				fg = colors.green,
+			},
+		},
+		{
+			group = "DiffText",
+			styles = {
+				fg = colors.fg_dark,
+			},
+		},
+		{
+			group = "DiffChange",
+			styles = {
+				fg = colors.orange,
+			},
+		},
+		{
+			group = "DiffDelete",
+			styles = {
+				fg = colors.red,
 			},
 		},
 		{
@@ -208,12 +608,6 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			group = "@lsp.type.property",
-			styles = {
-				link = "@property",
-			},
-		},
-		{
 			group = "healthError",
 			styles = {
 				fg = colors.error,
@@ -232,63 +626,12 @@ M.syntax = function(colors, theme_style)
 				fg = colors.black,
 			},
 		},
-		{
-			group = "@lsp.type.operator",
-			styles = {
-				link = "@operator",
-			},
-		},
-		{
-			group = "@lsp.type.number",
-			styles = {
-				link = "Number",
-			},
-		},
-		{
-			group = "@lsp.type.namespace",
-			styles = {
-				link = "@module",
-			},
-		},
+
 		{
 			group = "@module",
 			styles = {
 				link = "Include",
 			},
-		},
-		{
-			group = "Question",
-			styles = {
-				fg = colors.blue,
-			},
-		},
-		{
-			group = "@keyword.storage",
-			styles = {
-				link = "StorageClass",
-			},
-		},
-		{
-			group = "VisualNOS",
-			styles = {
-				bg = colors.bg_visual,
-			},
-		},
-		{
-			group = "Visual",
-			styles = {
-				bg = colors.bg_visual,
-			},
-		},
-		{
-			group = "@lsp.type.interface",
-			styles = {
-				fg = colors.blue2,
-			},
-		},
-		{
-			group = "PmenuThumb",
-			styles = {},
 		},
 		{
 			group = "@variable",
@@ -297,88 +640,40 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			group = "PmenuSbar",
+			group = "@operator",
 			styles = {
-				bg = colors.light_gray,
+				fg = colors.operator,
 			},
 		},
 		{
-			group = "@lsp.type.escapeSequence",
+			group = "@function",
 			styles = {
-				link = "@string.escape",
+				link = "Function",
 			},
 		},
 		{
-			group = "Pmenu",
+			group = "@function.builtin",
 			styles = {
-				bg = colors.bg_dark,
-				fg = colors.fg_dark,
+				link = "Special",
 			},
 		},
 		{
-			group = "FloatTitle",
+			group = "@type.builtin",
 			styles = {
-				bg = colors.bg_dark,
-				fg = colors.fg_dark,
+				fg = colors.blue2,
 			},
 		},
 		{
-			group = "FloatBorder",
+			group = "@variable.builtin",
 			styles = {
-				bg = colors.bg_dark,
-				fg = colors.border,
+				fg = colors.red1,
 			},
 		},
+
 		{
-			group = "NormalFloat",
+			group = "@constant.builtin",
 			styles = {
-				bg = colors.bg_dark,
-				fg = colors.fg_dark,
-			},
-		},
-		{
-			group = "@lsp.type.deriveHelper",
-			styles = {
-				link = "@attribute",
-			},
-		},
-		{
-			group = "MoreMsg",
-			styles = {
-				fg = colors.blue,
-			},
-		},
-		{
-			group = "NormalNC",
-			styles = {
-				bg = colors.bg,
-				fg = colors.fg,
-			},
-		},
-		{
-			group = "Normal",
-			styles = {
-				bg = colors.bg,
-				fg = colors.fg,
-			},
-		},
-		{
-			group = "@lsp.type.builtinType",
-			styles = {
-				link = "@type.builtin",
-			},
-		},
-		{
-			group = "@lsp.type.boolean",
-			styles = {
-				link = "Boolean",
-			},
-		},
-		{
-			group = "Boolean",
-			styles = {
-				fg = colors.red2,
-				italic = true,
+				link = "Special",
 			},
 		},
 		{
@@ -460,13 +755,6 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			group = "DiagnosticShowBorder",
-			styles = {
-				bg = colors.bg_dark,
-				fg = colors.border,
-			},
-		},
-		{
 			group = "@constructor",
 			styles = {
 				fg = colors.red,
@@ -503,12 +791,6 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			group = "@lsp.type.lifetime",
-			styles = {
-				link = "@keyword.storage",
-			},
-		},
-		{
 			group = "@comment.warning",
 			styles = {
 				fg = colors.warn,
@@ -533,21 +815,9 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			group = "WarningMsg",
-			styles = {
-				fg = colors.warn,
-			},
-		},
-		{
 			group = "@tag.delimiter",
 			styles = {
 				link = "Delimiter",
-			},
-		},
-		{
-			group = "RainbowDelimiterBlue",
-			styles = {
-				fg = colors.blue,
 			},
 		},
 		{
@@ -557,44 +827,8 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			group = "RainbowDelimiterYellow",
-			styles = {
-				fg = colors.bright_yellow,
-			},
-		},
-		{
-			group = "@keyword.repeat",
-			styles = {
-				link = "Repeat",
-			},
-		},
-		{
-			group = "Repeat",
-			styles = {
-				fg = colors.magenta,
-			},
-		},
-		{
-			group = "@keyword.directive",
-			styles = {
-				link = "PreProc",
-			},
-		},
-		{
-			group = "PreProc",
-			styles = {
-				fg = colors.cyan1,
-			},
-		},
-		{
 			group = "@none",
 			styles = {},
-		},
-		{
-			group = "@lsp.type.enum",
-			styles = {
-				link = "Type",
-			},
 		},
 		{
 			group = "@namespace.builtin",
@@ -609,15 +843,63 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			group = "Function",
-			styles = {
-				fg = colors.blue,
-			},
-		},
-		{
 			group = "@function.method",
 			styles = {
 				link = "Function",
+			},
+		},
+		{
+			group = "@function.macro",
+			styles = {
+				link = "Macro",
+			},
+		},
+		{
+			group = "@function.call",
+			styles = {
+				link = "Function",
+			},
+		},
+		{
+			group = "@conceal",
+			styles = {
+				link = "Conceal",
+			},
+		},
+		{
+			group = "@annotation",
+			styles = {
+				link = "PreProc",
+			},
+		},
+		{
+			group = "@keyword.exception",
+			styles = {
+				link = "Exception",
+			},
+		},
+		{
+			group = "@keyword.coroutine",
+			styles = {
+				link = "Keyword",
+			},
+		},
+		{
+			group = "@keyword.storage",
+			styles = {
+				link = "StorageClass",
+			},
+		},
+		{
+			group = "@keyword.repeat",
+			styles = {
+				link = "Repeat",
+			},
+		},
+		{
+			group = "@keyword.directive",
+			styles = {
+				link = "PreProc",
 			},
 		},
 		{
@@ -639,55 +921,6 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			group = "@function.macro",
-			styles = {
-				link = "Macro",
-			},
-		},
-		{
-			group = "Comment",
-			styles = {
-				fg = colors.comment,
-				italic = true,
-			},
-		},
-		{
-			group = "@function.call",
-			styles = {
-				link = "Function",
-			},
-		},
-		{
-			group = "Special",
-			styles = {
-				fg = colors.orange2,
-			},
-		},
-		{
-			group = "DiffText",
-			styles = {
-				fg = colors.fg_dark,
-			},
-		},
-		{
-			group = "@lsp.typemod.variable.globalScope",
-			styles = {
-				fg = colors.magenta,
-			},
-		},
-		{
-			group = "DiffAdd",
-			styles = {
-				fg = colors.green,
-			},
-		},
-		{
-			group = "@lsp.type.decorator",
-			styles = {
-				link = "@attribute",
-			},
-		},
-		{
 			group = "@keyword.directive.define",
 			styles = {
 				link = "Macro",
@@ -700,45 +933,9 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			group = "Debug",
-			styles = {
-				fg = colors.orange,
-			},
-		},
-		{
 			group = "@keyword.conditional",
 			styles = {
 				link = "Conditional",
-			},
-		},
-		{
-			group = "Conditional",
-			styles = {
-				fg = colors.magenta,
-			},
-		},
-		{
-			group = "@lsp.type.comment",
-			styles = {
-				link = "Comment",
-			},
-		},
-		{
-			group = "@conceal",
-			styles = {
-				link = "Conceal",
-			},
-		},
-		{
-			group = "Conceal",
-			styles = {
-				fg = colors.orange2,
-			},
-		},
-		{
-			group = "@annotation",
-			styles = {
-				link = "PreProc",
 			},
 		},
 		{
@@ -748,35 +945,15 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			group = "Todo",
-			styles = {
-				bg = colors.yellow,
-				fg = colors.bg,
-			},
-		},
-		{
 			group = "@property",
 			styles = {
 				fg = colors.teal,
 			},
 		},
 		{
-			group = "Italic",
+			group = "@attribute",
 			styles = {
-				italic = true,
-			},
-		},
-		{
-			group = "QuickFixLine",
-			styles = {
-				bg = colors.bg_visual,
-				bold = true,
-			},
-		},
-		{
-			group = "Underlined",
-			styles = {
-				underline = true,
+				link = "PreProc",
 			},
 		},
 		{
@@ -785,6 +962,7 @@ M.syntax = function(colors, theme_style)
 				fg = colors.yellow1,
 			},
 		},
+
 		{
 			group = "@string.escape",
 			styles = {
@@ -797,263 +975,18 @@ M.syntax = function(colors, theme_style)
 				fg = colors.hint,
 			},
 		},
-		{
-			group = "Label",
-			styles = {
-				fg = colors.brown,
-			},
-		},
-		{
-			group = "LineNr",
-			styles = {
-				fg = colors.light_gray,
-			},
-		},
-		{
-			group = "Statement",
-			styles = {
-				fg = colors.magenta,
-			},
-		},
-		{
-			group = "Keyword",
-			styles = {
-				fg = colors.magenta,
-			},
-		},
-		{
-			group = "Type",
-			styles = {
-				fg = colors.cyan,
-			},
-		},
-		{
-			group = "Character",
-			styles = {
-				fg = colors.string,
-			},
-		},
-		{
-			group = "String",
-			styles = {
-				fg = colors.string,
-			},
-		},
-		{
-			group = "WildMenu",
-			styles = {
-				bg = colors.bg_visual,
-			},
-		},
-		{
-			group = "SpecialKey",
-			styles = {
-				fg = colors.gray,
-			},
-		},
-		{
-			group = "Whitespace",
-			styles = {
-				fg = colors.light_gray,
-			},
-		},
-		{
-			group = "@attribute",
-			styles = {
-				link = "PreProc",
-			},
-		},
-		{
-			group = "WinBarNC",
-			styles = {
-				link = "StatusLineNC",
-			},
-		},
-		{
-			group = "StatusLineNC",
-			styles = {
-				bg = util.darken(colors.bg_line, 0.95),
-				fg = colors.fg,
-			},
-		},
-		{
-			group = "WinBar",
-			styles = {
-				link = "StatusLine",
-			},
-		},
-		{
-			group = "StatusLine",
-			styles = {
-				bg = colors.bg_line,
-				fg = colors.fg,
-			},
-		},
-		{
-			group = "TabLineSel",
-			styles = {
-				bg = colors.blue,
-				fg = colors.black,
-			},
-		},
-		{
-			group = "TabLineFill",
-			styles = {
-				bg = colors.black,
-			},
-		},
-		{
-			group = "TabLine",
-			styles = {
-				bg = colors.bg_line,
-				fg = colors.fg,
-			},
-		},
+
 		{
 			group = "@number.float",
 			styles = {
 				link = "Float",
 			},
 		},
-		{
-			group = "SpellRare",
-			styles = {
-				sp = colors.hint,
-				undercurl = true,
-			},
-		},
-		{
-			group = "SpellLocal",
-			styles = {
-				sp = colors.info,
-				undercurl = true,
-			},
-		},
-		{
-			group = "SpellCap",
-			styles = {
-				sp = colors.warn,
-				undercurl = true,
-			},
-		},
-		{
-			group = "SpellBad",
-			styles = {
-				sp = colors.error,
-				undercurl = true,
-			},
-		},
-		{
-			group = "MatchParen",
-			styles = {
-				bold = true,
-				fg = colors.orange,
-			},
-		},
-		{
-			group = "CursorLineNr",
-			styles = {
-				fg = colors.pink,
-			},
-		},
-		{
-			group = "Search",
-			styles = {
-				bg = colors.light_orange,
-				fg = colors.black,
-			},
-		},
-		{
-			group = "Substitute",
-			styles = {
-				bg = colors.red,
-				fg = colors.black,
-			},
-		},
-		{
-			group = "SignColumn",
-			styles = {},
-		},
-		{
-			group = "FoldColumn",
-			styles = {
-				bg = colors.bg,
-				fg = colors.comment,
-			},
-		},
-		{
-			group = "Folded",
-			styles = {
-				bg = colors.bg_gutter,
-				fg = colors.blue,
-			},
-		},
-		{
-			group = "WinSeparator",
-			styles = {
-				fg = colors.dark_border,
-			},
-		},
-		{
-			group = "VertSplit",
-			styles = {
-				fg = colors.dark_border,
-			},
-		},
-		{
-			group = "MsgArea",
-			styles = {
-				fg = colors.fg_dark,
-			},
-		},
-		{
-			group = "ModeMsg",
-			styles = {
-				fg = colors.fg_dark,
-			},
-		},
-		{
-			group = "ErrorMsg",
-			styles = {
-				fg = colors.error,
-			},
-		},
+
 		{
 			group = "@lsp.type.selfKeyword",
 			styles = {
 				link = "@variable.builtin",
-			},
-		},
-		{
-			group = "Directory",
-			styles = {
-				fg = colors.blue,
-			},
-		},
-		{
-			group = "CursorLine",
-			styles = {
-				bg = colors.bg_highlight,
-			},
-		},
-		{
-			group = "CodeActionNumber",
-			styles = {
-				fg = colors.purple,
-			},
-		},
-		{
-			group = "SagaVirtLine",
-			styles = {
-				bg = colors.bg_dark,
-				fg = colors.dark_border,
-			},
-		},
-		{
-			group = "IblScope",
-			styles = {
-				fg = colors.purple,
-				nocombine = true,
 			},
 		},
 		{
@@ -1063,18 +996,326 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			group = "IblIndent",
-			styles = {
-				fg = colors.graphite_border,
-				nocombine = true,
-			},
-		},
-		{
 			group = "@lsp.type.enumMember",
 			styles = {
 				link = "Constant",
 			},
 		},
+		{
+			group = "@lsp.type.keyword",
+			styles = {
+				link = "Keyword",
+			},
+		},
+		{
+			group = "@lsp.type.formatSpecifier",
+			styles = {
+				link = "@markup.list",
+			},
+		},
+		{
+			group = "@lsp.typemod.variable.static",
+			styles = {
+				link = "Constant",
+			},
+		},
+		{
+			group = "@lsp.typemod.variable.injected",
+			styles = {
+				link = "Identifier",
+			},
+		},
+		{
+			group = "@lsp.typemod.variable.defaultLibrary",
+			styles = {
+				link = "@variable.builtin",
+			},
+		},
+		{
+			group = "@lsp.typemod.variable.callable",
+			styles = {
+				link = "@function",
+			},
+		},
+		{
+			group = "@lsp.typemod.typeAlias.defaultLibrary",
+			styles = {
+				fg = colors.blue2,
+			},
+		},
+		{
+			group = "@lsp.typemod.type.defaultLibrary",
+			styles = {
+				fg = colors.blue2,
+			},
+		},
+		{
+			group = "@lsp.typemod.struct.defaultLibrary",
+			styles = {
+				link = "@type.builtin",
+			},
+		},
+		{
+			group = "@lsp.typemod.string.injected",
+			styles = {
+				link = "@string",
+			},
+		},
+		{
+			group = "@lsp.typemod.operator.injected",
+			styles = {
+				link = "@operator",
+			},
+		},
+		{
+			group = "@lsp.typemod.method.defaultLibrary",
+			styles = {
+				link = "@function.builtin",
+			},
+		},
+		{
+			group = "@lsp.typemod.macro.defaultLibrary",
+			styles = {
+				link = "@function.builtin",
+			},
+		},
+		{
+			group = "@lsp.typemod.keyword.injected",
+			styles = {
+				link = "@keyword",
+			},
+		},
+		{
+			group = "@lsp.typemod.keyword.async",
+			styles = {
+				link = "@keyword.coroutine",
+			},
+		},
+		{
+			group = "@lsp.typemod.function.defaultLibrary",
+			styles = {
+				link = "@function.builtin",
+			},
+		},
+		{
+			group = "@lsp.typemod.enumMember.defaultLibrary",
+			styles = {
+				link = "@constant.builtin",
+			},
+		},
+		{
+			group = "@lsp.typemod.enum.defaultLibrary",
+			styles = {
+				link = "@type.builtin",
+			},
+		},
+		{
+			group = "@lsp.typemod.class.defaultLibrary",
+			styles = {
+				link = "@type.builtin",
+			},
+		},
+		{
+			group = "@lsp.type.variable",
+			styles = {},
+		},
+		{
+			group = "@lsp.type.unresolvedReference",
+			styles = {
+				sp = colors.error,
+				undercurl = true,
+			},
+		},
+		{
+			group = "@lsp.type.typeAlias",
+			styles = {
+				link = "@type.definition",
+			},
+		},
+		{
+			group = "@lsp.type.string",
+			styles = {
+				link = "@string",
+			},
+		},
+		{
+			group = "@lsp.type.selfTypeKeyword",
+			styles = {
+				link = "@variable.builtin",
+			},
+		},
+		{
+			group = "@lsp.type.property",
+			styles = {
+				link = "@property",
+			},
+		},
+		{
+			group = "@lsp.type.operator",
+			styles = {
+				link = "@operator",
+			},
+		},
+		{
+			group = "@lsp.type.number",
+			styles = {
+				link = "Number",
+			},
+		},
+		{
+			group = "@lsp.type.namespace",
+			styles = {
+				link = "@module",
+			},
+		},
+		{
+			group = "@lsp.type.interface",
+			styles = {
+				fg = colors.blue2,
+			},
+		},
+		{
+			group = "@lsp.type.escapeSequence",
+			styles = {
+				link = "@string.escape",
+			},
+		},
+		{
+			group = "@lsp.type.deriveHelper",
+			styles = {
+				link = "@attribute",
+			},
+		},
+		{
+			group = "@lsp.type.builtinType",
+			styles = {
+				link = "@type.builtin",
+			},
+		},
+		{
+			group = "@lsp.type.boolean",
+			styles = {
+				link = "Boolean",
+			},
+		},
+		{
+			group = "@lsp.type.comment",
+			styles = {
+				link = "Comment",
+			},
+		},
+		{
+			group = "@lsp.typemod.variable.globalScope",
+			styles = {
+				fg = colors.magenta,
+			},
+		},
+		{
+			group = "@lsp.type.decorator",
+			styles = {
+				link = "@attribute",
+			},
+		},
+		{
+			group = "@lsp.type.enum",
+			styles = {
+				link = "Type",
+			},
+		},
+		{
+			group = "@lsp.type.lifetime",
+			styles = {
+				link = "@keyword.storage",
+			},
+		},
+
+		-- RainbowDelimiter
+		{
+			group = "RainbowDelimiterBlue",
+			styles = {
+				fg = colors.blue,
+			},
+		},
+		{
+			group = "RainbowDelimiterYellow",
+			styles = {
+				fg = colors.bright_yellow,
+			},
+		},
+		{
+			group = "RainbowDelimiterOrange",
+			styles = {
+				fg = colors.orange,
+			},
+		},
+		{
+			group = "RainbowDelimiterRed",
+			styles = {
+				fg = colors.red,
+			},
+		},
+		{
+			group = "RainbowDelimiterGreen",
+			styles = {
+				fg = colors.green,
+			},
+		},
+		{
+			group = "RainbowDelimiterCyan",
+			styles = {
+				fg = colors.cyan,
+			},
+		},
+		{
+			group = "RainbowDelimiterViolet",
+			styles = {
+				fg = colors.purple,
+			},
+		},
+
+		-- GitSigns
+		{
+			group = "GitSignsCurrentLineBlame",
+			styles = {
+				link = "NonText",
+			},
+		},
+		{
+			group = "GitSignsDelete",
+			styles = {
+				link = "DiffDelete",
+			},
+		},
+		{
+			group = "GitSignsChange",
+			styles = {
+				link = "DiffChange",
+			},
+		},
+		{
+			group = "GitSignsAdd",
+			styles = {
+				link = "DiffAdd",
+			},
+		},
+
+		-- Lazy
+		{
+			group = "LazyProgressTodo",
+			styles = {
+				bold = true,
+				fg = colors.bg_gutter,
+			},
+		},
+		{
+			group = "LazyProgressDone",
+			styles = {
+				bold = true,
+				fg = colors.magenta1,
+			},
+		},
+
+		-- WhichKey
 		{
 			group = "WhichKeyValue",
 			styles = {
@@ -1117,6 +1358,8 @@ M.syntax = function(colors, theme_style)
 				fg = colors.cyan,
 			},
 		},
+
+		-- Telescope
 		{
 			group = "TelescopeNormal",
 			styles = {
@@ -1131,265 +1374,43 @@ M.syntax = function(colors, theme_style)
 				fg = colors.border,
 			},
 		},
+
+		-- Indent Blankline
 		{
-			group = "LazyProgressTodo",
+			group = "IblScope",
 			styles = {
-				bold = true,
-				fg = colors.bg_gutter,
+				fg = colors.purple,
+				nocombine = true,
 			},
 		},
 		{
-			group = "MsgSeparator",
+			group = "IblIndent",
 			styles = {
-				fg = colors.border,
+				fg = colors.graphite_border,
+				nocombine = true,
+			},
+		},
+
+		-- LspSaga
+		{
+			group = "SagaVirtLine",
+			styles = {
+				bg = colors.bg_dark,
+				fg = colors.dark_border,
 			},
 		},
 		{
-			group = "LazyProgressDone",
-			styles = {
-				bold = true,
-				fg = colors.magenta1,
-			},
-		},
-		{
-			group = "GitSignsCurrentLineBlame",
-			styles = {
-				link = "NonText",
-			},
-		},
-		{
-			group = "NonText",
-			styles = {
-				fg = colors.gray,
-			},
-		},
-		{
-			group = "GitSignsDelete",
-			styles = {
-				link = "DiffDelete",
-			},
-		},
-		{
-			group = "DiffDelete",
-			styles = {
-				fg = colors.red,
-			},
-		},
-		{
-			group = "GitSignsChange",
-			styles = {
-				link = "DiffChange",
-			},
-		},
-		{
-			group = "DiffChange",
-			styles = {
-				fg = colors.orange,
-			},
-		},
-		{
-			group = "GitSignsAdd",
-			styles = {
-				link = "DiffAdd",
-			},
-		},
-		{
-			group = "RainbowDelimiterCyan",
-			styles = {
-				fg = colors.cyan,
-			},
-		},
-		{
-			group = "RainbowDelimiterViolet",
+			group = "CodeActionNumber",
 			styles = {
 				fg = colors.purple,
 			},
 		},
+
 		{
-			group = "@lsp.type.keyword",
+			group = "DiagnosticShowBorder",
 			styles = {
-				link = "Keyword",
-			},
-		},
-		{
-			group = "Number",
-			styles = {
-				fg = colors.orange1,
-			},
-		},
-		{
-			group = "RainbowDelimiterGreen",
-			styles = {
-				fg = colors.green,
-			},
-		},
-		{
-			group = "Bold",
-			styles = {
-				bold = true,
-			},
-		},
-		{
-			group = "@lsp.type.formatSpecifier",
-			styles = {
-				link = "@markup.list",
-			},
-		},
-		{
-			group = "RainbowDelimiterOrange",
-			styles = {
-				fg = colors.orange,
-			},
-		},
-		{
-			group = "RainbowDelimiterRed",
-			styles = {
-				fg = colors.red,
-			},
-		},
-		{
-			group = "Title",
-			styles = {
-				bold = true,
-				fg = colors.orange1,
-			},
-		},
-		{
-			group = "@lsp.typemod.variable.static",
-			styles = {
-				link = "Constant",
-			},
-		},
-		{
-			group = "Constant",
-			styles = {
-				fg = colors.orange,
-			},
-		},
-		{
-			group = "@lsp.typemod.variable.injected",
-			styles = {
-				link = "Identifier",
-			},
-		},
-		{
-			group = "Identifier",
-			styles = {
-				fg = colors.magenta,
-			},
-		},
-		{
-			group = "@lsp.typemod.variable.defaultLibrary",
-			styles = {
-				link = "@variable.builtin",
-			},
-		},
-		{
-			group = "@variable.builtin",
-			styles = {
-				fg = colors.red1,
-			},
-		},
-		{
-			group = "@lsp.typemod.variable.callable",
-			styles = {
-				link = "@function",
-			},
-		},
-		{
-			group = "@function",
-			styles = {
-				link = "Function",
-			},
-		},
-		{
-			group = "@lsp.typemod.typeAlias.defaultLibrary",
-			styles = {
-				fg = colors.blue2,
-			},
-		},
-		{
-			group = "@lsp.typemod.type.defaultLibrary",
-			styles = {
-				fg = colors.blue2,
-			},
-		},
-		{
-			group = "@lsp.typemod.struct.defaultLibrary",
-			styles = {
-				link = "@type.builtin",
-			},
-		},
-		{
-			group = "@type.builtin",
-			styles = {
-				fg = colors.blue2,
-			},
-		},
-		{
-			group = "@lsp.typemod.string.injected",
-			styles = {
-				link = "@string",
-			},
-		},
-		{
-			group = "PmenuSel",
-			styles = {
-				bg = colors.bg_highlight,
-			},
-		},
-		{
-			group = "@lsp.typemod.operator.injected",
-			styles = {
-				link = "@operator",
-			},
-		},
-		{
-			group = "@operator",
-			styles = {
-				fg = colors.operator,
-			},
-		},
-		{
-			group = "@lsp.typemod.method.defaultLibrary",
-			styles = {
-				link = "@function.builtin",
-			},
-		},
-		{
-			group = "@function.builtin",
-			styles = {
-				link = "Special",
-			},
-		},
-		{
-			group = "@lsp.typemod.macro.defaultLibrary",
-			styles = {
-				link = "@function.builtin",
-			},
-		},
-		{
-			group = "@lsp.typemod.keyword.injected",
-			styles = {
-				link = "@keyword",
-			},
-		},
-		{
-			group = "@keyword.exception",
-			styles = {
-				link = "Exception",
-			},
-		},
-		{
-			group = "@lsp.typemod.keyword.async",
-			styles = {
-				link = "@keyword.coroutine",
-			},
-		},
-		{
-			group = "@keyword.coroutine",
-			styles = {
-				link = "Keyword",
+				bg = colors.bg_dark,
+				fg = colors.border,
 			},
 		},
 	}
