@@ -66,6 +66,12 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
+			"TabLineFill",
+			{
+				bg = colors.black,
+			},
+		},
+		{
 			"SignColumn",
 			{},
 		},
@@ -82,88 +88,72 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
+			-- Line number for ":number" and ":#" commands, and when 'number' or 'relativenumber' option is set.
 			"LineNr",
 			{
 				fg = colors.light_gray,
 			},
 		},
 		{
-			"TabLineFill",
-			{
-				bg = colors.black,
-			},
-		},
-		{
+			-- Like LineNr when 'cursorline' or 'relativenumber' is set for the cursor line.
 			"CursorLineNr",
 			{
 				fg = colors.pink,
 			},
 		},
 		{
+			-- Screen-column at the cursor, when 'cursorcolumn' is set.
 			"CursorColumn",
 			{
 				bg = colors.bg_highlight,
 			},
 		},
 		{
+			-- Screen-line at the cursor, when 'cursorline' is set.
 			"CursorLine",
 			{
 				bg = colors.bg_highlight,
 			},
 		},
-		{
-			"Pmenu",
-			{
-				bg = colors.bg_dark,
-				fg = colors.fg_dark,
-			},
-		},
-		{
-			"PmenuSel",
-			{
-				bg = colors.bg_highlight,
-			},
-		},
-		{
-			"PmenuThumb",
-			{},
-		},
-		{
-			"PmenuSbar",
-			{
-				bg = colors.light_gray,
-			},
-		},
+
+		-- {
+		-- 	-- used for the columns set with 'colorcolumn'
+		-- 	"ColorColumn",
+		-- 	{
+		-- 		bg = colors.black,
+		-- 	},
+		-- },
+
+		--   {
+		-- -- character under the cursor
+		--     "Cursor",
+		--     {
+		--       fg = colors.bg,
+		--       bg = colors.fg,
+		--     },
+		--   },
+		--   {
+		-- -- the character under the cursor when |language-mapping| is used (see 'guicursor')
+		--     "lCursor",
+		--     {
+		--       fg = colors.bg,
+		--       bg = colors.fg,
+		--     },
+		--   },
+		--   {
+		-- -- like Cursor, but used when in IME mode |CursorIM|
+		--     "CursorIM",
+		--     {
+		--       fg = colors.bg,
+		--       bg = colors.fg,
+		--     },
+		--   },
+
 		{
 			"Comment",
 			{
 				fg = colors.comment,
 				italic = true,
-			},
-		},
-		{
-			"Question",
-			{
-				fg = colors.blue,
-			},
-		},
-		{
-			"VisualNOS",
-			{
-				bg = colors.bg_visual,
-			},
-		},
-		{
-			"Visual",
-			{
-				bg = colors.bg_visual,
-			},
-		},
-		{
-			"QuickFixLine",
-			{
-				bg = colors.bg_visual,
-				bold = true,
 			},
 		},
 		{
@@ -236,6 +226,7 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
+			-- |:substitute| replacement text highlighting
 			"Substitute",
 			{
 				bg = colors.red,
@@ -243,6 +234,7 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
+			-- 'foldcolumn'
 			"FoldColumn",
 			{
 				bg = colors.bg,
@@ -250,6 +242,7 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
+			-- line used for closed folds
 			"Folded",
 			{
 				bg = colors.bg_gutter,
@@ -257,6 +250,7 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
+			-- Area for messages and cmdline
 			"MsgArea",
 			{
 				fg = colors.fg_dark,
@@ -269,6 +263,7 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
+			-- Separator for scrolled messages, `msgsep` flag of 'display'
 			"MsgSeparator",
 			{
 				fg = colors.border,
@@ -281,24 +276,45 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
+			-- warning messages
 			"WarningMsg",
 			{
 				fg = colors.warn,
 			},
 		},
 		{
+			-- error messages on the command line
 			"ErrorMsg",
 			{
 				fg = colors.error,
 			},
 		},
+		-- {
+		-- 	"EndOfBuffer",
+		-- 	{
+		-- 		fg = colors.gray,
+		-- 	},
+		-- },
 		{
+			"QuickFixLine",
+			{
+				bg = colors.bg_visual,
+				bold = true,
+			},
+		},
+		{
+			"Question",
+			{
+				fg = colors.blue,
+			},
+		},
+		{
+			-- directory names (and other special names in listings)
 			"Directory",
 			{
 				fg = colors.blue,
 			},
 		},
-
 		{
 			"Identifier",
 			{
@@ -330,6 +346,12 @@ M.syntax = function(colors, theme_style)
 				fg = colors.orange1,
 			},
 		},
+		-- {
+		--   "Float",
+		--   {
+		--     fg = colors.orange2,
+		--   },
+		-- }
 		{
 			"Special",
 			{
@@ -360,7 +382,9 @@ M.syntax = function(colors, theme_style)
 				fg = colors.magenta,
 			},
 		},
+
 		{
+			-- placeholder characters substituted for concealed text (see 'conceallevel')
 			"Conceal",
 			{
 				fg = colors.orange2,
@@ -445,6 +469,8 @@ M.syntax = function(colors, theme_style)
 				bold = true,
 			},
 		},
+
+		-- diff mode: Added line |diff.txt|
 		{
 			"DiffAdd",
 			{
@@ -469,6 +495,8 @@ M.syntax = function(colors, theme_style)
 				fg = colors.red,
 			},
 		},
+
+		-- Diagnostic
 		{
 			"DiagnosticUnderlineHint",
 			{
@@ -551,6 +579,10 @@ M.syntax = function(colors, theme_style)
 				fg = colors.error,
 			},
 		},
+
+		-- These groups are for the native LSP client. Some other LSP clients may
+		-- use these groups, or use their own. Consult your LSP client's
+		-- documentation.
 		{
 			"LspCodeLensSeparator",
 			{
@@ -595,6 +627,7 @@ M.syntax = function(colors, theme_style)
 				bg = colors.bg_gutter,
 			},
 		},
+
 		{
 			"healthWarning",
 			{
@@ -613,6 +646,7 @@ M.syntax = function(colors, theme_style)
 				fg = colors.error,
 			},
 		},
+
 		{
 			"CurSearch",
 			{
@@ -646,6 +680,66 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
+			"@conceal",
+			{
+				link = "Conceal",
+			},
+		},
+		-- {
+		--   "@string",
+		--   {
+		--     link = "String",
+		--   },
+		-- },
+		-- {
+		--   "@tag",
+		--   {
+		--     link = "Label",
+		--   },
+		-- }
+		-- {
+		--   "@boolean",
+		--   {
+		--     link = "Boolean"
+		--   }
+		-- },
+		-- {
+		--   "@character",
+		--   {
+		--     link = "Character"
+		--   }
+		-- },
+		-- {
+		--   "@character.special",
+		--   {
+		--     link = "SpecialChar"
+		--   }
+		-- },
+		-- {
+		-- 	"@constant",
+		-- 	{
+		-- 		link = "Constant",
+		-- 	},
+		-- },
+		-- {
+		-- 	"@constant.macro",
+		-- 	{
+		-- 		link = "Macro",
+		-- 	},
+		-- },
+		{
+			"@constant.builtin",
+			{
+				link = "Special",
+			},
+		},
+		{
+			"@annotation",
+			{
+				link = "PreProc",
+			},
+		},
+		{
 			"@function",
 			{
 				link = "Function",
@@ -669,11 +763,10 @@ M.syntax = function(colors, theme_style)
 				fg = colors.red1,
 			},
 		},
-
 		{
-			"@constant.builtin",
+			"@constructor.tsx",
 			{
-				link = "Special",
+				fg = colors.blue1,
 			},
 		},
 		{
@@ -683,35 +776,12 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			"@constructor.tsx",
-			{
-				fg = colors.blue1,
-			},
-		},
-		{
 			"@tag.tsx",
 			{
 				fg = colors.red,
 			},
 		},
-		{
-			"@diff.delta",
-			{
-				link = "DiffChange",
-			},
-		},
-		{
-			"@diff.minus",
-			{
-				link = "DiffDelete",
-			},
-		},
-		{
-			"@diff.plus",
-			{
-				link = "DiffAdd",
-			},
-		},
+
 		{
 			"@punctuation.special.markdown",
 			{
@@ -760,28 +830,35 @@ M.syntax = function(colors, theme_style)
 				fg = colors.red,
 			},
 		},
-		{
-			"@lsp.type.parameter",
-			{
-				link = "@variable.parameter",
-			},
-		},
-		{
-			"@string.regexp",
-			{
-				fg = colors.blue,
-			},
-		},
-		{
-			"@string.documentation",
-			{
-				fg = colors.yellow,
-			},
-		},
+
+		-- {
+		-- 	"@type",
+		-- 	{
+		-- 		link = "Type",
+		-- 	},
+		-- },
+		--   {
+		--     "@type.definition",
+		--     {
+		--       link = "Typedef",
+		--     },
+		--   },
 		{
 			"@type.qualifier",
 			{
 				link = "Keyword",
+			},
+		},
+		-- {
+		--   "@comment",
+		--   {
+		--     link = "Comment",
+		--   },
+		-- },
+		{
+			"@comment.note",
+			{
+				fg = colors.hint,
 			},
 		},
 		{
@@ -860,18 +937,12 @@ M.syntax = function(colors, theme_style)
 				link = "Function",
 			},
 		},
-		{
-			"@conceal",
-			{
-				link = "Conceal",
-			},
-		},
-		{
-			"@annotation",
-			{
-				link = "PreProc",
-			},
-		},
+		-- {
+		-- 	"@keyword.function",
+		-- 	{
+		-- 		fg = colors.magenta1,
+		-- 	},
+		-- },
 		{
 			"@keyword.exception",
 			{
@@ -951,31 +1022,43 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			"@attribute",
-			{
-				link = "PreProc",
-			},
-		},
-		{
 			"@variable.parameter",
 			{
 				fg = colors.yellow1,
 			},
 		},
+		{
+			"@attribute",
+			{
+				link = "PreProc",
+			},
+		},
 
+		{
+			"@string.regexp",
+			{
+				fg = colors.blue,
+			},
+		},
+		{
+			"@string.documentation",
+			{
+				fg = colors.yellow,
+			},
+		},
 		{
 			"@string.escape",
 			{
 				fg = colors.magenta1,
 			},
 		},
-		{
-			"@comment.note",
-			{
-				fg = colors.hint,
-			},
-		},
 
+		-- {
+		--   "@number",
+		--   {
+		--     link = "Number",
+		--   },
+		-- },
 		{
 			"@number.float",
 			{
@@ -1116,6 +1199,12 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
+			"@lsp.typemod.variable.globalScope",
+			{
+				fg = colors.magenta,
+			},
+		},
+		{
 			"@lsp.type.variable",
 			{},
 		},
@@ -1205,15 +1294,15 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 		{
-			"@lsp.typemod.variable.globalScope",
-			{
-				fg = colors.magenta,
-			},
-		},
-		{
 			"@lsp.type.decorator",
 			{
 				link = "@attribute",
+			},
+		},
+		{
+			"@lsp.type.parameter",
+			{
+				link = "@variable.parameter",
 			},
 		},
 		{
@@ -1226,6 +1315,49 @@ M.syntax = function(colors, theme_style)
 			"@lsp.type.lifetime",
 			{
 				link = "@keyword.storage",
+			},
+		},
+
+		{
+			-- Popup menu: normal item.
+			"Pmenu",
+			{
+				bg = colors.bg_dark,
+				fg = colors.fg_dark,
+			},
+		},
+		{
+			-- Popup menu: selected item.
+			"PmenuSel",
+			{
+				bg = colors.bg_highlight,
+			},
+		},
+		{
+			-- Popup menu: Thumb of the scrollbar.
+			"PmenuThumb",
+			{},
+		},
+		{
+			-- Popup menu: scrollbar.
+			"PmenuSbar",
+			{
+				bg = colors.light_gray,
+			},
+		},
+
+		{
+			-- Visual mode selection
+			"VisualNOS",
+			{
+				bg = colors.bg_visual,
+			},
+		},
+		{
+			-- Visual mode selection when vim is "Not Owning the Selection".
+			"Visual",
+			{
+				bg = colors.bg_visual,
 			},
 		},
 
@@ -1312,6 +1444,25 @@ M.syntax = function(colors, theme_style)
 			{
 				bold = true,
 				fg = colors.magenta1,
+			},
+		},
+
+		{
+			"@diff.delta",
+			{
+				link = "DiffChange",
+			},
+		},
+		{
+			"@diff.minus",
+			{
+				link = "DiffDelete",
+			},
+		},
+		{
+			"@diff.plus",
+			{
+				link = "DiffAdd",
 			},
 		},
 
