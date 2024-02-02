@@ -2,8 +2,6 @@ The main theme for [stinvim](https://github.com/sontungexpt/stinvim)
 
 Easy to use, easy to config, easy to extend.
 
-It's still in development, so there are some bugs. If you find any bug, please report it to me.
-
 ## Features
 
 🤩 Beautiful colorscheme.
@@ -144,11 +142,9 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
 
 ## Events
 
-
 | Event                | Description                                                                                                                                       |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `WitchHighlightDone` | This event is fired when witch has finished highlighting. You can use this to reload highlight of some plugin such as NvimTree after change theme |
-
 
 ## Custom Highlight
 
@@ -330,3 +326,7 @@ So, if you have any idea to make it more flexible, please let me know.
         },
     }
 ```
+
+## License
+
+[MIT](./LICENSE)
