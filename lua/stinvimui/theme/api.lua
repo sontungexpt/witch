@@ -6,14 +6,19 @@ local M = {}
 
 M.link_kind = function(formatable_strings, highlight, kinds)
 	kinds = type(kinds) == "table" and kinds or require("stinvimui.theme.kind")
-	highlight = highlight or {}
 
 	local function linkPrefix(formatable_string)
-		for kind, hl_opts in pairs(kinds) do
-			highlight[#highlight + 1] = {
-				formatable_string:format(kind),
-				hl_opts,
-			}
+		if highlight[1] == nil then
+			for kind, hl_opts in pairs(kinds) do
+				highlight[formatable_string:format(kind)] = hl_opts
+			end
+		else
+			for kind, hl_opts in pairs(kinds) do
+				highlight[#highlight + 1] = {
+					formatable_string:format(kind),
+					hl_opts,
+				}
+			end
 		end
 	end
 

@@ -81,8 +81,6 @@ local async_load_syntax_batch = function(syntaxs, batch_size, step_delay)
 	local coroutine = coroutine
 	local co
 
- 
-  
 	local function resume_coroutine()
 		if coroutine.status(co) ~= "dead" then
 			local success, errorMsg = coroutine.resume(co)
@@ -90,7 +88,7 @@ local async_load_syntax_batch = function(syntaxs, batch_size, step_delay)
 		end
 	end
 
-	 local highlight = function(group_name, styles)
+	local highlight = function(group_name, styles)
 		hl(0, group_name, styles)
 
 		if dimmed_ns then
@@ -105,7 +103,6 @@ local async_load_syntax_batch = function(syntaxs, batch_size, step_delay)
 	end
 
 	co = coroutine.create(function()
-
 		if syntaxs[1] == nil then
 			local index = 1
 
