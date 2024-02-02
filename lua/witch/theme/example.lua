@@ -1,11 +1,16 @@
 local M = {}
 
+--- @function syntax(colors, theme_style) : table
+--- @author SonTung
+--- @description
 --- This function is invoked when the theme is loaded if no filetypes, buftypes, or events
 --- are specified in the configuration of this module.
---- This function must returns the highlight table with following structure:
+--- This function must returns the dictionary of highlight groups or an array of highlight groups.
+---
+--- The dictionary must have the following structure:
 --- key: highlight group name
 --- value: highlight options
----
+--
 --- e.g.
 --- return {
 --- 	Normal = { fg = colors.fg, bg = colors.bg },
@@ -13,9 +18,37 @@ local M = {}
 ---   NormalNC = { fg = colors.fg, bg = colors.bg },
 ---   -- ...
 --- }
+---
+--- The array must have the following structure:
+--- {
+---   highlight group name (string),
+---    highlight options (table)
+--- }
+---
+--- e.g.
+--- return {
+---   {
+---     "Normal",
+---     { fg = colors.fg, bg = colors.bg }
+---   },
+---   {
+---     "NormalFloat",
+---     { fg = colors.fg, bg = colors.bg }
+---   },
+---   -- ...
+--- }
+---
+--- So why the array? Because the order of the highlight groups is important.
+--- Some times you need to set the highlight group before another one.
+--- So the array is the best way to do that.
+--- Witch the array the highlight groups with smaller index will be set before
+--- the highlight groups with bigger index.
+--- It's same like the ranks in the a game, yah top 1 is the best.
+---
 ---@param colors table : The readonly color table from witch
 ---@param theme_style any : The theme style from witch
----@return table : The highlight table
+---@return table : The highlight dict or array
+---@usage M.syntax = function(colors, theme_style) return {} end
 M.syntax = function(colors, theme_style) return {} end
 
 -- If you provide M.colors here,
