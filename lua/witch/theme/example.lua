@@ -1,5 +1,6 @@
 local M = {}
 
+
 --- @function syntax(colors, theme_style) : table
 --- @author SonTung
 --- @description
@@ -10,7 +11,7 @@ local M = {}
 --- The dictionary must have the following structure:
 --- key: highlight group name
 --- value: highlight options
---
+---
 --- e.g.
 --- return {
 --- 	Normal = { fg = colors.fg, bg = colors.bg },

@@ -144,9 +144,11 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
 
 ## Events
 
+
 | Event                | Description                                                                                                                                       |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `WitchHighlightDone` | This event is fired when witch has finished highlighting. You can use this to reload highlight of some plugin such as NvimTree after change theme |
+
 
 ## Custom Highlight
 
