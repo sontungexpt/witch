@@ -8,7 +8,6 @@ local opts = vim.opt
 local cmd = api.nvim_command
 local defer_fn = vim.defer_fn
 local hl = api.nvim_set_hl
-
 local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
 local del_augroup = api.nvim_del_augroup_by_id
@@ -26,8 +25,9 @@ local STARTUP_MODULE = {
 	"cmp",
 }
 
-local autocmd_group_ids = {}
-local global_group_id = nil
+local group_ids = {
+	[PLUG_NAME] = augroup(PLUG_NAME, { clear = true }),
+}
 local current_theme_style = nil
 local dimmed_ns = nil
 local dim_level = 0.46
@@ -35,10 +35,11 @@ local dim_level = 0.46
 local M = {}
 
 local get_global_group_id = function()
-	if global_group_id == nil then
-		global_group_id = augroup(PLUG_NAME, { clear = true })
-	end
-	return global_group_id
+	return group_ids[PLUG_NAME]
+		or (function()
+			group_ids[PLUG_NAME] = augroup(PLUG_NAME, { clear = true })
+			return group_ids[PLUG_NAME]
+		end)()
 end
 
 local rand_unique_name = function()
@@ -53,6 +54,8 @@ local get_colors = function(style, configs)
 	local valid, colors = pcall(require, COLOR_DIR .. style)
 
 	if not valid then
+		-- check user custom themes
+
 		-- change style to PascalCase
 		local pascal_style = style:gsub("^%l", string.upper)
 
@@ -68,50 +71,40 @@ local get_colors = function(style, configs)
 		end
 	end
 
-	if type(theme_conf.on_highlight) == "function" then
-		theme_conf.on_highlight(style, colors, {})
-	end
+	if type(theme_conf.on_highlight) == "function" then theme_conf.on_highlight(style, colors, {}) end
 
 	return colors, style
 end
 
-local function async_load_syntax_batch(syntax, batch_size, step_delay)
+local async_load_syntax_batch = function(syntaxs, batch_size, step_delay)
 	local coroutine = coroutine
 	local co
 
 	local function resume_coroutine()
 		if coroutine.status(co) ~= "dead" then
 			local success, errorMsg = coroutine.resume(co)
-			if not success then
-				require("stinvimui.util.notify").error("Error in coroutine:", errorMsg)
-			end
+			if not success then require("stinvimui.util.notify").error("Error in coroutine:", errorMsg) end
 		end
 	end
 
 	co = coroutine.create(function()
-		local step = batch_size or 10
+		local turn = 0
 
-		for group_name, options in pairs(syntax) do
-			hl(0, group_name, options)
+		for group_name, styles in pairs(syntaxs) do
+			hl(0, group_name, styles)
 
 			if dimmed_ns then
-				local dimmed_opts = util.merge_tb({}, options)
-				if group_name ~= "VertSplit" and group_name ~= "WinSeparator" then
-					local fg = dimmed_opts.fg
-					local bg = dimmed_opts.bg
-					if fg and fg ~= "NONE" then
-						dimmed_opts.fg = util.darken(fg, dim_level)
-					end
-					if bg and bg ~= "NONE" then
-						dimmed_opts.bg = util.darken(bg, dim_level)
-					end
+				if group_name == "VertSplit" or group_name == "WinSeparator" then
+					hl(dimmed_ns, group_name, styles)
+				else
+					styles.fg = util.darken(styles.fg, dim_level)
+					styles.bg = util.darken(styles.bg, dim_level)
+					hl(dimmed_ns, group_name, styles)
 				end
-				hl(dimmed_ns, group_name, dimmed_opts)
 			end
 
-			step = step - 1
-			if step == 0 then
-				step = batch_size or 10
+			turn = turn + 1
+			if turn % (batch_size or 20) == 0 then
 				defer_fn(resume_coroutine, step_delay or 100)
 				coroutine.yield()
 			end
@@ -126,9 +119,7 @@ local highlight = function(get_syntax, colors, on_highlight)
 	local syntax = get_syntax(colors, current_theme_style)
 
 	if type(syntax) == "table" then
-		if type(on_highlight) == "function" then
-			on_highlight(current_theme_style, colors, syntax)
-		end
+		if type(on_highlight) == "function" then on_highlight(current_theme_style, colors, syntax) end
 
 		async_load_syntax_batch(syntax, 30, 80)
 
@@ -147,83 +138,76 @@ local load_module_highlight = function(module, colors, on_highlight)
 	on_highlight = module.on_highlight or on_highlight
 
 	local function create_autocmd(event, group, pattern, get_syntax)
-		autocmd_group_ids[group] = true
+		group_ids[group] = group
 		autocmd(event, {
 			group = group,
 			pattern = pattern,
 			once = true,
 			callback = function()
 				highlight(get_syntax, colors, on_highlight)
-				autocmd_group_ids[group] = nil
 				del_augroup(group)
+				group_ids[group] = nil
 			end,
 		})
 	end
 
 	local function setup_type_autocmds(event, types)
-		if type(types) == "table" then
-			-- name
-			-- name : fuction
-			for pattern, get_syntax in pairs(types) do
-				if type(pattern) == "number" and has_syntax then
-					has_syntax = false -- not need to call module.syntax in start time
-					-- pattern = get_syntax
-					-- group = module_autocmd_group
-					-- get_syntax = module.syntax
-					create_autocmd(event, module_autocmd_group, get_syntax, module.syntax)
-				elseif type(get_syntax) == "function" then
-					-- pattern = pattern
-					-- group = side_autocmd_group
-					-- get_syntax = get_syntax
-					create_autocmd(event, side_autocmd_group, pattern, get_syntax)
-				end
+		-- name
+		-- name : fuction
+		for pattern, get_syntax in pairs(types) do
+			if type(pattern) == "number" and has_syntax then
+				has_syntax = false -- not need to call module.syntax in start time
+				-- pattern = get_syntax
+				-- group = module_autocmd_group
+				-- get_syntax = module.syntax
+				create_autocmd(event, module_autocmd_group, get_syntax, module.syntax)
+			elseif type(get_syntax) == "function" then
+				-- pattern = pattern
+				-- group = side_autocmd_group
+				-- get_syntax = get_syntax
+				create_autocmd(event, side_autocmd_group, pattern, get_syntax)
 			end
 		end
 	end
 
 	local function setup_event_autocmds(events)
-		if type(events) == "table" then
-			-- name
-			-- name : fuction
-			-- name : { pattern = "pattern", syntax = function }
-			for event, get_syntax in pairs(events) do
-				if type(event) == "number" and has_syntax then
-					-- not need to call module.syntax in start time
-					has_syntax = false
+		-- name
+		-- name : fuction
+		-- name : { pattern = "pattern", syntax = function }
+		for event, get_syntax in pairs(events) do
+			if type(event) == "number" and has_syntax then
+				-- not need to call module.syntax in start time
+				has_syntax = false
 
-					-- event = get_syntax
-					-- get_syntax = module.syntax
-					-- group = module_autocmd_group
-					-- pattern = "*"
-					create_autocmd(get_syntax, module_autocmd_group, "*", module.syntax)
-				elseif type(get_syntax) == "function" then
-					-- event = event
-					-- get_syntax = get_syntax
-					-- group = side_autocmd_group
-					-- pattern = "*"
-					create_autocmd(event, side_autocmd_group, "*", get_syntax)
-				elseif
-					type(get_syntax) == "table"
-					and type(get_syntax.syntax) == "function"
-					and (type(get_syntax.pattern) == "table" or type(get_syntax.pattern) == "string")
-				then
-					-- event = event
-					-- get_syntax = get_syntax.syntax
-					-- group = side_autocmd_group
-					-- pattern = get_syntax.pattern
-					create_autocmd(event, side_autocmd_group, get_syntax.pattern, get_syntax.syntax)
-				end
+				-- event = get_syntax
+				-- get_syntax = module.syntax
+				-- group = module_autocmd_group
+				-- pattern = "*"
+				create_autocmd(get_syntax, module_autocmd_group, "*", module.syntax)
+			elseif type(get_syntax) == "function" then
+				-- event = event
+				-- get_syntax = get_syntax
+				-- group = side_autocmd_group
+				-- pattern = "*"
+				create_autocmd(event, side_autocmd_group, "*", get_syntax)
+			elseif
+				type(get_syntax) == "table"
+				and type(get_syntax.syntax) == "function"
+				and (type(get_syntax.pattern) == "table" or type(get_syntax.pattern) == "string")
+			then
+				-- event = event
+				-- get_syntax = get_syntax.syntax
+				-- group = side_autocmd_group
+				-- pattern = get_syntax.pattern
+				create_autocmd(event, side_autocmd_group, get_syntax.pattern, get_syntax.syntax)
 			end
 		end
 	end
+	if type(module.filetypes) == "table" then setup_type_autocmds("FileType", module.filetypes) end
+	if type(module.buftypes) == "table" then setup_type_autocmds("BufReadPre", module.buftypes) end
+	if type(module.events) == "table" then setup_event_autocmds(module.events) end
 
-	setup_type_autocmds("FileType", module.filetypes)
-	setup_type_autocmds("BufReadPre", module.buftypes)
-	setup_event_autocmds(module.events)
-
-	if has_syntax then
-		highlight(module.syntax, colors, on_highlight)
-	end
+	if has_syntax then highlight(module.syntax, colors, on_highlight) end
 end
 
 M.syntax = function(colors, theme_style)
@@ -686,9 +670,7 @@ local load_extra_modules = function(extras, colors, on_highlight)
 		end
 		if enabled then
 			local ok, module = pcall(require, EXTRA_THEME_HIGHLIGHT .. name)
-			if ok then
-				load_module_highlight(module, colors, on_highlight)
-			end
+			if ok then load_module_highlight(module, colors, on_highlight) end
 		end
 	end
 end
@@ -701,15 +683,11 @@ local load_custom_modules = function(customs, colors, on_highlight)
 end
 
 M.switch_style = function(configs, new_style)
-	if new_style ~= current_theme_style then
-		M.load(configs, new_style)
-	end
+	if new_style ~= current_theme_style then M.load(configs, new_style) end
 end
 
 M.enable_switcher = function(configs)
-	api.nvim_create_user_command("Stinvimui", function(args)
-		M.switch_style(configs, args.args)
-	end, {
+	api.nvim_create_user_command("Stinvimui", function(args) M.switch_style(configs, args.args) end, {
 		nargs = 1,
 	})
 end
@@ -729,34 +707,24 @@ M.load = function(configs, theme_style)
 end
 
 M.enable_dim = function(excluded)
-	local get_buf_option = api.nvim_buf_get_option
-	local win_get_buf = api.nvim_win_get_buf
-	local excluded_filetypes = excluded.filetypes
-	local excluded_buftypes = excluded.buftypes
-	local get_current_win = api.nvim_get_current_win
-
-	-- check if a window is not a floating window
-	local is_floating = function(win_id)
-		return api.nvim_win_get_config(win_id).relative ~= ""
+	local is_excluded = function(bufnr)
+		return excluded.filetypes[api.nvim_buf_get_option(bufnr, "filetype")]
+			or excluded.buftypes[api.nvim_buf_get_option(bufnr, "buftype")]
 	end
 
-	-- dim other windows except current window by setting their winhighlight to
-	-- NormalDimmed except some special windows like NvimTree
-	local dim = function()
-		if excluded_filetypes[get_buf_option(0, "filetype")] or excluded_buftypes[get_buf_option(0, "buftype")] then
-			return
-		end
+	-- Dim other windows when entering a window
+	-- (excluding floating windows and the current window and the win that list in excluded)
+	local dim_other_wins = function()
+		if is_excluded(0) then return end
 
-		local curr_win_id = get_current_win()
+		local curr_win_id = api.nvim_get_current_win()
 		local win_ids = api.nvim_list_wins()
 
 		for _, win_id in ipairs(win_ids) do
-			local bufnr = win_get_buf(win_id)
 			if
 				win_id ~= curr_win_id
-				and not is_floating(win_id)
-				and not excluded_filetypes[get_buf_option(bufnr, "filetype")]
-				and not excluded_buftypes[get_buf_option(bufnr, "buftype")]
+				and not api.nvim_win_get_config(win_id).relative ~= "" -- Check if not a floating window
+				and not is_excluded(api.nvim_win_get_buf(win_id))
 			then
 				api.nvim_win_set_hl_ns(win_id, dimmed_ns)
 			end
@@ -766,42 +734,32 @@ M.enable_dim = function(excluded)
 
 	autocmd({ "WinEnter" }, {
 		group = get_global_group_id(),
-		callback = function()
-			vim.schedule(function()
-				dim()
-			end, 400)
-		end,
+		callback = function() vim.schedule(dim_other_wins, 400) end,
 	})
 end
 
 M.setup = function(configs)
-	if vim.fn.exists("syntax_on") then
-		cmd("syntax reset")
-	end
-	if g.colors_name then
-		cmd("hi clear")
-	end
+	if vim.fn.exists("syntax_on") then cmd("syntax reset") end
+	if g.colors_name then cmd("hi clear") end
 	opts.termguicolors = true
 	g.colors_name = PLUG_NAME
 
 	autocmd("ColorSchemePre", {
 		group = get_global_group_id(),
 		callback = function()
-			for id, existed in pairs(autocmd_group_ids) do
+			for key, id in pairs(group_ids) do
 				del_augroup(id)
+				group_ids[key] = nil
 			end
-			del_augroup(global_group_id)
-			global_group_id = nil
 		end,
 	})
 
-	if configs.switcher then
-		M.enable_switcher(configs)
-	end
+	if configs.switcher then M.enable_switcher(configs) end
 
 	if configs.dim_inactive.enabled then
 		dimmed_ns = api.nvim_create_namespace(PLUG_NAME .. "_dimmed")
 		dim_level = configs.dim_inactive.level or dim_level
+
 		M.enable_dim(configs.dim_inactive.excluded)
 	end
 

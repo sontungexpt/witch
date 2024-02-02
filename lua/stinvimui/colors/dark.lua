@@ -71,6 +71,6 @@ local colors = {
 	term_green = "#4ad860",
 }
 
-colors.bg_dark = util.darken(colors.bg, 0.84)
+colors.bg_dark = util.darken(colors.bg, 0.82)
 
 return colors
