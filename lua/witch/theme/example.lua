@@ -13,19 +13,19 @@ local M = {}
 ---   NormalNC = { fg = colors.fg, bg = colors.bg },
 ---   -- ...
 --- }
----@param colors table : The readonly color table from stinvimui
----@param theme_style any : The theme style from stinvimui
+---@param colors table : The readonly color table from witch
+---@param theme_style any : The theme style from witch
 ---@return table : The highlight table
 M.syntax = function(colors, theme_style) return {} end
 
 -- If you provide M.colors here,
 -- the colors argument in M.syntax will be the M.colors
--- else the colors argument in M.syntax will be the stinvimui.colors from stinvimui
+-- else the colors argument in M.syntax will be the witch.colors from witch
 M.colors = {}
 
 -- If you provide M.on_highlight here,
 -- the on_highlight argument in M.syntax will be the M.on_highlight
--- else the on_highlight argument in M.syntax will be the config.theme.on_highlight from opts in stinvimui.setup(opts)
+-- else the on_highlight argument in M.syntax will be the config.theme.on_highlight from opts in witch.setup(opts)
 M.on_highlight = function(stype, colors, highlight) end
 
 M.filetypes = {

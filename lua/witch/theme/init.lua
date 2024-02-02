@@ -12,12 +12,12 @@ local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
 local del_augroup = api.nvim_del_augroup_by_id
 
-local util = require("stinvimui.util")
+local util = require("witch.util")
 
-local PLUG_NAME = "stinvimui"
-local COLOR_DIR = "stinvimui.colors."
-local EXTRA_THEME_HIGHLIGHT = "stinvimui.theme.extra."
-local STARTUP_MODULE_DIR = "stinvimui.theme.startup."
+local PLUG_NAME = "witch"
+local COLOR_DIR = "witch.colors."
+local EXTRA_THEME_HIGHLIGHT = "witch.theme.extra."
+local STARTUP_MODULE_DIR = "witch.theme.startup."
 local STARTUP_MODULE = {
 	"default_array",
 	"nvimtree",
@@ -64,7 +64,7 @@ local get_colors = function(style, configs)
 			colors = configs.more_themes[pascal_style]
 			style = pascal_style
 		else
-			require("stinvimui.util.notify").warn(
+			require("witch.util.notify").warn(
 				"Theme " .. style .. " not found. Using default theme" .. theme_conf.default
 			)
 			style = theme_conf.default
@@ -84,7 +84,7 @@ local async_load_syntax_batch = function(syntaxs, batch_size, step_delay)
 	local function resume_coroutine()
 		if coroutine.status(co) ~= "dead" then
 			local success, errorMsg = coroutine.resume(co)
-			if not success then require("stinvimui.util.notify").error("Error in coroutine:", errorMsg) end
+			if not success then require("witch.util.notify").error("Error in coroutine:", errorMsg) end
 		end
 	end
 
@@ -126,7 +126,7 @@ local async_load_syntax_batch = function(syntaxs, batch_size, step_delay)
 			end
 		end
 
-		api.nvim_exec_autocmds("User", { pattern = "StinvimuiHighlightDone", modeline = false })
+		api.nvim_exec_autocmds("User", { pattern = "WitchHighlightDone", modeline = false })
 	end)
 
 	resume_coroutine()
@@ -257,7 +257,7 @@ M.switch_style = function(configs, new_style)
 end
 
 M.enable_switcher = function(configs)
-	api.nvim_create_user_command("Stinvimui", function(args) M.switch_style(configs, args.args) end, {
+	api.nvim_create_user_command("Witch", function(args) M.switch_style(configs, args.args) end, {
 		nargs = 1,
 	})
 end

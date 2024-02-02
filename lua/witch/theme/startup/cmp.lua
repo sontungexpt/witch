@@ -82,7 +82,7 @@ M.syntax = function(colors, theme_style)
 		},
 	}
 
-	require("stinvimui.theme.api").link_kind({
+	require("witch.theme.api").link_kind({
 		"LspKind%s",
 		"CmpItemKind%s",
 		-- "NavicIcons%s",
