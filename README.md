@@ -329,4 +329,4 @@ So, if you have any idea to make it more flexible, please let me know.
 
 ## License
 
-[MIT](./LICENSE)
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details
