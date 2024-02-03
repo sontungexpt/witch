@@ -52,6 +52,10 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
 ```lua
     require("witch").setup {
         theme = {
+            -- if you disable the theme, no default highlight styles will be set by default
+            -- you must to add a customs module or extras module to set the highlight styles
+            enabled = true,
+
             -- default style of the theme
             -- "dark", "light"
             style = "dark",
