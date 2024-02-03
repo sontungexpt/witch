@@ -1,4 +1,6 @@
-local M = {}
+local M = {
+	name = "notify",
+}
 
 M.syntax = function(colors, theme_style)
 	return {

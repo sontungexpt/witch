@@ -1,4 +1,6 @@
-local M = {}
+local M = {
+	name = "markdown",
+}
 
 M.syntax = function(colors, theme_style)
 	local highlights = {

@@ -1,4 +1,6 @@
-local M = {}
+local M = {
+	name = "dashboard",
+}
 
 M.syntax = function(colors, theme_style)
 	return {
