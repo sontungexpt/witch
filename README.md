@@ -12,8 +12,6 @@ Easy to use, easy to config, easy to extend.
 
 🤗 Support for dimming inactive windows.
 
-🤓 Support for switch between themes easily.
-
 🤩 Support for add more highlight of the theme.
 
 🤪 Support for add more theme.
