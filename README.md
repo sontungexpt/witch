@@ -16,7 +16,7 @@ Easy to use, easy to config, easy to extend.
 
 🤪 Support for add more theme.
 
-😆 Witch boasts robust support for loading customized syntax highlighting tailored to specific filetypes, buftypes, events
+😆 Witch boasts robust support for loading customized syntax highlighting tailored to specific filetypes, buftypes, events, keymaps
 
 😁 Easy to switch between themes easily with `:Witch <theme_name>` command
 
