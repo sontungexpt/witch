@@ -154,9 +154,23 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
 
 ## Events
 
-| Event                | Description                                                                                                                                       |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `WitchHighlightDone` | This event is fired when witch has finished highlighting. You can use this to reload highlight of some plugin such as NvimTree after change theme |
+| Event                | Description                                                                                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `WitchHighlightDone` | This event is fired when witch has finished highlighting of a module. You can use this to reload highlight of some plugin such as NvimTree after change theme |
+
+Example:
+
+```lua
+    vim.api.nvim_create_autocmd({ "User" }, {
+        pattern = "WitchHighlightDone",
+        callback = function(event)
+            -- event.data is the name of the module that witch has finished highlighting
+            if event.data == "nvimtree" then
+                print("WitchHighlightDone nvimtree")
+            end
+        end,
+    })
+```
 
 ## Custom Highlight
 

@@ -1,5 +1,21 @@
 local M = {}
 
+--- the name of the module if you not provide it the name of the module will be "unknown"
+--- It will be passed  to event.data in the event argument of the WitchHighlightDone event callback
+--- Example:
+---
+--- vim.api.nvim_create_autocmd({ "User" }, {
+---     pattern = "WitchHighlightDone",
+---     callback = function(event)
+---         -- event.data is the name of the module that witch has finished highlighting
+---         if event.data == "nvimtree" then
+---             print("WitchHighlightDone nvimtree")
+---         end
+---     end,
+--- })
+---
+M.name = "example"
+
 --- @function syntax(colors, theme_style) : table
 --- @author SonTung
 --- @description
