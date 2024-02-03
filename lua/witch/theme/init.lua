@@ -47,7 +47,9 @@ local rand_unique_name = function()
 	return string.format("%s_%s_%s", PLUG_NAME, uv.hrtime() --[[ now ]], math.random(1000000, 9999999))
 end
 
-local get_colors = function(style, configs)
+M.get_current_theme_style = function() return current_theme_style end
+
+M.get_colors = function(style, configs)
 	local theme_conf = configs.theme
 
 	local valid, colors = pcall(require, COLOR_DIR .. style)
@@ -134,7 +136,7 @@ local async_load_syntax_batch = function(syntaxs, batch_size, step_delay, module
 	resume_coroutine()
 end
 
-local highlight = function(get_syntax, colors, on_highlight, module_name)
+M.highlight = function(get_syntax, colors, on_highlight, module_name)
 	local syntax = get_syntax(colors, current_theme_style)
 
 	if type(syntax) == "table" then
@@ -158,7 +160,7 @@ local load_module_highlight = function(module, colors, on_highlight)
 			pattern = pattern,
 			once = true,
 			callback = function()
-				highlight(get_syntax, colors, on_highlight, module.name or "unknown")
+				M.highlight(get_syntax, colors, on_highlight, module.name or "unknown")
 				del_augroup(group)
 				group_ids[group] = nil
 			end,
@@ -226,7 +228,7 @@ local load_module_highlight = function(module, colors, on_highlight)
 	if type(module.buftypes) == "table" then setup_type_autocmds("BufReadPre", module.buftypes) end
 	if type(module.events) == "table" then setup_event_autocmds(module.events) end
 
-	if has_syntax then highlight(module.syntax, colors, on_highlight, module.name or "unknown") end
+	if has_syntax then M.highlight(module.syntax, colors, on_highlight, module.name or "unknown") end
 end
 
 local load_default = function(colors, on_highlight)
@@ -278,7 +280,7 @@ M.load = function(configs, theme_style)
 
 	local colors = nil
 
-	colors, current_theme_style = get_colors(theme_style or theme_conf.style, configs)
+	colors, current_theme_style = M.get_colors(theme_style or theme_conf.style, configs)
 
 	if theme_conf.enabled then load_default(colors, on_highlight) end
 

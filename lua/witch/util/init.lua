@@ -68,17 +68,25 @@ M.merge_tb = function(to, from)
 	return to
 end
 
-M.read_only = function(table, error_msg)
-	return setmetatable({}, {
-		__index = table,
-		__newindex = function(metatable, key, value)
-			error(
-				type(error_msg) == "function" and error_msg(metatable, key, value)
-					or error_msg
-					or "Attempt to modify read-only table"
-			)
-		end,
-	})
+M.read_only = function(tbl, err_msg)
+	local cache = {}
+
+	function M.read_only(table, error_msg)
+		if not cache[table] then
+			cache[table] = setmetatable({}, {
+				__index = table,
+				__newindex = function(metatable, key, value)
+					error(
+						type(error_msg) == "function" and error_msg(metatable, key, value)
+							or error_msg
+							or "Attempt to modify read-only table"
+					)
+				end,
+			})
+		end
+
+		return cache[table]
+	end
 end
 
 return M

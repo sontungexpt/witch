@@ -116,4 +116,16 @@ M.events = {
 	},
 }
 
+-- So how to call it when an key is pressed?
+-- I thought about it and I think the best way is to use the vim.keymap.set with
+-- the api that i provided you in witch.theme.api
+-- So you can call the function like this:
+-- See more about the vim.keymap.set in the :h vim.keymap.set
+vim.keymap.set("n", "f", function()
+	-- M is the module that you provided
+	require("witch.theme.api").highlight(M)
+
+	-- you can do more things here
+end)
+
 return M
