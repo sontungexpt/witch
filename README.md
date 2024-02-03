@@ -10,6 +10,14 @@ Easy to use, easy to config, easy to extend.
 
 🤔 Easy to config, easy to extend.
 
+🤗 Support for dimming inactive windows.
+
+🤓 Support for switch between themes easily.
+
+🤩 Support for add more highlight of the theme.
+
+🤪 Support for add more theme.
+
 😆 Witch boasts robust support for loading customized syntax highlighting tailored to specific filetypes, buftypes, events
 
 😁 Easy to switch between themes easily with `:Witch <theme_name>` command
