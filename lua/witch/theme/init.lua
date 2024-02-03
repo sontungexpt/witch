@@ -240,7 +240,11 @@ local load_extra_modules = function(extras, colors, on_highlight)
 		end
 		if enabled then
 			local ok, module = pcall(require, EXTRA_THEME_HIGHLIGHT .. name)
-			if ok then load_module_highlight(module, colors, on_highlight) end
+			if ok then
+				load_module_highlight(module, colors, on_highlight)
+			else
+				require("witch.util.notify").warn("Extra module " .. name .. " not found")
+			end
 		end
 	end
 end
