@@ -16,15 +16,15 @@ Easy to use, easy to config, easy to extend.
 
 🤪 Support for add more theme.
 
-😆 Witch boasts robust support for loading customized syntax highlighting tailored to specific filetypes, buftypes, events, keymaps
+😆 Witch boasts robust support for loading customized syntax highlighting tailored to specific filetypes, buftypes, events.
 
-😁 Easy to switch between themes easily with `:Witch <theme_name>` command
+😁 Easy to switch between themes easily with `:Witch <theme_name>` command.
 
-👀 Try to load highlighting incrementally to hopefully reduce the time it takes to load the neovim
+👀 Try to load highlighting incrementally to hopefully reduce the time it takes to load the neovim.
 
 ## Preview
 
-The colors in the preview may appear different from those in your Vim due to potential errors during color conversion
+The colors in the preview may appear different from those in your Vim due to potential errors during color conversion.
 
 ![witch](./docs/readme/preview1.png)
 
@@ -359,6 +359,8 @@ If you need more features, please feel free to open an issue or pull request
 with and image or a video to show your color scheme.
 
 Hope you enjoy it!
+
+I look forward to more highlight styles from you.
 
 ## License
 
