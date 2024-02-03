@@ -1,6 +1,8 @@
 local util = require("witch.util")
 
-local M = {}
+local M = {
+	name = "default_array",
+}
 
 M.syntax = function(colors, theme_style)
 	return {

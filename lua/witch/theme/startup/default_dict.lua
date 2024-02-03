@@ -1,6 +1,8 @@
 local util = require("witch.util")
 
-local M = {}
+local M = {
+	name = "default_dict",
+}
 
 M.syntax = function(colors, theme_style)
 	local highlights = {

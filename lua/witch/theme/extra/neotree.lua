@@ -1,4 +1,6 @@
-local M = {}
+local M = {
+	name = "neotree",
+}
 
 M.syntax = function(colors, theme_style)
 	return {

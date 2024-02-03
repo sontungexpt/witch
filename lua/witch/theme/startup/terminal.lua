@@ -1,5 +1,7 @@
 local g = vim.g
-local M = {}
+local M = {
+	name = "terminal",
+}
 
 M.syntax = function(colors)
 	-- Set the color for normal and bright black.

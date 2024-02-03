@@ -44,9 +44,7 @@ local get_global_group_id = function()
 end
 
 local rand_unique_name = function()
-	local now = uv.hrtime()
-	local rand = math.random(1000000, 9999999)
-	return string.format("%s_%s_%s", PLUG_NAME, now, rand)
+	return string.format("%s_%s_%s", PLUG_NAME, uv.hrtime() --[[ now ]], math.random(1000000, 9999999))
 end
 
 local get_colors = function(style, configs)
@@ -77,7 +75,7 @@ local get_colors = function(style, configs)
 	return colors, style
 end
 
-local async_load_syntax_batch = function(syntaxs, batch_size, step_delay)
+local async_load_syntax_batch = function(syntaxs, batch_size, step_delay, module_name)
 	local coroutine = coroutine
 	local co
 
@@ -126,25 +124,28 @@ local async_load_syntax_batch = function(syntaxs, batch_size, step_delay)
 			end
 		end
 
-		api.nvim_exec_autocmds("User", { pattern = "WitchHighlightDone", modeline = false })
+		api.nvim_exec_autocmds("User", {
+			pattern = "WitchHighlightDone",
+			data = module_name,
+			modeline = false,
+		})
 	end)
 
 	resume_coroutine()
 end
 
-local highlight = function(get_syntax, colors, on_highlight)
+local highlight = function(get_syntax, colors, on_highlight, module_name)
 	local syntax = get_syntax(colors, current_theme_style)
 
 	if type(syntax) == "table" then
 		if type(on_highlight) == "function" then on_highlight(current_theme_style, colors, syntax) end
 
-		async_load_syntax_batch(syntax, 30, 80)
+		async_load_syntax_batch(syntax, 30, 80, module_name)
 	end
 end
 
 local load_module_highlight = function(module, colors, on_highlight)
 	local module_autocmd_group = augroup(rand_unique_name(), { clear = true })
-	local side_autocmd_group = augroup(rand_unique_name(), { clear = true })
 
 	local has_syntax = type(module.syntax) == "function"
 	colors = module.colors or colors
@@ -157,7 +158,7 @@ local load_module_highlight = function(module, colors, on_highlight)
 			pattern = pattern,
 			once = true,
 			callback = function()
-				highlight(get_syntax, colors, on_highlight)
+				highlight(get_syntax, colors, on_highlight, module.name or "unknown")
 				del_augroup(group)
 				group_ids[group] = nil
 			end,
@@ -178,7 +179,7 @@ local load_module_highlight = function(module, colors, on_highlight)
 				-- pattern = pattern
 				-- group = side_autocmd_group
 				-- get_syntax = get_syntax
-				create_autocmd(event, side_autocmd_group, pattern, get_syntax)
+				create_autocmd(event, augroup(rand_unique_name(), { clear = true }), pattern, get_syntax)
 			end
 		end
 	end
@@ -202,7 +203,7 @@ local load_module_highlight = function(module, colors, on_highlight)
 				-- get_syntax = get_syntax
 				-- group = side_autocmd_group
 				-- pattern = "*"
-				create_autocmd(event, side_autocmd_group, "*", get_syntax)
+				create_autocmd(event, augroup(rand_unique_name(), { clear = true }), "*", get_syntax)
 			elseif
 				type(get_syntax) == "table"
 				and type(get_syntax.syntax) == "function"
@@ -212,7 +213,12 @@ local load_module_highlight = function(module, colors, on_highlight)
 				-- get_syntax = get_syntax.syntax
 				-- group = side_autocmd_group
 				-- pattern = get_syntax.pattern
-				create_autocmd(event, side_autocmd_group, get_syntax.pattern, get_syntax.syntax)
+				create_autocmd(
+					event,
+					augroup(rand_unique_name(), { clear = true }),
+					get_syntax.pattern,
+					get_syntax.syntax
+				)
 			end
 		end
 	end
@@ -220,7 +226,7 @@ local load_module_highlight = function(module, colors, on_highlight)
 	if type(module.buftypes) == "table" then setup_type_autocmds("BufReadPre", module.buftypes) end
 	if type(module.events) == "table" then setup_event_autocmds(module.events) end
 
-	if has_syntax then highlight(module.syntax, colors, on_highlight) end
+	if has_syntax then highlight(module.syntax, colors, on_highlight, module.name or "unknown") end
 end
 
 local load_default = function(colors, on_highlight)
