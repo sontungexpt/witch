@@ -353,6 +353,15 @@ So, if you have any idea to make it more flexible, please let me know.
     }
 ```
 
+## Contributing
+
+Because I follow minimalism, I just support the basic features that I use.
+
+If you need more features, please feel free to open an issue or pull request
+with and image or a video to show your color scheme.
+
+Hope you enjoy it!
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details
