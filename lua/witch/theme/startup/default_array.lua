@@ -1566,6 +1566,22 @@ M.syntax = function(colors, theme_style)
 				fg = colors.border,
 			},
 		},
+
+		-- Todo
+		{
+			"TodoFgNOTE",
+			{
+				fg = colors.hint,
+			},
+		},
+
+		{
+			"TodoBgNOTE",
+			{
+				fg = colors.black,
+				bg = colors.hint,
+			},
+		},
 	}
 end
 
