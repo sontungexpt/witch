@@ -70,7 +70,6 @@ end
 
 M.read_only = function(tbl, err_msg)
 	local cache = {}
-
 	function M.read_only(table, error_msg)
 		if not cache[table] then
 			cache[table] = setmetatable({}, {
@@ -87,8 +86,6 @@ M.read_only = function(tbl, err_msg)
 
 		return cache[table]
 	end
-
-	return M.read_only(tbl, err_msg)
 end
 
 return M
