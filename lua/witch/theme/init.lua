@@ -265,7 +265,10 @@ local load_custom_modules = function(customs, colors, on_highlight)
 end
 
 M.switch_style = function(configs, new_style)
-	if new_style ~= current_theme_style then M.load(configs, new_style) end
+	if new_style ~= current_theme_style then
+		cmd("hi clear")
+		M.load(configs, new_style)
+	end
 end
 
 M.enable_switcher = function(configs)

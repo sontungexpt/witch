@@ -87,6 +87,8 @@ M.read_only = function(tbl, err_msg)
 
 		return cache[table]
 	end
+
+	return M.read_only(tbl, err_msg)
 end
 
 return M
