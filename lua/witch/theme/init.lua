@@ -16,8 +16,8 @@ local util = require("witch.util")
 
 local PLUG_NAME = "witch"
 local COLOR_DIR = "witch.colors."
-local EXTRA_THEME_HIGHLIGHT = "witch.theme.extra."
-local STARTUP_MODULE_DIR = "witch.theme.startup."
+local MODULE_DIR = "witch.theme.module."
+local STARTUP_MODULE_DIR = "witch.theme.module.startup."
 local STARTUP_MODULE = {
 	"default_array",
 	"nvimtree",
@@ -247,7 +247,7 @@ local load_extra_modules = function(extras, colors, on_highlight)
 			enabled = true
 		end
 		if enabled then
-			local ok, module = pcall(require, EXTRA_THEME_HIGHLIGHT .. name)
+			local ok, module = pcall(require, MODULE_DIR .. name)
 			if ok then
 				load_module_highlight(module, colors, on_highlight)
 			else
