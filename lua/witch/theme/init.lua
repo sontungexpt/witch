@@ -317,7 +317,7 @@ M.enable_dim = function(excluded)
 		api.nvim_win_set_hl_ns(curr_win_id, 0)
 	end
 
-	autocmd({ "WinEnter" }, {
+	autocmd({ "WinEnter", "WinClosed" }, {
 		group = get_global_group_id(),
 		callback = function() vim.schedule(dim_other_wins, 400) end,
 	})
