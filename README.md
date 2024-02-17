@@ -65,6 +65,10 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
                 -- diffview = true,
                 -- explorer = true,
                 -- indentline = true,
+
+                -- you can disable startup module by setting enabled to false
+                -- then you can add the startup module by yourself like extras module like above
+                -- ["startup.<module_name>"] = true,
             },
 
             -- custome your highlight module
