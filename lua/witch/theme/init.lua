@@ -2,7 +2,6 @@ local vim = vim
 local g = vim.g
 local api = vim.api
 local uv = vim.uv or vim.loop
-local opts = vim.opt
 local cmd = api.nvim_command
 local hl = api.nvim_set_hl
 local autocmd = api.nvim_create_autocmd
@@ -53,31 +52,24 @@ end
 M.get_current_theme_style = function() return current_theme_style end
 
 M.get_colors = function(style, configs)
-	local theme_conf = configs.theme
+	local is_plug_theme, colors = pcall(require, COLOR_DIR .. style)
 
-	local valid, colors = pcall(require, COLOR_DIR .. style)
+	if is_plug_theme then return colors, style end
 
-	if not valid then
-		-- check user custom themes
+	-- check user custom themes
 
-		-- change style to PascalCase
-		local pascal_style = style:gsub("^%l", string.upper)
+	-- change style to PascalCase
+	local pascal_style = style:gsub("^%l", string.upper)
 
-		if configs.more_themes[pascal_style] then
-			colors = configs.more_themes[pascal_style]
-			style = pascal_style
-		else
-			require("witch.util.notify").warn(
-				"Theme " .. style .. " not found. Using default theme" .. theme_conf.default
-			)
-			style = theme_conf.default
-			colors = require(COLOR_DIR .. theme_conf.default)
-		end
+	if configs.more_themes[pascal_style] then
+		return configs.more_themes[pascal_style], pascal_style
+	else
+		local default_theme = configs.theme.default
+		require("witch.util.notify").warn(
+			"Theme " .. style .. " not found. Using default theme" .. default_theme
+		)
+		return require(COLOR_DIR .. default_theme), default_theme
 	end
-
-	if type(theme_conf.on_highlight) == "function" then theme_conf.on_highlight(style, colors, {}) end
-
-	return colors, style
 end
 
 local async_load_syntax_batch = function(syntaxs, batch_size, step_delay, module_name)
@@ -325,7 +317,7 @@ end
 M.setup = function(configs)
 	if vim.fn.exists("syntax_on") then cmd("syntax reset") end
 	if g.colors_name then cmd("hi clear") end
-	opts.termguicolors = true
+	vim.opt.termguicolors = true
 	g.colors_name = PLUG_NAME
 
 	autocmd("ColorSchemePre", {
