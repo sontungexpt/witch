@@ -190,7 +190,7 @@ The module should has the structure like this: [example](./lua/witch/theme/examp
 ```
 
 🤗 We also provide some default highlight module that you can use to extend the theme
-see [here](./lua/witch/theme/extra).
+see [here](./lua/witch/theme/module).
 So to enable these module, you can add the name of module to the `extras` option
 
 ```lua
