@@ -1,16 +1,19 @@
-local type = type
-local require = require
 local vim = vim
 local g = vim.g
 local api = vim.api
 local uv = vim.uv or vim.loop
 local opts = vim.opt
 local cmd = api.nvim_command
-local defer_fn = vim.defer_fn
 local hl = api.nvim_set_hl
 local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
 local del_augroup = api.nvim_del_augroup_by_id
+local defer_fn = vim.defer_fn
+
+local type = type
+local require = require
+local ipairs = ipairs
+local pairs = pairs
 
 local util = require("witch.util")
 
@@ -231,14 +234,6 @@ local load_module_highlight = function(module, colors, on_highlight)
 	if has_syntax then M.highlight(module.syntax, colors, on_highlight, module.name or "unknown") end
 end
 
-local load_default = function(colors, on_highlight)
-	-- highlight(M.syntax, colors, on_highlight)
-
-	for _, name in ipairs(STARTUP_MODULE) do
-		load_module_highlight(require(STARTUP_MODULE_DIR .. name), colors, on_highlight)
-	end
-end
-
 local load_extra_modules = function(extras, colors, on_highlight)
 	--support for table and array
 	for name, enabled in pairs(extras) do
@@ -285,7 +280,11 @@ M.load = function(configs, theme_style)
 
 	colors, current_theme_style = M.get_colors(theme_style or theme_conf.style, configs)
 
-	if theme_conf.enabled then load_default(colors, on_highlight) end
+	if theme_conf.enabled then
+		for _, name in ipairs(STARTUP_MODULE) do
+			load_module_highlight(require(STARTUP_MODULE_DIR .. name), colors, on_highlight)
+		end
+	end
 
 	load_extra_modules(theme_conf.extras, colors, on_highlight)
 	load_custom_modules(theme_conf.customs, colors, on_highlight)
