@@ -3,7 +3,7 @@ local M = {
 }
 
 M.syntax = function(colors, theme_style)
-	return {
+	local options = {
 		NavicSeparator = { fg = colors.fg },
 		NavicText = { fg = colors.fg },
 
@@ -11,6 +11,13 @@ M.syntax = function(colors, theme_style)
 		AerialGuide = { fg = colors.bg_gutter },
 		AerialLine = { link = "LspInlayHint" },
 	}
+
+	require("witch.theme.api").link_kind({
+		"NavicIcons%s",
+		"Aerial%sIcon",
+	}, options)
+
+	return options
 end
 
 return M

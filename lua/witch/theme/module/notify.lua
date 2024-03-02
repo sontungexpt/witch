@@ -3,7 +3,7 @@ local M = {
 }
 
 M.syntax = function(colors, theme_style)
-	return {
+	local options = {
 		-- Notify
 		NotifyBackground = { fg = colors.fg_dark, bg = colors.bg_dark },
 		--- Border
@@ -46,6 +46,10 @@ M.syntax = function(colors, theme_style)
 		NotifyDEBUGBody = { fg = colors.fg_dark, bg = colors.bg_dark },
 		NotifyTRACEBody = { fg = colors.fg_dark, bg = colors.bg_dark },
 	}
+
+	require("witch.theme.api").link_kind({
+		"NoiceCompletionItemKind%s",
+	}, options)
 end
 
 return M

@@ -86,9 +86,6 @@ M.syntax = function(colors, theme_style)
 	require("witch.theme.api").link_kind({
 		"LspKind%s",
 		"CmpItemKind%s",
-		-- "NavicIcons%s",
-		-- "Aerial%sIcon"
-		-- "NoiceCompletionItemKind%s",
 	}, options)
 
 	return options
