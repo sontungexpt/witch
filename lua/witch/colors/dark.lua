@@ -1,8 +1,5 @@
-local util = require("witch.util")
-
 local colors = {
 	bg = "#161f31",
-	-- bg_dark = "#121a29",
 	bg_line = "#0d1829",
 	bg_visual = "#253557",
 	bg_highlight = "#1f2b49",
@@ -72,6 +69,6 @@ local colors = {
 	term_green = "#4ad860",
 }
 
-colors.bg_dark = util.darken(colors.bg, 0.82)
+colors.bg_dark = require("witch.util").darken(colors.bg, 0.82)
 
 return colors

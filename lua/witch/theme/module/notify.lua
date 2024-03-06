@@ -5,7 +5,11 @@ local M = {
 M.syntax = function(colors, theme_style)
 	local options = {
 		-- Notify
-		NotifyBackground = { fg = colors.fg_dark, bg = colors.bg_dark },
+		NotifyBackground = {
+			fg = colors.fg_dark,
+			bg = colors.bg_dark,
+		},
+
 		--- Border
 		NotifyERRORBorder = {
 			fg = colors.border,
@@ -28,23 +32,58 @@ M.syntax = function(colors, theme_style)
 			bg = colors.bg_dark,
 		},
 		--- Icons
-		NotifyERRORIcon = { fg = colors.error },
-		NotifyWARNIcon = { fg = colors.warn },
-		NotifyINFOIcon = { fg = colors.info },
-		NotifyDEBUGIcon = { fg = colors.comment },
-		NotifyTRACEIcon = { fg = colors.purple },
+		NotifyERRORIcon = {
+			fg = colors.error,
+		},
+		NotifyWARNIcon = {
+			fg = colors.warn,
+		},
+		NotifyINFOIcon = {
+			fg = colors.info,
+		},
+		NotifyDEBUGIcon = {
+			fg = colors.comment,
+		},
+		NotifyTRACEIcon = {
+			fg = colors.purple,
+		},
 		--- Title
-		NotifyERRORTitle = { fg = colors.error },
-		NotifyWARNTitle = { fg = colors.warn },
-		NotifyINFOTitle = { fg = colors.info },
-		NotifyDEBUGTitle = { fg = colors.comment },
-		NotifyTRACETitle = { fg = colors.purple },
+		NotifyERRORTitle = {
+			fg = colors.error,
+		},
+		NotifyWARNTitle = {
+			fg = colors.warn,
+		},
+		NotifyINFOTitle = {
+			fg = colors.info,
+		},
+		NotifyDEBUGTitle = {
+			fg = colors.comment,
+		},
+		NotifyTRACETitle = {
+			fg = colors.purple,
+		},
 		--- Body
-		NotifyERRORBody = { fg = colors.fg_dark, bg = colors.bg_dark },
-		NotifyWARNBody = { fg = colors.fg_dark, bg = colors.bg_dark },
-		NotifyINFOBody = { fg = colors.fg_dark, bg = colors.bg_dark },
-		NotifyDEBUGBody = { fg = colors.fg_dark, bg = colors.bg_dark },
-		NotifyTRACEBody = { fg = colors.fg_dark, bg = colors.bg_dark },
+		NotifyERRORBody = {
+			fg = colors.fg_dark,
+			bg = colors.bg_dark,
+		},
+		NotifyWARNBody = {
+			fg = colors.fg_dark,
+			bg = colors.bg_dark,
+		},
+		NotifyINFOBody = {
+			fg = colors.fg_dark,
+			bg = colors.bg_dark,
+		},
+		NotifyDEBUGBody = {
+			fg = colors.fg_dark,
+			bg = colors.bg_dark,
+		},
+		NotifyTRACEBody = {
+			fg = colors.fg_dark,
+			bg = colors.bg_dark,
+		},
 	}
 
 	require("witch.theme.api").link_kind({

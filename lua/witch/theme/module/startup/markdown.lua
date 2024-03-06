@@ -31,10 +31,9 @@ M.syntax = function(colors, theme_style)
 		["@markup.list.unchecked"] = { fg = colors.red },
 	}
 
-	local markdown_rainbows =
-		{ colors.blue, colors.yellow, colors.red2, colors.teal, colors.cyan1, colors.purlple }
+	local rainbows = { colors.blue, colors.yellow, colors.red2, colors.teal, colors.cyan1, colors.purlple }
 
-	for i, color in ipairs(markdown_rainbows) do
+	for i, color in ipairs(rainbows) do
 		local heading_group_name = "@markup.heading." .. i .. ".markdown"
 		highlights[heading_group_name] = { fg = color, bold = true }
 		highlights["@markup.heading." .. i .. ".marker.markdown"] = { link = heading_group_name }

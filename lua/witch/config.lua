@@ -96,13 +96,10 @@ local configs = {
 	},
 }
 
---- The config properties are read-only
-local keep_default_values = function() configs.theme.default = "dark" end
 
 M.setup = function(user_opts)
 	M.merge_config(configs, user_opts)
-	keep_default_values()
-
+  configs.theme.default = "dark"
 	return configs
 end
 

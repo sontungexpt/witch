@@ -1,8 +1,9 @@
 local tonumber = tonumber
+
 local M = {}
+
 local blend_bg = "#000000"
 local blend_fg = "#ffffff"
--- local day_brightness = 0.3
 
 --- Convert hex color to rgb
 ---@param hex_color string : hex color code e.g. #ffffff or #fff

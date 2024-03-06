@@ -1,20 +1,13 @@
--- local util = require("witch.util")
-
 local colors = {
 	bg = "#dee2ea",
-	-- bg_line = "#2d3546",
 	bg_line = "#bbbed6",
 	bg_visual = "#b6bfeb",
 	bg_dark = "#f4f6f7",
-	-- bg_sidebar = "#272d48",
-	-- bg_sidebar = "#f8f9fa",
 	bg_highlight = "#cad5eb",
 	bg_gutter = "#afbbd5",
 
 	fg = "#111120",
 	fg_dark = "#1b2039",
-	-- fg_sidebar = "#9ba4b8",
-	-- fg_sidebar = "#1b2039",
 
 	yellow = "#ff7722",
 	yellow1 = "#ec8a09",
@@ -75,8 +68,5 @@ local colors = {
 
 	term_green = "#0cb241",
 }
-
--- colors.bg_dark = util.darken(colors.bg, 0.93)
--- colors.bg_dark = util.lighten(colors.bg, 0.8)
 
 return colors
