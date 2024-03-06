@@ -1,5 +1,3 @@
-local util = require("witch.util")
-
 local M = {
 	name = "default_array",
 }
@@ -37,7 +35,7 @@ M.syntax = function(colors, theme_style)
 		{
 			"StatusLineNC",
 			{
-				bg = util.darken(colors.bg_line, 0.95),
+				bg = require("witch.util").darken(colors.bg_line, 0.95),
 				fg = colors.fg,
 			},
 		},
