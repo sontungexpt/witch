@@ -144,7 +144,7 @@ end
 local load_module_highlight = function(module, colors, on_highlight)
 	local module_autocmd_group = augroup(rand_unique_name(), { clear = true })
 
-	local has_syntax = type(module.syntax) == "function"
+	local on_startup = type(module.syntax) == "function"
 	colors = module.colors or colors
 	on_highlight = module.on_highlight or on_highlight
 
@@ -164,10 +164,10 @@ local load_module_highlight = function(module, colors, on_highlight)
 
 	local function setup_type_autocmds(event, types)
 		-- name
-		-- name : fuction
+		-- name : function
 		for pattern, get_syntax in pairs(types) do
-			if type(pattern) == "number" and has_syntax then
-				has_syntax = false -- not need to call module.syntax in start time
+			if type(pattern) == "number" and on_startup then
+				on_startup = false -- not need to call module.syntax in start time
 				-- pattern = get_syntax
 				-- group = module_autocmd_group
 				-- get_syntax = module.syntax
@@ -183,12 +183,12 @@ local load_module_highlight = function(module, colors, on_highlight)
 
 	local function setup_event_autocmds(events)
 		-- name
-		-- name : fuction
+		-- name : function
 		-- name : { pattern = "pattern", syntax = function }
 		for event, get_syntax in pairs(events) do
-			if type(event) == "number" and has_syntax then
+			if type(event) == "number" and on_startup then
 				-- not need to call module.syntax in start time
-				has_syntax = false
+				on_startup = false
 
 				-- event = get_syntax
 				-- get_syntax = module.syntax
@@ -223,7 +223,7 @@ local load_module_highlight = function(module, colors, on_highlight)
 	if type(module.buftypes) == "table" then setup_type_autocmds("BufReadPre", module.buftypes) end
 	if type(module.events) == "table" then setup_event_autocmds(module.events) end
 
-	if has_syntax then M.highlight(module.syntax, colors, on_highlight, module.name or "unknown") end
+	if on_startup then M.highlight(module.syntax, colors, on_highlight, module.name or "unknown") end
 end
 
 local load_extra_modules = function(extras, colors, on_highlight)
@@ -252,7 +252,10 @@ local load_custom_modules = function(customs, colors, on_highlight)
 end
 
 M.switch_style = function(configs, new_style)
-	if new_style ~= current_theme_style then M.load(configs, new_style) end
+	if new_style ~= current_theme_style then
+		cmd("hi clear")
+		M.load(configs, new_style)
+	end
 end
 
 M.enable_switcher = function(configs)
