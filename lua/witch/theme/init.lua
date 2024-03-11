@@ -58,11 +58,11 @@ M.get_colors = function(style, configs)
 
 	-- check user custom themes
 
-	-- change style to PascalCase
-	local pascal_style = style:gsub("^%l", string.upper)
+	-- change theme name to PascalCase
+	local pascal_style_theme = style:gsub("^%l", string.upper)
 
-	if configs.more_themes[pascal_style] then
-		return configs.more_themes[pascal_style], pascal_style
+	if configs.more_themes[pascal_style_theme] then
+		return configs.more_themes[pascal_style_theme], pascal_style_theme
 	else
 		local default_theme = configs.theme.default
 		require("witch.util.notify").warn(
