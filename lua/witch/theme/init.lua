@@ -144,7 +144,7 @@ end
 local load_module_highlight = function(module, colors, on_highlight)
 	local module_autocmd_group = augroup(rand_unique_name(), { clear = true })
 
-	local on_startup = type(module.syntax) == "function"
+	local should_run_on_startup = type(module.syntax) == "function"
 	colors = module.colors or colors
 	on_highlight = module.on_highlight or on_highlight
 
@@ -166,8 +166,8 @@ local load_module_highlight = function(module, colors, on_highlight)
 		-- name
 		-- name : function
 		for pattern, get_syntax in pairs(types) do
-			if type(pattern) == "number" and on_startup then
-				on_startup = false -- not need to call module.syntax in start time
+			if type(pattern) == "number" and should_run_on_startup then
+				should_run_on_startup = false -- not need to call module.syntax in start time
 				-- pattern = get_syntax
 				-- group = module_autocmd_group
 				-- get_syntax = module.syntax
@@ -185,37 +185,31 @@ local load_module_highlight = function(module, colors, on_highlight)
 		-- name
 		-- name : function
 		-- name : { pattern = "pattern", syntax = function }
-		for event, get_syntax in pairs(events) do
-			if type(event) == "number" and on_startup then
+		for key, value in pairs(events) do
+			if type(key) == "number" and should_run_on_startup then
 				-- not need to call module.syntax in start time
-				on_startup = false
-
-				-- event = get_syntax
+				should_run_on_startup = false
+				-- event = value
 				-- get_syntax = module.syntax
 				-- group = module_autocmd_group
 				-- pattern = "*"
-				create_autocmd(get_syntax, module_autocmd_group, "*", module.syntax)
-			elseif type(get_syntax) == "function" then
-				-- event = event
-				-- get_syntax = get_syntax
-				-- group = side_autocmd_group
+				create_autocmd(value, module_autocmd_group, "*", module.syntax)
+			elseif type(value) == "function" then
+				-- event = key
+				-- get_syntax = value
+				-- group = random
 				-- pattern = "*"
-				create_autocmd(event, augroup(rand_unique_name(), { clear = true }), "*", get_syntax)
+				create_autocmd(key, augroup(rand_unique_name(), { clear = true }), "*", value)
 			elseif
-				type(get_syntax) == "table"
-				and type(get_syntax.syntax) == "function"
-				and (type(get_syntax.pattern) == "table" or type(get_syntax.pattern) == "string")
+				type(value) == "table"
+				and type(value.syntax) == "function"
+				and (type(value.pattern) == "table" or type(value.pattern) == "string")
 			then
-				-- event = event
-				-- get_syntax = get_syntax.syntax
-				-- group = side_autocmd_group
-				-- pattern = get_syntax.pattern
-				create_autocmd(
-					event,
-					augroup(rand_unique_name(), { clear = true }),
-					get_syntax.pattern,
-					get_syntax.syntax
-				)
+				-- event = key
+				-- get_syntax = value.syntax
+				-- group = random
+				-- pattern = value.pattern
+				create_autocmd(key, augroup(rand_unique_name(), { clear = true }), value.pattern, value.syntax)
 			end
 		end
 	end
@@ -223,7 +217,9 @@ local load_module_highlight = function(module, colors, on_highlight)
 	if type(module.buftypes) == "table" then setup_type_autocmds("BufReadPre", module.buftypes) end
 	if type(module.events) == "table" then setup_event_autocmds(module.events) end
 
-	if on_startup then M.highlight(module.syntax, colors, on_highlight, module.name or "unknown") end
+	if should_run_on_startup then
+		M.highlight(module.syntax, colors, on_highlight, module.name or "unknown")
+	end
 end
 
 local load_extra_modules = function(extras, colors, on_highlight)
@@ -290,8 +286,18 @@ M.enable_dim = function(excluded)
 
 	-- Dim other windows when entering a window
 	-- (excluding floating windows and the current window and the win that list in excluded)
-	local dim_other_wins = function()
-		if is_excluded(0) then return end
+	local dim_win_ids = {}
+	local dim_wins = function(event)
+		if is_excluded(0) then
+			if event == "WinClosed" then
+				local id, _ = next(dim_win_ids)
+				if id then
+					api.nvim_win_set_hl_ns(id, 0)
+					dim_win_ids[id] = nil
+				end
+			end
+			return
+		end
 
 		local curr_win_id = api.nvim_get_current_win()
 		local win_ids = api.nvim_list_wins()
@@ -302,15 +308,20 @@ M.enable_dim = function(excluded)
 				and not api.nvim_win_get_config(win_id).relative ~= "" -- Check if not a floating window
 				and not is_excluded(api.nvim_win_get_buf(win_id))
 			then
+				dim_win_ids[win_id] = true
 				api.nvim_win_set_hl_ns(win_id, dimmed_ns)
 			end
 		end
+		dim_win_ids[curr_win_id] = nil
 		api.nvim_win_set_hl_ns(curr_win_id, 0)
 	end
 
 	autocmd({ "WinEnter", "WinClosed" }, {
 		group = get_global_group_id(),
-		callback = function() vim.schedule(dim_other_wins, 400) end,
+		callback = function(args)
+			if args.event == "WinClosed" then dim_win_ids[api.nvim_get_current_win()] = nil end
+			vim.defer_fn(function() dim_wins(args.event) end, 10) -- delay 10ms to make sure the window is completely loaded
+		end,
 	})
 end
 
