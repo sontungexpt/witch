@@ -135,7 +135,27 @@ M.highlight = function(get_syntax, colors, on_highlight, module_name)
 	local syntax = get_syntax(colors, current_theme_style)
 
 	if type(syntax) == "table" then
-		if type(on_highlight) == "function" then on_highlight(current_theme_style, colors, syntax) end
+		if type(on_highlight) == "function" then
+			if syntax[1] ~= nil then
+				setmetatable(syntax, {
+					__index = function(_, k)
+						for i = 1, #syntax do
+							if syntax[i][1] == k then return syntax[i][2] end
+						end
+					end,
+					__newindex = function(_, k, v)
+						for i = 1, #syntax do
+							if syntax[i][1] == k then
+								syntax[i][2] = v
+								return
+							end
+						end
+						table.insert(syntax, { k, v })
+					end,
+				})
+			end
+			on_highlight(current_theme_style, colors, syntax)
+		end
 
 		async_load_syntax_batch(syntax, 30, 80, module_name)
 	end
@@ -165,18 +185,18 @@ local load_module_highlight = function(module, colors, on_highlight)
 	local function setup_type_autocmds(event, types)
 		-- name
 		-- name : function
-		for pattern, get_syntax in pairs(types) do
-			if type(pattern) == "number" and should_run_on_startup then
+		for key, value in pairs(types) do
+			if type(key) == "number" and should_run_on_startup then
 				should_run_on_startup = false -- not need to call module.syntax in start time
-				-- pattern = get_syntax
+				-- pattern = value
 				-- group = module_autocmd_group
 				-- get_syntax = module.syntax
-				create_autocmd(event, module_autocmd_group, get_syntax, module.syntax)
-			elseif type(get_syntax) == "function" then
-				-- pattern = pattern
+				create_autocmd(event, module_autocmd_group, value, module.syntax)
+			elseif type(value) == "function" then
+				-- pattern = key
 				-- group = side_autocmd_group
-				-- get_syntax = get_syntax
-				create_autocmd(event, augroup(rand_unique_name(), { clear = true }), pattern, get_syntax)
+				-- get_syntax = value
+				create_autocmd(event, augroup(rand_unique_name(), { clear = true }), key, value)
 			end
 		end
 	end

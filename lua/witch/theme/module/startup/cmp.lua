@@ -1,5 +1,8 @@
 local M = {
 	name = "cmp",
+	events = {
+		"InsertEnter",
+	},
 }
 
 M.syntax = function(colors, theme_style)
@@ -91,7 +94,4 @@ M.syntax = function(colors, theme_style)
 	return options
 end
 
-M.events = {
-	"InsertEnter",
-}
 return M

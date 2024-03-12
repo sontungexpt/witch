@@ -1,5 +1,8 @@
 local M = {
 	name = "nvimtree",
+	filetypes = {
+		"NvimTree",
+	},
 }
 
 M.syntax = function(colors, theme_style)
@@ -61,9 +64,5 @@ M.syntax = function(colors, theme_style)
 		-- NvimTreeOpenedHL = { bg = colors.bg_highlight, fg = colors.blue },
 	}
 end
-
-M.filetypes = {
-	"NvimTree",
-}
 
 return M
