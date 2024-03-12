@@ -1,4 +1,4 @@
-local tonumber = tonumber
+local tonumber, floor, min, max, format = tonumber, math.floor, math.min, math.max, string.format
 
 local M = {}
 
@@ -33,10 +33,10 @@ M.blend = function(foreground, background, alpha)
 
 	local blendChannel = function(i)
 		local ret = (alpha * rgb_fg[i] + ((1 - alpha) * rgb_bg[i]))
-		return math.floor(math.min(math.max(0, ret), 255) + 0.5)
+		return floor(min(max(0, ret), 255) + 0.5)
 	end
 
-	return string.format("#%02x%02x%02x", blendChannel(1), blendChannel(2), blendChannel(3))
+	return format("#%02x%02x%02x", blendChannel(1), blendChannel(2), blendChannel(3))
 end
 
 M.darken = function(hex, amount, background) return M.blend(hex, background or blend_bg, amount) end
@@ -54,7 +54,7 @@ M.lighten = function(hex, amount, foreground) return M.blend(hex, foreground or 
 --
 --- @param to table : the table to be merged to
 --- @param from table : the table to be merged from
-M.merge_tb = function(to, from)
+M.merge_tb = function(to, from, force)
 	if type(to) == "table" and type(from) == "table" then
 		for k, v in pairs(from) do
 			if to[1] == nil then -- to is a dict
@@ -63,7 +63,9 @@ M.merge_tb = function(to, from)
 				to[#to + 1] = v
 			end
 		end
-	else
+	elseif force then
+		to = from
+	elseif to == nil then
 		to = from
 	end
 	return to

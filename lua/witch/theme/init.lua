@@ -1,18 +1,14 @@
 local vim = vim
-local g = vim.g
-local api = vim.api
 local uv = vim.uv or vim.loop
-local cmd = api.nvim_command
-local hl = api.nvim_set_hl
-local autocmd = api.nvim_create_autocmd
-local augroup = api.nvim_create_augroup
-local del_augroup = api.nvim_del_augroup_by_id
-local defer_fn = vim.defer_fn
+local g, api, defer_fn = vim.g, vim.api, vim.defer_fn
+local cmd, hl, autocmd, augroup, del_augroup =
+	api.nvim_command,
+	api.nvim_set_hl,
+	api.nvim_create_autocmd,
+	api.nvim_create_augroup,
+	api.nvim_del_augroup_by_id
 
-local type = type
-local require = require
-local ipairs = ipairs
-local pairs = pairs
+local type, require, ipairs, pairs = type, require, ipairs, pairs
 
 local util = require("witch.util")
 
