@@ -1,5 +1,8 @@
 local M = {
 	name = "terminal",
+	events = {
+		"TermOpen",
+	},
 }
 
 M.syntax = function(colors)
@@ -37,9 +40,5 @@ M.syntax = function(colors)
 	g.terminal_color_6 = colors.term_6 or colors.term_cyan or colors.cyan
 	g.terminal_color_14 = colors.term_14 or colors.term_bright_cyan or colors.cyan
 end
-
-M.events = {
-	"TermOpen",
-}
 
 return M

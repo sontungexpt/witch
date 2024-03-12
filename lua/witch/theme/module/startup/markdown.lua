@@ -1,5 +1,8 @@
 local M = {
 	name = "markdown",
+	filetypes = {
+		"markdown",
+	},
 }
 
 M.syntax = function(colors, theme_style)
@@ -41,9 +44,5 @@ M.syntax = function(colors, theme_style)
 
 	return highlights
 end
-
-M.filetypes = {
-	"markdown",
-}
 
 return M

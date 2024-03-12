@@ -1,5 +1,3 @@
-local util = require("witch.util")
-
 local M = {
 	name = "default_dict",
 }
@@ -156,7 +154,7 @@ M.syntax = function(colors, theme_style)
 		StatusLine = { fg = colors.fg, bg = colors.bg_line },
 		-- status lines of not-current windows Note: if this is equal to "StatusLine"
 		-- Vim will use "^^^" in the status line of the current window.
-		StatusLineNC = { fg = colors.fg, bg = util.darken(colors.bg_line, 0.95) },
+		StatusLineNC = { fg = colors.fg, bg = require("witch.util").darken(colors.bg_line, 0.95) },
 		-- TabLine = { link = "StatusLine" }, -- tab pages line, not active tab page label
 		-- tab pages line, not active tab page label
 		TabLine = { fg = colors.fg, bg = colors.bg_line },
