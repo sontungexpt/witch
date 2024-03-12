@@ -1,6 +1,4 @@
-local type = type
-local require = require
-local ipairs = ipairs
+local type, require, ipairs = type, require, ipairs
 
 local M = {}
 
