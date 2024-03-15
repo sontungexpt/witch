@@ -116,6 +116,22 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 
+		-- Indent Blankline
+		{
+			"IblScope",
+			{
+				fg = colors.purple,
+				nocombine = true,
+			},
+		},
+		{
+			"IblIndent",
+			{
+				fg = colors.graphite_border,
+				nocombine = true,
+			},
+		},
+
 		-- {
 		-- 	-- used for the columns set with 'colorcolumn'
 		-- 	"ColorColumn",
@@ -1523,22 +1539,6 @@ M.syntax = function(colors, theme_style)
 			{
 				bg = colors.bg_dark,
 				fg = colors.border,
-			},
-		},
-
-		-- Indent Blankline
-		{
-			"IblScope",
-			{
-				fg = colors.purple,
-				nocombine = true,
-			},
-		},
-		{
-			"IblIndent",
-			{
-				fg = colors.graphite_border,
-				nocombine = true,
 			},
 		},
 
