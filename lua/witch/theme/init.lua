@@ -153,7 +153,7 @@ M.highlight = function(get_syntax, colors, on_highlight, module_name)
 			on_highlight(current_theme_style, colors, syntax)
 		end
 
-		async_load_syntax_batch(syntax, 30, 80, module_name)
+		async_load_syntax_batch(syntax, 35, 80, module_name)
 	end
 end
 
