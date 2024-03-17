@@ -116,6 +116,50 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 
+		-- RainbowDelimiter
+		{
+			"RainbowDelimiterRed",
+			{
+				fg = colors.red,
+			},
+		},
+		{
+			"RainbowDelimiterOrange",
+			{
+				fg = colors.orange,
+			},
+		},
+		{
+			"RainbowDelimiterYellow",
+			{
+				fg = colors.bright_yellow,
+			},
+		},
+		{
+			"RainbowDelimiterBlue",
+			{
+				fg = colors.blue,
+			},
+		},
+		{
+			"RainbowDelimiterGreen",
+			{
+				fg = colors.green,
+			},
+		},
+		{
+			"RainbowDelimiterCyan",
+			{
+				fg = colors.cyan,
+			},
+		},
+		{
+			"RainbowDelimiterViolet",
+			{
+				fg = colors.purple,
+			},
+		},
+
 		-- Indent Blankline
 		{
 			"IblScope",
@@ -1374,50 +1418,6 @@ M.syntax = function(colors, theme_style)
 			"Visual",
 			{
 				bg = colors.bg_visual,
-			},
-		},
-
-		-- RainbowDelimiter
-		{
-			"RainbowDelimiterBlue",
-			{
-				fg = colors.blue,
-			},
-		},
-		{
-			"RainbowDelimiterYellow",
-			{
-				fg = colors.bright_yellow,
-			},
-		},
-		{
-			"RainbowDelimiterOrange",
-			{
-				fg = colors.orange,
-			},
-		},
-		{
-			"RainbowDelimiterRed",
-			{
-				fg = colors.red,
-			},
-		},
-		{
-			"RainbowDelimiterGreen",
-			{
-				fg = colors.green,
-			},
-		},
-		{
-			"RainbowDelimiterCyan",
-			{
-				fg = colors.cyan,
-			},
-		},
-		{
-			"RainbowDelimiterViolet",
-			{
-				fg = colors.purple,
 			},
 		},
 
