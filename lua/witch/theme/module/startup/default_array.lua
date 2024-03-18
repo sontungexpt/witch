@@ -1580,6 +1580,14 @@ M.syntax = function(colors, theme_style)
 				bg = colors.hint,
 			},
 		},
+
+		-- Codeium
+		{
+			"CodeiumSuggestion",
+			{
+				link = "Comment",
+			},
+		},
 	}
 end
 
