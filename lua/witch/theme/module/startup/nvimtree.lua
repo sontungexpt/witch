@@ -60,8 +60,9 @@ M.syntax = function(colors, theme_style)
 		NvimTreeLiveFilterPrefix = {
 			fg = colors.pink,
 		},
-		-- NvimTreeOpenedFile = { bg = colors.bg_highlight, fg = colors.blue },
-		-- NvimTreeOpenedHL = { bg = colors.bg_highlight, fg = colors.blue },
+		NvimTreeOpenedHL = {
+			fg = colors.blue,
+		},
 	}
 end
 
