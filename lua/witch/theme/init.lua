@@ -316,14 +316,17 @@ M.enable_dim = function(excluded)
 		end
 
 		local curr_win_id = api.nvim_get_current_win()
+
 		local win_ids = api.nvim_list_wins()
 
+		-- Get all visible windows except floating do this
+		-- local win_ids = vim.tbl_filter(
+		-- 	function(id) return api.nvim_win_get_config(id).relative == "" end,
+		-- 	api.nvim_list_wins()
+		-- )
+
 		for _, win_id in ipairs(win_ids) do
-			if
-				win_id ~= curr_win_id
-				and not api.nvim_win_get_config(win_id).relative ~= "" -- Check if not a floating window
-				and not is_excluded(api.nvim_win_get_buf(win_id))
-			then
+			if win_id ~= curr_win_id and not is_excluded(api.nvim_win_get_buf(win_id)) then
 				dim_win_ids[win_id] = true
 				api.nvim_win_set_hl_ns(win_id, dimmed_ns)
 			end
