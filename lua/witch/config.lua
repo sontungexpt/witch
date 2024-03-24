@@ -98,7 +98,7 @@ local configs = {
 
 M.setup = function(user_opts)
 	M.merge_config(configs, user_opts)
-	configs.theme.default = "dark"
+	configs.theme.fallback = "dark"
 	return configs
 end
 

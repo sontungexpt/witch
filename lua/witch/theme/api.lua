@@ -32,12 +32,12 @@ M.link_kind = function(formatable_strings, highlight, kinds)
 end
 
 M.highlight = function(module)
-	local theme = require("witch.theme")
-	local current_theme_style = theme.get_current_theme_style()
+	local witch = require("witch")
+	local current_theme_style = witch.get_current_theme_style()
 
-	require("witch.theme").highlight(
+	witch.highlight(
 		module.syntax,
-		module.colors or theme.get_colors(current_theme_style, require("witch.config").get_config()),
+		module.colors or witch.get_palette(current_theme_style, require("witch.config").get_config()),
 		module.on_highlight or require("witch.config").get_config().on_highlight,
 		module.name or "unknown"
 	)

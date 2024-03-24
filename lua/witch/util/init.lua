@@ -8,7 +8,7 @@ local blend_fg = "#ffffff"
 --- Convert hex color to rgb
 ---@param hex_color string : hex color code e.g. #ffffff or #fff
 local hex2rgb = function(hex_color)
-	if hex_color:len() == 4 then
+	if #hex_color == 4 then
 		local r = (tonumber(hex_color:sub(2, 2), 16) * 17) % 256
 		local g = (tonumber(hex_color:sub(3, 3), 16) * 17) % 256
 		local b = (tonumber(hex_color:sub(4, 4), 16) * 17) % 256
@@ -21,15 +21,14 @@ local hex2rgb = function(hex_color)
 end
 
 --- Blend two colors
----@param foreground string foreground color
----@param background string background color
----@param alpha number|string number between 0 and 1. 0 results in bg, 1 results in fg
-M.blend = function(foreground, background, alpha)
-	if foreground == nil or foreground:sub(1, 1) ~= "#" then return foreground end
+---@param fg string foreground color
+---@param bg string background color
+---@param alpha number number between 0 and 1. 0 results in bg, 1 results in fg
+M.blend = function(fg, bg, alpha)
+	if fg == nil or fg:sub(1, 1) ~= "#" then return fg end
 
-	alpha = type(alpha) == "string" and (tonumber(alpha, 16) / 0xff) or alpha
-	local rgb_bg = hex2rgb(background)
-	local rgb_fg = hex2rgb(foreground)
+	local rgb_bg = hex2rgb(bg)
+	local rgb_fg = hex2rgb(fg)
 
 	local blendChannel = function(i)
 		local ret = (alpha * rgb_fg[i] + ((1 - alpha) * rgb_bg[i]))
@@ -71,9 +70,14 @@ M.merge_tb = function(to, from, force)
 	return to
 end
 
-M.read_only = function(tbl, err_msg)
+M.read_only = (function()
 	local cache = {}
-	function M.read_only(table, error_msg)
+
+	--- Return a read-only table
+	--- @param table table The table should be read only
+	--- @param error_msg string|function|nil The error message when you try to modify the table
+	--- @return table The read only table
+	return function(table, error_msg)
 		if not cache[table] then
 			cache[table] = setmetatable({}, {
 				__index = table,
@@ -86,9 +90,8 @@ M.read_only = function(tbl, err_msg)
 				end,
 			})
 		end
-
 		return cache[table]
 	end
-end
+end)()
 
 return M

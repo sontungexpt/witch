@@ -70,7 +70,7 @@ M.syntax = function(colors, theme_style) return {} end
 -- If you provide M.colors here,
 -- the colors argument in M.syntax will be the M.colors
 -- else the colors argument in M.syntax will be the witch.colors from witch
-M.colors = {}
+M.pallete = {}
 
 -- If you provide M.on_highlight here,
 -- the on_highlight argument in M.syntax will be the M.on_highlight
