@@ -151,13 +151,13 @@ M.syntax = function(colors, theme_style)
 		SpellRare = { sp = colors.hint, undercurl = true },
 
 		-- status line of current window
-		StatusLine = { fg = colors.fg, bg = colors.bg_line },
+		StatusLine = { fg = colors.fg, bg = colors.bg_bar },
 		-- status lines of not-current windows Note: if this is equal to "StatusLine"
 		-- Vim will use "^^^" in the status line of the current window.
-		StatusLineNC = { fg = colors.fg, bg = require("witch.util").darken(colors.bg_line, 0.95) },
+		StatusLineNC = { fg = colors.fg, bg = require("witch.util").darken(colors.bg_bar, 0.95) },
 		-- TabLine = { link = "StatusLine" }, -- tab pages line, not active tab page label
 		-- tab pages line, not active tab page label
-		TabLine = { fg = colors.fg, bg = colors.bg_line },
+		TabLine = { fg = colors.fg, bg = colors.bg_bar },
 		-- tab pages line, where there are no labels
 		TabLineFill = { bg = colors.black },
 		-- tab pages line, active tab page label
@@ -410,10 +410,6 @@ M.syntax = function(colors, theme_style)
 		GitSignsChange = { link = "DiffChange" },
 		GitSignsDelete = { link = "DiffDelete" },
 		GitSignsCurrentLineBlame = { link = "NonText" },
-
-		-- Lazy
-		LazyProgressDone = { bold = true, fg = colors.magenta1 },
-		LazyProgressTodo = { bold = true, fg = colors.bg_gutter },
 
 		-- Telescope
 		TelescopeBorder = { fg = colors.border, bg = colors.bg_dark },

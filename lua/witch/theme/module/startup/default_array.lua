@@ -28,14 +28,14 @@ M.syntax = function(colors, theme_style)
 		{
 			"StatusLine",
 			{
-				bg = colors.bg_line,
+				bg = colors.bg_bar,
 				fg = colors.fg,
 			},
 		},
 		{
 			"StatusLineNC",
 			{
-				bg = require("witch.util").darken(colors.bg_line, 0.95),
+				bg = "#000001",
 				fg = colors.fg,
 			},
 		},
@@ -54,7 +54,7 @@ M.syntax = function(colors, theme_style)
 		{
 			"TabLine",
 			{
-				bg = colors.bg_line,
+				bg = colors.bg_bar,
 				fg = colors.fg,
 			},
 		},
@@ -1448,21 +1448,6 @@ M.syntax = function(colors, theme_style)
 		},
 
 		-- Lazy
-		{
-			"LazyProgressTodo",
-			{
-				bold = true,
-				fg = colors.bg_gutter,
-			},
-		},
-		{
-			"LazyProgressDone",
-			{
-				bold = true,
-				fg = colors.magenta1,
-			},
-		},
-
 		{
 			"@diff.delta",
 			{

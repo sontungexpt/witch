@@ -14,7 +14,7 @@ M.syntax = function(colors, theme_style)
 		["@markup.list.markdown"] = { fg = colors.orange, bold = true },
 		["@markup.raw"] = { link = "String" },
 		["@markup.raw.markdown"] = { fg = colors.orange },
-		["@markup.raw.markdown_inline"] = { fg = colors.red1, bg = colors.bg_line },
+		["@markup.raw.markdown_inline"] = { fg = colors.red1, bg = colors.bg_bar },
 		["@markup.link"] = { fg = colors.link },
 		["@markup.link.url"] = { link = "Underlined" },
 		["@markup.link.label.markdown_inline"] = { fg = colors.pink1 },
@@ -34,9 +34,14 @@ M.syntax = function(colors, theme_style)
 		["@markup.list.unchecked"] = { fg = colors.red },
 	}
 
-	local rainbows = { colors.blue, colors.yellow, colors.red2, colors.teal, colors.cyan1, colors.purlple }
-
-	for i, color in ipairs(rainbows) do
+	for i, color in ipairs {
+		colors.blue,
+		colors.yellow,
+		colors.red2,
+		colors.teal,
+		colors.cyan1,
+		colors.purlple,
+	} do
 		local heading_group_name = "@markup.heading." .. i .. ".markdown"
 		highlights[heading_group_name] = { fg = color, bold = true }
 		highlights["@markup.heading." .. i .. ".marker.markdown"] = { link = heading_group_name }

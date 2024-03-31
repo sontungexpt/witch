@@ -1,6 +1,6 @@
-local colors = {
+return {
 	bg = "#dee2ea",
-	bg_line = "#bbbed6",
+	bg_bar = "#bbbed6",
 	bg_visual = "#b6bfeb",
 	bg_dark = "#f4f6f7",
 	bg_highlight = "#cad5eb",
@@ -68,5 +68,3 @@ local colors = {
 
 	term_green = "#0cb241",
 }
-
-return colors

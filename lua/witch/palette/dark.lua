@@ -1,6 +1,7 @@
-local colors = {
+return {
 	bg = "#161f31",
-	bg_line = "#0d1829",
+	bg_dark = "#121928",
+	bg_bar = "#0d1829",
 	bg_visual = "#253557",
 	bg_highlight = "#1f2b49",
 	bg_gutter = "#1b305d",
@@ -68,7 +69,3 @@ local colors = {
 
 	term_green = "#4ad860",
 }
-
-colors.bg_dark = require("witch.util").darken(colors.bg, 0.82)
-
-return colors
