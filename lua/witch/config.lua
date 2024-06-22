@@ -96,13 +96,13 @@ local configs = {
 	},
 }
 
-M.setup = function(user_opts)
+function M.setup(user_opts)
 	M.merge_config(configs, user_opts)
 	configs.theme.fallback = "dark"
 	return configs
 end
 
-M.merge_config = function(default_opts, user_opts)
+function M.merge_config(default_opts, user_opts)
 	local default_options_type = type(default_opts)
 
 	if default_options_type == type(user_opts) then
@@ -119,7 +119,7 @@ M.merge_config = function(default_opts, user_opts)
 	return default_opts
 end
 
-M.get_config = function()
+function M.get_config()
 	return require("witch.util").read_only(configs, "Attempt to modify config, this is a read-only table")
 end
 

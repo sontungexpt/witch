@@ -33,7 +33,7 @@ end
 
 M.highlight = function(module)
 	local witch = require("witch")
-	local current_theme_style = witch.get_current_theme_style()
+	local current_theme_style = witch.current_theme_style()
 
 	witch.highlight(
 		module.syntax,

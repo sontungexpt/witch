@@ -1,3 +1,5 @@
+---@diagnostic disable: unused-local
+
 local M = {}
 
 --- the name of the module if you not provide it the name of the module will be "unknown"
@@ -75,7 +77,7 @@ M.pallete = {}
 -- If you provide M.on_highlight here,
 -- the on_highlight argument in M.syntax will be the M.on_highlight
 -- else the on_highlight argument in M.syntax will be the config.theme.on_highlight from opts in witch.setup(opts)
-M.on_highlight = function(stype, colors, highlight) end
+M.on_highlight = function(style, colors, highlight) end
 
 M.filetypes = {
 	-- if you provide a filetype here with no value
@@ -86,6 +88,8 @@ M.filetypes = {
 	-- so the function like other M.syntax and will be called when this filetype is loaded
 	markdown = function(colors, theme_style) end,
 }
+
+M.plugins = {}
 
 M.buftypes = {
 	-- same as M.filetypes but for buftypes

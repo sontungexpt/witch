@@ -1,13 +1,12 @@
-local vim = vim
+local vim, type, require, ipairs, pairs = vim, type, require, ipairs, pairs
 local uv, g, api, defer_fn = (vim.uv or vim.loop), vim.g, vim.api, vim.defer_fn
 local hl, autocmd, augroup = api.nvim_set_hl, api.nvim_create_autocmd, api.nvim_create_augroup
-local type, require, ipairs, pairs = type, require, ipairs, pairs
 
 local PLUG_NAME = "witch"
 local PALETTE_DIR = "witch.palette."
 local MODULE_DIR = "witch.theme.module."
 local STARTUP_MODULE_DIR = "witch.theme.module.startup."
-local STARTUP_MODULE = {
+local STARTUP_MODULES = {
 	"default_array",
 	"nvimtree",
 	"markdown",
@@ -19,12 +18,13 @@ local group_ids = {
 	[PLUG_NAME] = augroup(PLUG_NAME, { clear = true }),
 }
 local current_theme_style = nil
-local dimmed_ns = nil
+
+local dimmed_ns = nil -- dimmed_ns == nil means dim is disabled
 local dimmed_level = 0.46
 
 local M = {}
 
-local get_global_group_id = function()
+local function get_global_group_id()
 	return group_ids[PLUG_NAME]
 		or (function()
 			group_ids[PLUG_NAME] = augroup(PLUG_NAME, { clear = true })
@@ -32,15 +32,16 @@ local get_global_group_id = function()
 		end)()
 end
 
-local rand_unique_name = function()
-	return string.format("%s_%s_%s", PLUG_NAME, uv.hrtime() --[[ now ]], math.random(1000000, 9999999))
+local function rand_unique_name()
+	---@diagnostic disable-next-line: undefined-field
+	return PLUG_NAME .. "_" .. uv.now() .. "_" .. math.random(1000000, 9999999)
 end
 
-M.get_current_theme_style = function() return current_theme_style end
+function M.current_theme_style() return current_theme_style end
 
-M.get_palette = function(style, configs)
-	local is_default, palette = pcall(require, PALETTE_DIR .. style)
-	if is_default then return palette, style end
+function M.get_palette(style, configs)
+	local default, palette = pcall(require, PALETTE_DIR .. style)
+	if default then return palette, style end
 
 	-- Check user custom themes, fallback to default
 	local pascal_style_theme = style:gsub("^%l", string.upper)
@@ -56,7 +57,7 @@ M.get_palette = function(style, configs)
 	end
 end
 
-local async_load_syntax_batch = function(syntaxs, batch_size, step_delay, module_name)
+local function async_load_syntax_batch(syntaxs, batch_size, step_delay, module_name)
 	local darken = require("witch.util").darken
 	local coroutine = coroutine
 	local co
@@ -115,7 +116,7 @@ local async_load_syntax_batch = function(syntaxs, batch_size, step_delay, module
 	resume_coroutine()
 end
 
-M.highlight = function(get_syntax, palette, on_highlight, module_name)
+function M.highlight(get_syntax, palette, on_highlight, module_name)
 	local syntax = get_syntax(palette, current_theme_style)
 
 	if type(syntax) == "table" then
@@ -146,7 +147,7 @@ M.highlight = function(get_syntax, palette, on_highlight, module_name)
 	end
 end
 
-local load_module_highlight = function(module, palette, on_highlight)
+local function load_module_highlight(module, palette, on_highlight)
 	local module_autocmd_group = augroup(rand_unique_name(), { clear = true })
 	local should_run_on_startup = type(module.syntax) == "function"
 
@@ -228,7 +229,7 @@ local load_module_highlight = function(module, palette, on_highlight)
 	end
 end
 
-local load_extra_modules = function(extras, palette, on_highlight)
+local function load_extra_modules(extras, palette, on_highlight)
 	--support for both table and array
 	for key, enabled in pairs(extras) do
 		if enabled then
@@ -243,27 +244,26 @@ local load_extra_modules = function(extras, palette, on_highlight)
 	end
 end
 
-local load_custom_modules = function(customs, palette, on_highlight)
+local function load_custom_modules(customs, palette, on_highlight)
 	local read_only_colors = require("witch.util").read_only(palette)
 	for _, module in ipairs(customs) do
 		if type(module) == "table" then load_module_highlight(module, read_only_colors, on_highlight) end
 	end
 end
 
-M.switch_style = function(configs, new_style)
-	if new_style ~= current_theme_style then
-		api.nvim_command("hi clear")
-		M.load(configs, new_style)
-	end
+function M.switch_style(configs, new_style)
+	if new_style ~= current_theme_style then M.load(configs, new_style) end
 end
 
-M.enable_switcher = function(configs)
+function M.enable_switcher(configs)
 	api.nvim_create_user_command("Witch", function(args) M.switch_style(configs, args.args) end, {
 		nargs = 1,
 	})
 end
 
-M.load = function(configs, theme_style)
+function M.load(configs, theme_style)
+	if g.colors_name then api.nvim_command("hi clear") end
+
 	local theme_conf = configs.theme
 	local on_highlight = theme_conf.on_highlight
 
@@ -272,21 +272,23 @@ M.load = function(configs, theme_style)
 	palette, current_theme_style = M.get_palette(theme_style or theme_conf.style, configs)
 
 	if theme_conf.enabled then
-		for _, name in ipairs(STARTUP_MODULE) do
+		for _, name in ipairs(STARTUP_MODULES) do
 			load_module_highlight(require(STARTUP_MODULE_DIR .. name), palette, on_highlight)
 		end
 	end
 
 	if next(theme_conf.extras) then load_extra_modules(theme_conf.extras, palette, on_highlight) end
 	if next(theme_conf.customs) then load_custom_modules(theme_conf.customs, palette, on_highlight) end
+
+	g.colors_name = PLUG_NAME .. "-" .. current_theme_style
 end
 
-M.enable_dim = function(excluded)
+function M.enable_dim(excluded)
 	local is_excluded = function(bufnr)
-		return excluded.filetypes[api.nvim_buf_get_option(bufnr, "filetype")]
-			or excluded.buftypes[api.nvim_buf_get_option(bufnr, "buftype")]
-			or vim.tbl_contains(excluded.filetypes, api.nvim_buf_get_option(bufnr, "filetype"))
-			or vim.tbl_contains(excluded.buftypes, api.nvim_buf_get_option(bufnr, "buftype"))
+		return excluded.filetypes[api.nvim_get_option_value("filetype", { buf = bufnr })]
+			or excluded.buftypes[api.nvim_get_option_value("buftype", { buf = bufnr })]
+			or vim.tbl_contains(excluded.filetypes, api.nvim_get_option_value("filetype", { buf = bufnr }))
+			or vim.tbl_contains(excluded.buftypes, api.nvim_get_option_value("buftype", { buf = bufnr }))
 	end
 
 	-- Dim other windows when entering a window
@@ -326,10 +328,9 @@ M.enable_dim = function(excluded)
 	})
 end
 
-M.setup = function(user_opts)
+function M.setup(user_opts)
 	local configs = require("witch.config").setup(user_opts)
 
-	if g.colors_name then api.nvim_command("hi clear") end
 	vim.opt.termguicolors = true
 
 	if configs.dim_inactive.enabled then
@@ -340,7 +341,6 @@ M.setup = function(user_opts)
 	end
 
 	M.load(configs)
-	g.colors_name = PLUG_NAME
 
 	if configs.switcher then M.enable_switcher(configs) end
 
