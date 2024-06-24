@@ -147,86 +147,108 @@ function M.highlight(get_syntax, palette, on_highlight, module_name)
 	end
 end
 
+--- Load and apply highlight for a module based on its configuration.
+--- @param module table The module to load.
+--- @param palette table The default color palette.
+--- @param on_highlight function The callback function to apply highlight.
 local function load_module_highlight(module, palette, on_highlight)
 	local module_autocmd_group = augroup(rand_unique_name(), { clear = true })
-	local should_run_on_startup = type(module.syntax) == "function"
+	local should_run_on_startup = true
 
 	palette = module.palette or palette
 	on_highlight = module.on_highlight or on_highlight
 
-	local function create_autocmd(event, group, pattern, get_syntax)
+	local function apply_syntax(get_syntax)
+		if type(get_syntax) == "function" then
+			M.highlight(get_syntax, palette, on_highlight, module.name or "unknown")
+		else
+			M.highlight(module.syntax, palette, on_highlight, module.name or "unknown")
+		end
+	end
+
+	--- Create an autocommand for a module based on its configuration. The autocommand will be removed after the first run.
+	--- @param event table|string The event to trigger the autocommand.
+	--- @param callback function The callback function to execute. If the callback returns false, the autocommand will not be removed.
+	--- @param pattern string|table|nil The pattern to match for the autocommand.
+	--- @param new_group boolean|nil Whether to create a new group for the autocommand.
+	local create_autocmd = function(event, callback, pattern, new_group)
+		local group = new_group and augroup(rand_unique_name(), { clear = true }) or module_autocmd_group
 		group_ids[group] = group
 		autocmd(event, {
 			group = group,
-			pattern = pattern,
-			once = true,
-			callback = function()
-				M.highlight(get_syntax, palette, on_highlight, module.name or "unknown")
-				api.nvim_del_augroup_by_id(group)
-				group_ids[group] = nil
+			pattern = pattern or "*",
+			callback = function(args)
+				if callback(args) ~= false then
+					api.nvim_del_augroup_by_id(group)
+					group_ids[group] = nil
+				end
 			end,
 		})
 	end
 
-	local function setup_type_autocmds(event, types)
-		-- name
-		-- name : function
-		for key, value in pairs(types) do
-			if type(key) == "number" and should_run_on_startup then
-				should_run_on_startup = false
-				-- pattern = value
-				-- group = module_autocmd_group
-				-- get_syntax = module.syntax
-				create_autocmd(event, module_autocmd_group, value, module.syntax)
-			elseif type(value) == "function" then
-				-- pattern = key
-				-- group = side_autocmd_group
-				-- get_syntax = value
-				create_autocmd(event, augroup(rand_unique_name(), { clear = true }), key, value)
+	local filetypes = module.filetypes
+	if type(filetypes) == "table" then
+		should_run_on_startup = filetypes[1] == nil
+		for key, value in pairs(filetypes) do
+			if type(key) == "number" then
+				create_autocmd("FileType", apply_syntax, value)
+			else
+				create_autocmd("FileType", function() apply_syntax(value) end, key, true)
 			end
 		end
 	end
 
-	local function setup_event_autocmds(events)
-		-- name
-		-- name : function
-		-- name : { pattern = "pattern", syntax = function }
+	local buftypes = module.buftypes
+	if type(buftypes) == "table" then
+		if buftypes[1] ~= nil then
+			should_run_on_startup = false
+			create_autocmd("BufReadPost", function(args)
+				local buftype = api.nvim_get_option_value("buftype", { buf = args.buf })
+				for _, value in ipairs(buftypes) do
+					if buftype == value then
+						apply_syntax()
+						return true -- break the loop and cleanup the group
+					end
+				end
+				return false
+			end, "*")
+		end
+		for key, value in pairs(buftypes) do
+			if type(value) == "function" then
+				create_autocmd("BufReadPost", function(args)
+					if api.nvim_get_option_value("buftype", { buf = args.buf }) == key then
+						apply_syntax(value)
+						return true
+					end
+					return false
+				end, "*", true)
+			end
+		end
+	end
+
+	local events = module.events
+	if type(events) == "table" then
+		should_run_on_startup = events[1] == nil
 		for key, value in pairs(events) do
-			if type(key) == "number" and should_run_on_startup then
-				-- not need to call module.syntax in start time
-				should_run_on_startup = false
-				-- event = value
-				-- get_syntax = module.syntax
-				-- group = module_autocmd_group
-				-- pattern = "*"
-				create_autocmd(value, module_autocmd_group, "*", module.syntax)
+			if type(key) == "number" then
+				create_autocmd(value, apply_syntax, "*")
 			elseif type(value) == "function" then
-				-- event = key
-				-- get_syntax = value
-				-- group = random
-				-- pattern = "*"
-				create_autocmd(key, augroup(rand_unique_name(), { clear = true }), "*", value)
+				create_autocmd(key, function() apply_syntax(value) end, "*", true)
 			elseif
 				type(value) == "table"
-				and type(value.syntax) == "function"
 				and (type(value.pattern) == "table" or type(value.pattern) == "string")
 			then
-				-- event = key
-				-- get_syntax = value.syntax
-				-- group = random
-				-- pattern = value.pattern
-				create_autocmd(key, augroup(rand_unique_name(), { clear = true }), value.pattern, value.syntax)
+				if type(value.syntax) == "function" then
+					create_autocmd(key, function() apply_syntax(value.syntax) end, value.pattern, true)
+				else
+					should_run_on_startup = false
+					create_autocmd(key, apply_syntax, value.pattern)
+				end
 			end
 		end
 	end
 
-	if type(module.filetypes) == "table" then setup_type_autocmds("FileType", module.filetypes) end
-	if type(module.buftypes) == "table" then setup_type_autocmds("BufReadPre", module.buftypes) end
-	if type(module.events) == "table" then setup_event_autocmds(module.events) end
-
-	if should_run_on_startup then
-		M.highlight(module.syntax, palette, on_highlight, module.name or "unknown")
-	end
+	if should_run_on_startup then apply_syntax() end
 end
 
 local function load_extra_modules(extras, palette, on_highlight)
