@@ -7,7 +7,7 @@ local PALETTE_DIR = "witch.palette."
 local MODULE_DIR = "witch.theme.module."
 local STARTUP_MODULE_DIR = "witch.theme.module.startup."
 local STARTUP_MODULES = {
-	"default_array",
+	"main",
 	"nvimtree",
 	"markdown",
 	"terminal",
