@@ -122,13 +122,20 @@ function M.highlight(get_syntax, palette, on_highlight, module_name)
 	if type(syntax) == "table" then
 		if type(on_highlight) == "function" then
 			if syntax[1] ~= nil then
+				-- Create a lookup cache table for fast access
+				local lookup = {}
 				setmetatable(syntax, {
 					__index = function(_, k)
+						if lookup[k] then return lookup[k] end
 						for i = 1, #syntax do
-							if syntax[i][1] == k then return syntax[i][2] end
+							local key = syntax[i][1]
+							local value = syntax[i][2]
+							lookup[key] = value
+							if key == k then return value end
 						end
 					end,
 					__newindex = function(_, k, v)
+						lookup[k] = v -- update cache
 						local len = #syntax
 						for i = 1, len do
 							if syntax[i][1] == k then
@@ -211,7 +218,7 @@ local function load_module_highlight(module, palette, on_highlight)
 					end
 				end
 				return false
-			end, "*")
+			end)
 		end
 		for key, value in pairs(buftypes) do
 			if type(value) == "function" then
@@ -231,7 +238,7 @@ local function load_module_highlight(module, palette, on_highlight)
 		should_run_on_startup = events[1] == nil
 		for key, value in pairs(events) do
 			if type(key) == "number" then
-				create_autocmd(value, apply_syntax, "*")
+				create_autocmd(value, apply_syntax)
 			elseif type(value) == "function" then
 				create_autocmd(key, function() apply_syntax(value) end, "*", true)
 			elseif
