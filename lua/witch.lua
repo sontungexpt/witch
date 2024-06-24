@@ -17,13 +17,15 @@ local STARTUP_MODULES = {
 local group_ids = {
 	[PLUG_NAME] = augroup(PLUG_NAME, { clear = true }),
 }
-local current_theme_style = nil
+local current_theme_style
 
 local dimmed_ns = nil -- dimmed_ns == nil means dim is disabled
 local dimmed_level = 0.46
 
 local M = {}
 
+--- Get the global group ID, creating it if necessary.
+--- @return number The global group ID.
 local function get_global_group_id()
 	return group_ids[PLUG_NAME]
 		or (function()
@@ -32,13 +34,21 @@ local function get_global_group_id()
 		end)()
 end
 
+--- Generate a random unique name.
+--- @return string A unique name.
 local function rand_unique_name()
 	---@diagnostic disable-next-line: undefined-field
-	return PLUG_NAME .. "_" .. uv.now() .. "_" .. math.random(1000000, 9999999)
+	return PLUG_NAME .. "_" .. uv.now() .. "_" .. math.random(100000, 999999)
 end
 
+--- Get the current theme style.
+--- @return string The current theme style.
 function M.current_theme_style() return current_theme_style end
 
+--- Get the color palette for the given style.
+--- @param style string The name of the style.
+--- @param configs table The configuration table.
+--- @return table, string The color palette and the resolved style name.
 function M.get_palette(style, configs)
 	local default, palette = pcall(require, PALETTE_DIR .. style)
 	if default then return palette, style end
@@ -57,6 +67,11 @@ function M.get_palette(style, configs)
 	end
 end
 
+--- Asynchronously load a batch of syntax highlights.
+--- @param syntaxs table The syntax highlight definitions.
+--- @param batch_size number The number of highlights to process in each batch.
+--- @param step_delay number The delay between batches.
+--- @param module_name string The name of the module.
 local function async_load_syntax_batch(syntaxs, batch_size, step_delay, module_name)
 	local darken = require("witch.util").darken
 	local coroutine = coroutine
@@ -116,6 +131,11 @@ local function async_load_syntax_batch(syntaxs, batch_size, step_delay, module_n
 	resume_coroutine()
 end
 
+--- Highlight syntax using the provided syntax definition.
+--- @param get_syntax function The function to get the syntax definitions.
+--- @param palette table The color palette.
+--- @param on_highlight function The callback function to apply additional highlight.
+--- @param module_name string The name of the module.
 function M.highlight(get_syntax, palette, on_highlight, module_name)
 	local syntax = get_syntax(palette, current_theme_style)
 
@@ -258,6 +278,10 @@ local function load_module_highlight(module, palette, on_highlight)
 	if should_run_on_startup then apply_syntax() end
 end
 
+--- Load extra modules.
+--- @param extras table The extra modules to load.
+--- @param palette table The color palette.
+--- @param on_highlight function The callback function to apply additional highlight.
 local function load_extra_modules(extras, palette, on_highlight)
 	--support for both table and array
 	for key, enabled in pairs(extras) do
@@ -273,6 +297,10 @@ local function load_extra_modules(extras, palette, on_highlight)
 	end
 end
 
+--- Load custom modules.
+--- @param customs table The custom modules to load.
+--- @param palette table The color palette.
+--- @param on_highlight function The callback function to apply additional highlight.
 local function load_custom_modules(customs, palette, on_highlight)
 	local read_only_colors = require("witch.util").read_only(palette)
 	for _, module in ipairs(customs) do
@@ -280,16 +308,24 @@ local function load_custom_modules(customs, palette, on_highlight)
 	end
 end
 
+--- Switch to a different theme style.
+--- @param configs table The configuration table.
+--- @param new_style string The new theme style to switch to.
 function M.switch_style(configs, new_style)
 	if new_style ~= current_theme_style then M.load(configs, new_style) end
 end
 
+--- Enable the theme switcher command.
+--- @param configs table The configuration table.
 function M.enable_switcher(configs)
 	api.nvim_create_user_command("Witch", function(args) M.switch_style(configs, args.args) end, {
 		nargs = 1,
 	})
 end
 
+--- Load the theme with the given configuration and style.
+--- @param configs table The configuration table.
+--- @param theme_style string|nil The theme style to load. If nil, the default style is used.
 function M.load(configs, theme_style)
 	if g.colors_name then api.nvim_command("hi clear") end
 
@@ -312,6 +348,8 @@ function M.load(configs, theme_style)
 	g.colors_name = PLUG_NAME .. "-" .. current_theme_style
 end
 
+--- Enable dimming of inactive windows.
+--- @param excluded table The table of excluded filetypes and buftypes.
 function M.enable_dim(excluded)
 	local is_excluded = function(bufnr)
 		return excluded.filetypes[api.nvim_get_option_value("filetype", { buf = bufnr })]
@@ -357,6 +395,8 @@ function M.enable_dim(excluded)
 	})
 end
 
+--- Set up the Witch plugin with the user options.
+--- @param user_opts table The user configuration options.
 function M.setup(user_opts)
 	local configs = require("witch.config").setup(user_opts)
 
