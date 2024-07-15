@@ -1467,50 +1467,6 @@ M.syntax = function(colors, theme_style)
 			},
 		},
 
-		-- WhichKey
-		{
-			"WhichKeyValue",
-			{
-				fg = colors.fg_dark,
-			},
-		},
-		{
-			"WhichKeyFloat",
-			{
-				bg = colors.bg_dark,
-			},
-		},
-		{
-			"WhichKeySeparator",
-			{
-				fg = colors.comment,
-			},
-		},
-		{
-			"WhichKeySeperator",
-			{
-				fg = colors.comment,
-			},
-		},
-		{
-			"WhichKeyDesc",
-			{
-				fg = colors.magenta,
-			},
-		},
-		{
-			"WhichKeyGroup",
-			{
-				fg = colors.blue,
-			},
-		},
-		{
-			"WhichKey",
-			{
-				fg = colors.cyan,
-			},
-		},
-
 		-- Telescope
 		{
 			"TelescopeNormal",
