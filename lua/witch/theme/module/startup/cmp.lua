@@ -89,6 +89,7 @@ M.syntax = function(colors, theme_style)
 	require("witch.theme.api").link_kind({
 		"LspKind%s",
 		"CmpItemKind%s",
+		"BlinkCmpKind%s",
 	}, options)
 
 	return options
