@@ -396,9 +396,9 @@ function M.enable_dim(excluded)
 end
 
 --- Set up the Witch plugin with the user options.
---- @param user_opts table The user configuration options.
-function M.setup(user_opts)
-	local configs = require("witch.config").setup(user_opts)
+--- @param opts UserConfig The user configuration options.
+M.setup = function(opts)
+	local configs = require("witch.config").setup(opts)
 
 	vim.opt.termguicolors = true
 

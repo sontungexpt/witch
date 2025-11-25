@@ -1,6 +1,10 @@
 local type = type
 local M = {}
 
+---@class UserConfig
+---
+---
+
 local configs = {
 	theme = {
 		-- if you disable the theme, no default highlight styles will be set by default

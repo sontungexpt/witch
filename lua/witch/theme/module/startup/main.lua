@@ -175,6 +175,12 @@ M.syntax = function(colors, theme_style)
 				nocombine = true,
 			},
 		},
+		{
+			"BlinkIndent",
+			{
+				link = "IblIndent",
+			},
+		},
 
 		-- {
 		-- 	-- used for the columns set with 'colorcolumn'
@@ -1525,6 +1531,13 @@ M.syntax = function(colors, theme_style)
 		-- Codeium
 		{
 			"CodeiumSuggestion",
+			{
+				link = "Comment",
+			},
+		},
+
+		{
+			"NeoCodeiumSuggestion",
 			{
 				link = "Comment",
 			},
