@@ -1,140 +1,68 @@
 ---@type Palette
 return {
-	-- ========================================================================
-	-- Backgrounds (light → dark)
-	-- ========================================================================
-	bg_0 = "#f4f6f7",        -- lightest (floats, elevated)
-	bg_1 = "#dee2ea",        -- main background
-	bg_2 = "#bbbed6",        -- bars, sidebar
-	bg_3 = "#afbbd5",        -- gutter
-	bg_4 = "#cad5eb",        -- cursor line
-	bg_5 = "#b6bfeb",        -- visual selection
+	-- Backgrounds (Mist Gray - zero glare, perfect for weak eyes)
+	bg_0 = 0xf3f4f6, -- Lightest gray (Floats, Popups)
+	bg_1 = 0xe5e7eb, -- Main background (Muted mist gray)
+	bg_2 = 0xd1d5db, -- UI elements (Statusline, Sidebars)
+	bg_3 = 0xbfc4cc, -- Gutter (Line numbers, SignColumn)
+	bg_4 = 0xdadde3, -- CursorLine (Very subtle)
+	bg_5 = 0xc7d2e5, -- Visual selection (Muted, dusty blue)
 
-	-- ========================================================================
-	-- Foregrounds
-	-- ========================================================================
-	fg_0 = "#111120",        -- primary text
-	fg_1 = "#1b2039",        -- secondary text
+	-- Foregrounds (Slate - soft but high enough contrast to read)
+	fg_0 = 0x2d3748, -- Primary text (Deep slate, not black)
+	fg_1 = 0x4a5568, -- Secondary text (Comments, hints)
 
-	-- ========================================================================
 	-- Semantic UI
-	-- ========================================================================
-	bg = "#dee2ea",          -- = bg_1
-	bg_dark = "#f4f6f7",     -- = bg_0 (lighter on light theme)
-	bg_float = "#f4f6f7",    -- = bg_0
-	bg_bar = "#bbbed6",      -- = bg_2
-	bg_visual = "#b6bfeb",   -- = bg_5
-	bg_highlight = "#cad5eb",-- = bg_4
-	bg_gutter = "#afbbd5",   -- = bg_3
+	bg = 0xe5e7eb,
+	bg_dark = 0xf3f4f6,
+	bg_float = 0xf3f4f6,
+	bg_bar = 0xd1d5db,
+	bg_visual = 0xc7d2e5,
+	bg_highlight = 0xdadde3,
+	bg_gutter = 0xbfc4cc,
 
-	fg = "#111120",          -- = fg_0
-	fg_dark = "#1b2039",     -- = fg_1
+	fg = 0x2d3748,
+	fg_dark = 0x4a5568,
 
-	border = "#3951aa",
-	dark_border = "#5c6bbf",
-	graphite_border = "#797d9a",
+	border = 0xbac0c9,
+	dark_border = 0x9ca3af,
+	graphite_border = 0xd1d5db,
 
-	-- ========================================================================
-	-- Semantic syntax
-	-- ========================================================================
-	comment = "#7b81a6",
-	string = "#a235a6",
-	operator = "#a544e9",
+	-- Semantic syntax (Muted and gentle)
+	comment = 0x718096,     -- Soft cool gray
+	string = 0x2f855a,      -- Muted forest green
+	operator = 0x6b46c1,    -- Soft indigo
 
-	-- ========================================================================
 	-- Semantic diagnostic
-	-- ========================================================================
-	error = "#d85374",
-	warn = "#ff6933",
-	info = "#5b71f3",
-	hint = "#229ba0",
-	todo = "#ee7a6c",
-	unnecessary = "#afbcd7",
+	error = 0xc53030,       -- Soft ruby
+	warn = 0xb7791f,        -- Dusty gold
+	info = 0x3182ce,        -- Gentle blue
+	hint = 0x319795,        -- Soft teal
+	todo = 0x805ad5,        -- Muted violet
+	unnecessary = 0xbac0c9,
 
-	-- ========================================================================
-	-- Accents — base / light / dark variants
-	-- ========================================================================
-	-- Red
-	red = "#fc3753",         -- base
-	red1 = "#f14057",        -- light
-	red2 = "#e93c7b",        -- dark
+	-- Accents (Gentle tones)
+	red = 0xc53030, red1 = 0xe53e3e, red2 = 0x9b2c2c,
+	orange = 0xc05621, orange1 = 0xdd6b20, orange2 = 0x9c4221, light_orange = 0xfbd38d,
+	yellow = 0x975a16, yellow1 = 0xb7791f, yellow2 = 0x744210, bright_yellow = 0xd69e2e,
+	green = 0x2f855a, green1 = 0x38a169, green2 = 0x276749,
+	cyan = 0x285e61, cyan1 = 0x319795, cyan2 = 0x234e52,
+	blue = 0x2b6cb0, blue1 = 0x3182ce, blue2 = 0x2c5282,
+	purple = 0x553c9a, purple1 = 0x6b46c1, purple2 = 0x44337a,
+	magenta = 0x97266d, magenta1 = 0xb83280, magenta2 = 0x702459,
+	pink = 0xb83280, pink1 = 0xd53f8c, pink2 = 0x97266d,
+	teal = 0x285e61, teal1 = 0x319795, teal2 = 0x234e52,
 
-	-- Orange
-	orange = "#ee4b14",      -- base
-	orange1 = "#ee673f",     -- light
-	orange2 = "#f96755",     -- dark
-	light_orange = "#d38a63",
+	link = 0x2b6cb0,
 
-	-- Yellow
-	yellow = "#ff7722",      -- base
-	yellow1 = "#ec8a09",     -- dark
-	yellow2 = "#e29d78",     -- light
-	bright_yellow = "#fc8c21",
-
-	-- Green
-	green = "#37a16f",       -- base
-	green1 = "#2e8a5c",      -- dark
-	green2 = "#4dbd86",      -- light
-
-	-- Cyan
-	cyan = "#247ea7",        -- base
-	cyan1 = "#4b9fd9",       -- light
-	cyan2 = "#1a5f80",       -- dark
-
-	-- Blue
-	blue = "#2419f4",        -- base
-	blue1 = "#647ee2",       -- light
-	blue2 = "#3873f0",       -- dark
-
-	-- Purple
-	purple = "#9f58da",      -- base
-	purple1 = "#b47ae6",     -- light
-	purple2 = "#7a3fb0",     -- dark
-
-	-- Magenta
-	magenta = "#f00bde",     -- base
-	magenta1 = "#ff4a93",    -- light
-	magenta2 = "#b008a3",    -- dark
-
-	-- Pink
-	pink = "#f304de",        -- base
-	pink1 = "#e534c2",       -- dark
-	pink2 = "#b802a8",       -- darker
-
-	-- Teal
-	teal = "#2e7e9c",        -- base
-	teal1 = "#4aa6c4",       -- light
-	teal2 = "#1f5c73",       -- dark
-
-	link = "#2a6bb5",
-
-	-- ========================================================================
 	-- Neutrals
-	-- ========================================================================
-	black = "#000000",
-	white = "#ffffff",
-	gray = "#7c91a2",
-	graphite = "#707687",
-	light_gray = "#818ca0",
-	brown = "#c17e70",
+	black = 0x2d3748, -- Mapped to primary text (no pure black)
+	white = 0xf3f4f6, -- Mapped to lightest bg (no pure white)
+	gray = 0x718096, graphite = 0x4a5568, light_gray = 0x9ca3af, brown = 0x8b5a2b,
 
-	-- ========================================================================
 	-- Terminal (16 colors)
-	-- ========================================================================
-	term_0 = "#111120",      -- black (fg on light theme)
-	term_1 = "#fc3753",      -- red
-	term_2 = "#37a16f",      -- green
-	term_3 = "#ff7722",      -- yellow
-	term_4 = "#2419f4",      -- blue
-	term_5 = "#f00bde",      -- magenta
-	term_6 = "#247ea7",      -- cyan
-	term_7 = "#dee2ea",      -- white (bg on light theme)
-	term_8 = "#7c91a2",      -- bright black
-	term_9 = "#f14057",      -- bright red
-	term_10 = "#0cb241",     -- bright green
-	term_11 = "#fc8c21",     -- bright yellow
-	term_12 = "#647ee2",     -- bright blue
-	term_13 = "#ff4a93",     -- bright magenta
-	term_14 = "#4b9fd9",     -- bright cyan
-	term_15 = "#ffffff",     -- bright white
+	term_0 = 0x2d3748, term_1 = 0xc53030, term_2 = 0x2f855a, term_3 = 0x975a16,
+	term_4 = 0x2b6cb0, term_5 = 0x553c9a, term_6 = 0x285e61, term_7 = 0xd1d5db,
+	term_8 = 0x718096, term_9 = 0xe53e3e, term_10 = 0x38a169, term_11 = 0xb7791f,
+	term_12 = 0x3182ce, term_13 = 0x6b46c1, term_14 = 0x319795, term_15 = 0xf3f4f6,
 }

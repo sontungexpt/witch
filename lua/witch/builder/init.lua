@@ -3,21 +3,32 @@ local require, next = require, next
 local M = {}
 
 local PATH = {
-	main = "witch.builder.main",
+	core = "witch.builder.core",
+	treesitter = "witch.builder.core.treesitter",
+	lsp = "witch.builder.core.lsp",
+
+	-- Extra
 	["blink-cmp"] = "witch.builder.extra.blink-cmp",
-	nvimtree = "witch.builder.extra.nvimtree",
 	markdown = "witch.builder.extra.markdown",
 	terminal = "witch.builder.extra.terminal",
-	cmp = "witch.builder.extra.cmp",
+	indentline = "witch.builder.extra.indentline",
 	bracket = "witch.builder.extra.bracket",
+	yanky = "witch.builder.extra.yanky",
+
+    todo = "witch.builder.extra.todo",
+	git = "witch.builder.extra.git",
+	dap = "witch.builder.extra.dap",
+	telescope = "witch.builder.extra.telescope",
+
+	nvimtree = "witch.builder.extra.nvimtree",
+	neotree = "witch.builder.extra.neotree",
+
+	cmp = "witch.builder.extra.cmp",
 	dashboard = "witch.builder.extra.dashboard",
 	diffview = "witch.builder.extra.diffview",
-	indentline = "witch.builder.extra.indentline",
-	neotree = "witch.builder.extra.neotree",
 	notify = "witch.builder.extra.notify",
 	navic = "witch.builder.extra.navic",
 	scrollbar = "witch.builder.extra.scrollbar",
-	yanky = "witch.builder.extra.yanky",
 }
 
 

@@ -1,120 +1,123 @@
+--- A color value: hex string (`"#rrggbb"`) or 24-bit integer (`0xrrggbb`).
+--- @alias Color string|integer
+
 --- @class Palette
 ---
 --- Backgrounds (dark → light).
---- @field bg_0 string Darkest (bars, sidebar).
---- @field bg_1 string Main background.
---- @field bg_2 string Elevated (floats).
---- @field bg_3 string Gutter.
---- @field bg_4 string Cursor line.
---- @field bg_5 string Visual selection.
+--- @field bg_0 Color Darkest (bars, sidebar).
+--- @field bg_1 Color Main background.
+--- @field bg_2 Color Elevated (floats).
+--- @field bg_3 Color Gutter.
+--- @field bg_4 Color Cursor line.
+--- @field bg_5 Color Visual selection.
 ---
 --- Foregrounds.
---- @field fg_0 string Primary text.
---- @field fg_1 string Secondary text.
+--- @field fg_0 Color Primary text.
+--- @field fg_1 Color Secondary text.
 ---
 --- Semantic UI.
---- @field bg string Main background (alias of `bg_1`).
---- @field bg_dark string Darkest background (alias of `bg_0`).
---- @field bg_float string Elevated background (alias of `bg_2`).
---- @field bg_bar string Bar background (alias of `bg_0`).
---- @field bg_visual string Visual selection (alias of `bg_5`).
---- @field bg_highlight string Cursor line (alias of `bg_4`).
---- @field bg_gutter string Gutter (alias of `bg_3`).
---- @field fg string Primary text (alias of `fg_0`).
---- @field fg_dark string Secondary text (alias of `fg_1`).
---- @field border string Primary border.
---- @field dark_border string Darker border.
---- @field graphite_border string Subtle border.
+--- @field bg Color Main background (alias of `bg_1`).
+--- @field bg_dark Color Darkest background (alias of `bg_0`).
+--- @field bg_float Color Elevated background (alias of `bg_2`).
+--- @field bg_bar Color Bar background (alias of `bg_0`).
+--- @field bg_visual Color Visual selection (alias of `bg_5`).
+--- @field bg_highlight Color Cursor line (alias of `bg_4`).
+--- @field bg_gutter Color Gutter (alias of `bg_3`).
+--- @field fg Color Primary text (alias of `fg_0`).
+--- @field fg_dark Color Secondary text (alias of `fg_1`).
+--- @field border Color Primary border.
+--- @field dark_border Color Darker border.
+--- @field graphite_border Color Subtle border.
 ---
 --- Semantic syntax.
---- @field comment string Comment text.
---- @field string string String literal.
---- @field operator string Operator.
+--- @field comment Color Comment text.
+--- @field string Color String literal.
+--- @field operator Color Operator.
 ---
 --- Semantic diagnostic.
---- @field error string Error.
---- @field warn string Warning.
---- @field info string Info.
---- @field hint string Hint.
---- @field todo string Todo.
---- @field unnecessary string Unnecessary code.
+--- @field error Color Error.
+--- @field warn Color Warning.
+--- @field info Color Info.
+--- @field hint Color Hint.
+--- @field todo Color Todo.
+--- @field unnecessary Color Unnecessary code.
 ---
 --- Red accents.
---- @field red string Base red.
---- @field red1 string Light red.
---- @field red2 string Dark red.
+--- @field red Color Base red.
+--- @field red1 Color Light red.
+--- @field red2 Color Dark red.
 ---
 --- Orange accents.
---- @field orange string Base orange.
---- @field orange1 string Light orange.
---- @field orange2 string Dark orange.
---- @field light_orange string Light orange variant.
+--- @field orange Color Base orange.
+--- @field orange1 Color Light orange.
+--- @field orange2 Color Dark orange.
+--- @field light_orange Color Light orange variant.
 ---
 --- Yellow accents.
---- @field yellow string Base yellow.
---- @field yellow1 string Dark yellow.
---- @field bright_yellow string Light yellow.
+--- @field yellow Color Base yellow.
+--- @field yellow1 Color Dark yellow.
+--- @field bright_yellow Color Light yellow.
 ---
 --- Green accents.
---- @field green string Base green.
---- @field green1 string Light green.
---- @field green2 string Dark green.
+--- @field green Color Base green.
+--- @field green1 Color Light green.
+--- @field green2 Color Dark green.
 ---
 --- Cyan accents.
---- @field cyan string Base cyan.
---- @field cyan1 string Dark cyan.
---- @field cyan2 string Light cyan.
+--- @field cyan Color Base cyan.
+--- @field cyan1 Color Dark cyan.
+--- @field cyan2 Color Light cyan.
 ---
 --- Blue accents.
---- @field blue string Base blue.
---- @field blue1 string Light blue.
---- @field blue2 string Dark blue.
+--- @field blue Color Base blue.
+--- @field blue1 Color Light blue.
+--- @field blue2 Color Dark blue.
 ---
 --- Purple accents.
---- @field purple string Base purple.
---- @field purple1 string Light purple.
---- @field purple2 string Dark purple.
+--- @field purple Color Base purple.
+--- @field purple1 Color Light purple.
+--- @field purple2 Color Dark purple.
 ---
 --- Magenta accents.
---- @field magenta string Base magenta.
---- @field magenta1 string Light magenta.
---- @field magenta2 string Dark magenta.
+--- @field magenta Color Base magenta.
+--- @field magenta1 Color Light magenta.
+--- @field magenta2 Color Dark magenta.
 ---
 --- Pink accents.
---- @field pink string Base pink.
---- @field pink1 string Dark pink.
---- @field pink2 string Darker pink.
+--- @field pink Color Base pink.
+--- @field pink1 Color Dark pink.
+--- @field pink2 Color Darker pink.
 ---
 --- Teal accents.
---- @field teal string Base teal.
---- @field teal1 string Light teal.
---- @field teal2 string Dark teal.
+--- @field teal Color Base teal.
+--- @field teal1 Color Light teal.
+--- @field teal2 Color Dark teal.
 ---
 --- Link.
---- @field link string Link color.
+--- @field link Color Link color.
 ---
 --- Neutrals.
---- @field black string Pure black.
---- @field white string Pure white.
---- @field gray string Gray.
---- @field graphite string Graphite.
---- @field light_gray string Light gray.
---- @field brown string Brown.
+--- @field black Color Pure black.
+--- @field white Color Pure white.
+--- @field gray Color Gray.
+--- @field graphite Color Graphite.
+--- @field light_gray Color Light gray.
+--- @field brown Color Brown.
 ---
 --- Terminal (16 colors).
---- @field term_0 string ANSI black.
---- @field term_1 string ANSI red.
---- @field term_2 string ANSI green.
---- @field term_3 string ANSI yellow.
---- @field term_4 string ANSI blue.
---- @field term_5 string ANSI magenta.
---- @field term_6 string ANSI cyan.
---- @field term_7 string ANSI white.
---- @field term_8 string ANSI bright black.
---- @field term_9 string ANSI bright red.
---- @field term_10 string ANSI bright green.
---- @field term_11 string ANSI bright yellow.
---- @field term_12 string ANSI bright blue.
---- @field term_13 string ANSI bright magenta.
---- @field term_14 string ANSI bright cyan.
---- @field term_15 string ANSI bright white.
+--- @field term_0 Color ANSI black.
+--- @field term_1 Color ANSI red.
+--- @field term_2 Color ANSI green.
+--- @field term_3 Color ANSI yellow.
+--- @field term_4 Color ANSI blue.
+--- @field term_5 Color ANSI magenta.
+--- @field term_6 Color ANSI cyan.
+--- @field term_7 Color ANSI white.
+--- @field term_8 Color ANSI bright black.
+--- @field term_9 Color ANSI bright red.
+--- @field term_10 Color ANSI bright green.
+--- @field term_11 Color ANSI bright yellow.
+--- @field term_12 Color ANSI bright blue.
+--- @field term_13 Color ANSI bright magenta.
+--- @field term_14 Color ANSI bright cyan.
+--- @field term_15 Color ANSI bright white.

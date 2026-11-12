@@ -1,5 +1,5 @@
 local type, pairs = type, pairs
-local isarray = vim.isarray
+local islist = vim.islist
 
 --- @class Module
 --- @field enabled? boolean Whether the module is enabled.
@@ -21,69 +21,115 @@ local isarray = vim.isarray
 --- @field palette string Active palette name.
 --- @field modules table<string, Module> Per-module configuration overrides.
 --- @field palletes table<string, Palette> User-defined custom palettes.
---- @field dim_inactive DimInactiveConfig Configuration for dimming inactive windows.
+--- @field dim DimInactiveConfig Configuration for dimming inactive windows.
 --- @field switcher boolean Whether the `:Witch` command is enabled.
 
 --- @class DimInactiveConfig
 --- @field enabled boolean Whether dimming is active.
 --- @field level number Dim level from `0` to `1`.
 --- @field excluded table{ filetypes: table<string, boolean>, buftypes: table<string, boolean> } Buffers excluded from dimming.
+--- @field bg boolean Whether to also fade background groups.
 
 --- @type Config
 local config = {
     palette = "dark",
     palletes = {},
     modules = {
-        main = {
+        core = {
             lazy = false,
+            enabled = true,
+        },
+        treesitter = {
+            event = "FileType",
+            enabled = true,
+        },
+        lsp = {
+            event = "LspAttach",
             enabled = true,
         },
         ["blink-cmp"] = {
             enabled = true,
             event = { "InsertEnter", "CmdlineEnter" },
         },
+        terminal = {
+            enabled = true,
+            event = "TermOpen",
+        },
+
         bracket = {
+            enabled = true,
             event = "CursorHold",
         },
+
         indentline = {
+            enabled = true,
             event = "CursorHold",
         },
-        nvimtree = {
-            ft = "NvimTree",
-        },
+
         markdown = {
+            enabled = true,
             ft = "markdown",
         },
-        terminal = {
-            ft = "terminal",
-        },
-        cmp = {
-            event = { "InsertEnter", "CmdlineEnter" },
-        },
-        dashboard = {
-            ft = "dashboard",
-            lazy = false,
-        },
-        diffview = {
-            ft = "diffview",
+
+        nvimtree = {
+            ft = "NvimTree",
         },
         neotree = {
             ft = "neotree",
         },
+
+        cmp = {
+            event = { "InsertEnter", "CmdlineEnter" },
+        },
+
+        dashboard = {
+            ft = "dashboard",
+            lazy = false,
+        },
+
+        telescope = {
+            ft = "TelescopePrompt",
+        },
+
+        todo = {
+
+        },
+
+        git = {
+
+        },
+
+        dap = {
+
+        },
+
+        diffview = {
+            ft = "diffview",
+        },
+
         notify = {
             ft = "notify",
         },
-        navic = { ft = "navic" },
-        scrollbar = { ft = "scrollbar" },
-        yanky = {},
+
+        navic = {
+            ft = "navic",
+        },
+        scrollbar = {
+            ft = "scrollbar",
+        },
+
+        yanky = {
+
+        },
     },
-    dim_inactive = {
+    dim = {
         enabled = true,
-        level = 0.46,
+        level = 0.54,
         excluded = {
             filetypes = { NvimTree = true },
             buftypes = { nofile = true, prompt = true, terminal = true },
         },
+        bg = true,
     },
     switcher = true,
 }
@@ -111,7 +157,7 @@ local function merge(base, user)
     end
 
     -- Array: completely replace
-    if isarray(base) and isarray(user) then
+    if islist(base) and islist(user) then
         return user
     end
 

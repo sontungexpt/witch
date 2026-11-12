@@ -1,5 +1,5 @@
 local vim = vim
-local type, require, ipairs, pairs = type, require, ipairs, pairs
+local type, require, pairs = type, require, pairs
 local g, api = vim.g, vim.api
 local nvim_set_hl, autocmd, augroup = api.nvim_set_hl, api.nvim_create_autocmd, api.nvim_create_augroup
 
@@ -10,12 +10,15 @@ local builder = require("witch.builder")
 local config = require("witch.config")
 local modules = config.modules
 
+local group = augroup(PLUG_NAME, { clear = true })
+
 local DEFAULT_PALETTES = {
     ["dark"] = "witch.palette.dark",
     ["light"] = "witch.palette.light",
 }
 local FALLBACK_PALETTE = "dark"
----@type table<string, Palette>
+
+--- @type table<string, Palette>
 local PALETTE_DICT = setmetatable({}, {
     __index = function(t, name)
         local found_path = DEFAULT_PALETTES[name]
@@ -28,7 +31,8 @@ local PALETTE_DICT = setmetatable({}, {
 })
 
 local active_palette_name
---- Get the current theme style.
+
+--- Get the current palette name.
 --- @return string
 M.active_palette_name = function()
     return active_palette_name or FALLBACK_PALETTE
@@ -42,29 +46,13 @@ end
 
 --- Cache of already-loaded module names for the current palette.
 --- Reset on every palette switch.
----@type table<string, boolean>
+--- @type table<string, boolean>
 local loaded = {}
 
---- Apply a list of highlight definitions synchronously.
----@param highlights table array of {group_name, opts} or dict {group_name = opts}
----@param palette Palette
----@param palette_name string
----@param module_name string
-local function apply_highlights(highlights, palette, palette_name, module_name)
-    for i = 1, #highlights do
-        local hl = highlights[i]
-        local hl_name = hl[1]
-        hl[1] = nil -- remove group_name from entry because it is invalid field
-        nvim_set_hl(0, hl_name, hl)
-    end
-
-    api.nvim_exec_autocmds("User", { pattern = "WitchHighlightDone", data = module_name })
-end
-
---- Load a single theme module by name using the registry.
----@param name string module name
----@param palette Palette
----@param palette_name string
+--- Load a single theme module by name.
+--- @param name string Module name.
+--- @param palette Palette The active palette.
+--- @param palette_name string The active palette name.
 local function load_module(name, palette, palette_name)
     local module = modules[name]
     if not module then
@@ -74,120 +62,109 @@ local function load_module(name, palette, palette_name)
     local b = module.build or builder.require(name)
     if type(b) == "function" then
         local highlights = b(palette, palette_name)
+
         if type(highlights) == "table" then
-            apply_highlights(highlights, palette, palette_name, name)
+            for i = 1, #highlights do
+                local hl = highlights[i]
+                local hl_name = hl[1]
+                hl[1] = nil -- remove group_name from entry because it is invalid field
+                nvim_set_hl(0, hl_name, hl)
+            end
         end
     end
+    api.nvim_exec_autocmds("User", { pattern = "WitchModuleLoaded", data = name })
 end
 
+--- A single normalized event entry.
+--- @class EventPattern
+--- @field event string The event name (e.g. `"InsertEnter"`, `"User"`).
+--- @field pattern string The autocmd pattern (e.g. `"*"`, `"LazyLoad"`, `"*.lua"`).
+
+--- Accepted shapes of `spec.event`.
+---
+--- - `string` — a single event name.
+--- - `table` — an array, a map, or a mix of both.
+---
+--- @alias EventSpec string|table
+
+--- Normalize `spec.event` into a flat list of `{ event, pattern }` pairs.
+---
+--- Supported forms:
+---
+--- 1. **String** — a single event with the default pattern:
+---    `"TermOpen"` → `{ { "TermOpen", "*" } }`
+---
+--- 2. **Array** — each element is an event name with the default pattern:
+---    `{ "InsertEnter", "CmdlineEnter" }` → two entries with `pattern = "*"`.
+---
+--- 3. **Map** — each key is an event name, each value is its pattern:
+---    - `{ User = "LazyLoad" }` → `{ "User", "LazyLoad" }`
+---    - `{ FileType = { "lua", "python" } }` → two `"FileType"` entries
+---    - `{ BufReadPost = true }` → `{ "BufReadPost", "*" }`
+---
+--- A single table may mix array elements and map entries.
+---
+--- **Rules:**
+--- - Numeric keys (array elements) → event name with `pattern = "*"`.
+--- - String keys (map entries) → event name with pattern from value:
+---   - string → used as-is;
+---   - array of strings → one entry per element;
+---   - any other type → `"*"`.
+--- - Other key types are ignored.
+---
+--- @param event_spec EventSpec The event specification from a module.
+--- @return EventPattern[] pairs A flat list of `{ event, pattern }` entries.
+--- @return integer count The number of entries in `pairs`.
+local function normalize_events(event_spec)
+    local event_spec_type = type(event_spec)
+    if event_spec_type == "string" then
+        return { { event = event_spec, pattern = "*" } }, 1
+    elseif event_spec_type ~= "table" then
+        return {}, 0
+    end
+
+    local result = {}
+    local n = 0
+
+    for ev, pattern in pairs(event_spec) do
+        local ev_type = type(ev)
+        if ev_type == "number" then
+            -- Array element: event name, default pattern.
+            n = n + 1
+            result[n] = { event = pattern, pattern = "*" }
+        elseif ev_type == "string" then
+            local pattern_type = type(pattern)
+            -- Map entry: event → pattern (string | array | fallback "*").
+            if pattern_type == "string" then
+                n = n + 1
+                result[n] = { event = ev, pattern = pattern }
+            elseif pattern_type == "table" then
+                for j = 1, #pattern do
+                    n = n + 1
+                    result[n] = { event = ev, pattern = pattern[j] }
+                end
+            else
+                n = n + 1
+                result[n] = { event = ev, pattern = "*" }
+            end
+        end
+    end
+
+    return result, n
+end
 
 --- Set up lazy loading for all modules with `ft` or `event` triggers.
 ---
---- Modules with `lazy = false` are loaded immediately.
---- Modules with `ft` are loaded on the matching FileType.
---- Modules with `event` are loaded on the matching event.
---- Modules with neither are left alone (manual `registry.require` only).
+--- - Modules with `lazy = false` are loaded immediately.
+--- - Modules with `ft` are loaded on the matching `FileType`.
+--- - Modules with `event` are loaded on the matching event (lazy.nvim-style).
+--- - Modules with none of the above are left alone (manual load only).
 ---
 --- Autocmds use `once = true` and self-destruct after firing.
 --- `loaded` is a module-level cache so that already-loaded modules can be
 --- re-loaded with the new palette when switching themes.
 local function setup_modules()
 
-    --- Normalize `spec.event` into a flat list of `{ event, pattern }` pairs.
-    ---
-    --- `event_spec` accepts three top-level forms:
-    ---
-    --- 1. **String** — a single event with the default pattern:
-    ---
-    ---    ```lua
-    ---    "TermOpen"
-    ---    -- → { { event = "TermOpen", pattern = "*" } }
-    ---    ```
-    ---
-    --- 2. **Array** — each element is an event name with the default pattern:
-    ---
-    ---    ```lua
-    ---    { "InsertEnter", "CmdlineEnter" }
-    ---    -- → { { event = "InsertEnter",  pattern = "*" },
-    ---    --     { event = "CmdlineEnter", pattern = "*" } }
-    ---    ```
-    ---
-    --- 3. **Map** — each key is an event name, each value is its pattern:
-    ---
-    ---    ```lua
-    ---    {
-    ---        User         = "LazyLoad",            -- single pattern
-    ---        FileType     = { "lua", "python" },   -- multiple patterns
-    ---        BufReadPost  = true,                  -- non-string/table → "*"
-    ---    }
-    ---    -- → { { event = "User",        pattern = "LazyLoad" },
-    ---    --     { event = "FileType",    pattern = "lua" },
-    ---    --     { event = "FileType",    pattern = "python" },
-    ---     --     { event = "BufReadPost", pattern = "*" } }
-    ---    ```
-    ---
-    --- A single table can also **mix array elements and map entries**:
-    ---
-    ---    ```lua
-    ---    {
-    ---        "InsertEnter",                        -- array element → "*"
-    ---        User        = "LazyLoad",             -- map entry → "LazyLoad"
-    ---        FileType    = { "lua", "python" },    -- map entry → two patterns
-    ---        BufReadPost = true,                   -- map entry → "*"
-    ---    }
-    ---    ```
-    ---
-    --- **Rules:**
-    ---   - Array elements (numeric keys) contribute an event with `pattern = "*"`.
-    ---   - Map entries (string keys) contribute an event whose pattern is:
-    ---       - the string value, if the value is a string;
-    ---       - each element, if the value is an array of strings;
-    ---       - `"*"`, for any other value type.
-    ---   - Keys that are neither numbers nor strings are ignored.
-    ---
-    --- @param event_spec string|table The event specification from a module.
-    --- @return table[] pairs A flat list of `{ event: string, pattern: string }`.
-    local function normalize_events(event_spec)
-        if type(event_spec) == "string" then
-            return { { event = event_spec, pattern = "*" } }
-        end
-
-        if type(event_spec) ~= "table" then
-            return {}
-        end
-
-        local result = {}
-        local n = 0
-
-        for ev, pattern in pairs(event_spec) do
-            local ev_type = type(ev)
-            if ev_type == "number" then
-                -- Array element: event name, default pattern.
-                n = n + 1
-                result[n] = { event = pattern, pattern = "*" }
-            elseif ev_type == "string" then
-                local pattern_type = type(pattern)
-                -- Map entry: event → pattern (string | array | fallback "*").
-                if pattern_type == "string" then
-                    n = n + 1
-                    result[n] = { event = ev, pattern = pattern }
-                elseif pattern_type == "table" then
-                    for j = 1, #pattern do
-                        n = n + 1
-                        result[n] = { event = ev, pattern = pattern[j] }
-                    end
-                else
-                    n = n + 1
-                    result[n] = { event = ev, pattern = "*" }
-                end
-            end
-        end
-
-        return result
-    end
-
-
-    local group = augroup(PLUG_NAME, { clear = true })
     for name, mod in pairs(modules) do
         if not mod.enabled then
             goto continue
@@ -220,8 +197,9 @@ local function setup_modules()
 
         -- Event trigger (lazy.nvim-style)
         if mod.event then
-            local events = normalize_events(mod.event)
-            for _, ev in ipairs(events) do
+            local events, count = normalize_events(mod.event)
+            for i = 1, count do
+                local ev = events[i]
                 autocmd(ev.event, {
                     group = group,
                     pattern = ev.pattern,
@@ -240,24 +218,17 @@ local function setup_modules()
     end
 end
 
---- Enable the :Witch <style> user command.
-M.enable_switcher = function()
-    api.nvim_create_user_command("Witch", function(args)
-        M.load_palette(args.args)
-    end, { nargs = 1, force = true })
-end
-
---- Load the theme with the given configuration and style.
----@param palette_name string|nil
+--- Load the theme with the given palette name.
+--- @param palette_name string|nil Palette name. Falls back to `FALLBACK_PALETTE` if `nil`.
 M.load_palette = function(palette_name)
-    ---@type string
+    --- @type string
     palette_name = palette_name or FALLBACK_PALETTE
 
     if active_palette_name == palette_name then
         return
     end
 
-    --- Clear the highlight cache and reload the theme.
+    -- Clear the highlight cache and reload the theme.
     if g.colors_name then
         api.nvim_command("hi clear")
     end
@@ -272,15 +243,15 @@ M.load_palette = function(palette_name)
 
     -- Re-load modules that were already loaded under the previous palette.
     for name in pairs(loaded) do
-        loaded[name] = true
         load_module(name, active_palette, active_palette_name)
     end
 
     g.colors_name = PLUG_NAME .. "-" .. active_palette_name
+    api.nvim_exec_autocmds("User", {pattern = "WitchPaletteChanged", data = active_palette_name})
 end
 
 --- Set up the Witch plugin.
----@param opts table|nil
+--- @param opts table|nil User configuration options.
 M.setup = function(opts)
     if opts then
         config(opts)
@@ -291,7 +262,14 @@ M.setup = function(opts)
     setup_modules()
 
     if config.switcher then
-        M.enable_switcher()
+        api.nvim_create_user_command("Witch", function(args)
+            M.load_palette(args.args)
+        end, { nargs = 1, force = true })
+    end
+
+    local dim_config = config.dim
+    if dim_config.enabled then
+        require("witch.dim").setup(dim_config.excluded, dim_config.level, dim_config.bg)
     end
 end
 

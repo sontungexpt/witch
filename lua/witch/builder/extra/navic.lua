@@ -7,7 +7,7 @@ return function(palette, palette_name)
 		{ "AerialLine", link = "LspInlayHint" },
 	}
 
-	require("witch.builder.share.kind").link_kind({
+	require("witch.builder.shared.kind").link_kind({
 		"NavicIcons%s",
 		"Aerial%sIcon",
 	}, result)

@@ -14,7 +14,7 @@ return function(palette, palette_name)
 		{ "CmpItemKindTabNine", fg = palette.teal },
 	}
 
-	require("witch.builder.share.kind").link_kind({
+	require("witch.builder.shared.kind").link_kind({
 		"LspKind%s",
 		"CmpItemKind%s",
 	}, result)

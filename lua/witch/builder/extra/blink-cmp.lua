@@ -34,7 +34,7 @@ return function(palette, palette_name)
 		{ "BlinkCmpKind", fg = palette.blue },
 	}
 
-	require("witch.builder.share.kind").link_kind({
+	require("witch.builder.shared.kind").link_kind({
 		"BlinkCmpKind%s",
 	}, result)
 
