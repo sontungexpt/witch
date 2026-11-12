@@ -100,16 +100,16 @@ local config = {
         },
 
         todo = {
-
+            event = "BufReadPost",
         },
 
-        git = {
-
+        gitsigns = {
+            event = {
+                User = "GitSignsUpdate"
+            },
         },
 
-        dap = {
-
-        },
+        dap = {},
 
         diffview = {
             ft = "diffview",
@@ -122,15 +122,11 @@ local config = {
         navic = {
             ft = "navic",
         },
+
         scrollbar = {
             ft = "scrollbar",
         },
-
-        yanky = {
-
-        },
     },
-
 }
 
 --- Deep-merge `user` into `base`, preserving type consistency.

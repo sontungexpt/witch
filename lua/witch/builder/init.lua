@@ -13,10 +13,9 @@ local PATH = {
 	terminal = "witch.builder.extra.terminal",
 	indentline = "witch.builder.extra.indentline",
 	bracket = "witch.builder.extra.bracket",
-	yanky = "witch.builder.extra.yanky",
 
     todo = "witch.builder.extra.todo",
-	git = "witch.builder.extra.git",
+	gitsigns = "witch.builder.extra.gitsigns",
 	dap = "witch.builder.extra.dap",
 	telescope = "witch.builder.extra.telescope",
 
