@@ -6,28 +6,26 @@ Easy to use, easy to config, easy to extend.
 
 ## Features
 
-- 🎨 Beautiful built-in palettes: `dark`, `light`, `umber`, `parchment`.
-- 🧩 Per-module configuration — enable, disable, lazy-load, or override any highlight group.
-- ⚡ Lazy loading with lazy.nvim-style triggers: `ft`, `event`, `User`, or eager `lazy = false`.
-- 🎯 Batched autocmds — filetypes, `User` events, and pattern-less events share one autocmd per group.
-- 🪟 Dim inactive windows with per-filetype / per-buftype exclusion.
-- 🔌 Custom palettes — drop in your own color table.
-- 🧱 Custom modules — write your own highlight builder and hook it in.
-- 🔄 Hot-switch palettes at runtime with `:Witch <palette>`.
-- 👀 Incremental highlighting to keep startup fast.
+- 🎨 **Four built-in palettes** — dark, light, umber, parchment for any lighting condition
+- 🧩 **Modular by design** — load only the highlight groups you actually use
+- ⚡ **Lazy & fast** — modules load on demand, keeping startup snappy
+- 🪟 **Focus-friendly** — dim inactive windows so your buffer stands out
+- 🌈 **Your own colors** — define custom palettes and switch between them instantly
+- 🔧 **Fully extendable** — add custom highlight builders for any plugin
+- 🔄 **Live palette switching** — change colors on the fly with `:Witch <palette>`
 
 ## Preview
-
-The colors in the preview may appear different from those in your Vim due to potential errors during color conversion.
 
 ![witch](./docs/readme/preview1.png)
 
 https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0fa5895532
 
+> The colors in the preview may appear different from those in your Vim due to potential errors during color conversion.
+
 ## Requirements
 
-- Neovim >= 0.10 (uses `vim.islist`, `nvim_set_hl` with list-form highlights).
-- `termguicolors` (set automatically by `setup`).
+- **Neovim >= 0.10** — uses `vim.islist`, `nvim_set_hl` with list-form highlights
+- **`termguicolors`** — set automatically by `setup`
 
 ## Installation
 
@@ -60,7 +58,7 @@ require("witch").setup({
     -- Dim inactive windows.
     dim = {
         enabled = true,
-        level = 0.35,        -- 0 = fully dimmed, 1 = no dimming
+        level = 0.3,        -- 0 = fully dimmed, 1 = no dimming
         fade_bg = true,      -- also fade background groups
         excluded = {
             filetypes = { NvimTree = true },
@@ -68,29 +66,28 @@ require("witch").setup({
         },
     },
 
-    -- Per-module configuration. Each key is a module name; the value
-    -- is a `Module` table (see below).
+    -- Per-module configuration. Each key is a module name.
     modules = {
-        core = { lazy = false, enabled = true },
+        core       = { lazy = false, enabled = true },
         treesitter = { event = "FileType", enabled = true },
-        lsp = { event = "LspAttach", enabled = true },
+        lsp        = { event = "LspAttach", enabled = true },
         ["blink-cmp"] = { event = { "InsertEnter", "CmdlineEnter" }, enabled = true },
-        terminal = { event = "TermOpen", enabled = true },
-        bracket = { event = "CursorHold", enabled = true },
+        terminal   = { event = "TermOpen", enabled = true },
+        bracket    = { event = "CursorHold", enabled = true },
         indentline = { event = "CursorHold", enabled = true },
-        markdown = { ft = "markdown", enabled = true },
-        nvimtree = { ft = "NvimTree" },
-        neotree = { ft = "neotree" },
-        cmp = { event = { "InsertEnter", "CmdlineEnter" } },
-        dashboard = { lazy = false },
-        telescope = { ft = "TelescopePrompt" },
-        todo = { event = "BufReadPost" },
-        gitsigns = { event = { "BufReadPre", "BufNewFile" } },
-        dap = { event = "BufReadPost" },
-        diffview = { ft = "diffview" },
-        notify = { event = "UIEnter" },
-        navic = { event = "LspAttach" },
-        scrollbar = { lazy = false },
+        markdown   = { ft = "markdown", enabled = true },
+        nvimtree   = { ft = "NvimTree" },
+        neotree    = { ft = "neotree" },
+        cmp        = { event = { "InsertEnter", "CmdlineEnter" } },
+        dashboard  = { ft = "dashboard", lazy = false },
+        telescope  = { ft = "TelescopePrompt" },
+        todo       = { event = "BufReadPost" },
+        gitsigns   = { event = { User = "GitSignsUpdate" } },
+        dap        = { ft = "diffview" },
+        diffview   = { event = "CursorHold" },
+        notify     = { event = "CursorHold" },
+        navic      = { event = "LspAttach" },
+        scrollbar  = { event = "CursorHold" },
     },
 })
 ```
@@ -112,30 +109,30 @@ Each entry in `modules` is a `Module`:
 
 ### Built-in modules
 
-All modules below ship with Witch. Each maps to a `build` function under `lua/witch/theme/module/<name>.lua`; you can enable, disable, override triggers, or replace its `build` from `setup`.
+All modules below ship with Witch. Each maps to a `build` function under `lua/witch/builder/core/<name>.lua` or `lua/witch/builder/extra/<name>.lua`; you can enable, disable, override triggers, or replace its `build` from `setup`.
 
-| Name | Highlights |
-|------|------------|
-| `core` | Base editor groups — `Normal`, `Comment`, `Visual`, `Search`, `StatusLine`, popups, borders, etc. **Required** — every palette expects it. |
-| `treesitter` | Tree-sitter capture groups — `@function`, `@keyword`, `@variable`, `@type`, `@string`, … |
-| `lsp` | LSP semantic tokens and diagnostic groups (`DiagnosticError`, …). |
-| `blink-cmp` | [blink.cmp](https://github.com/Saghen/blink.cmp) completion menu. |
-| `cmp` | [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) completion menu (alternative to `blink-cmp`). |
-| `terminal` | `:terminal` buffer groups — `TermCursor`, terminal color table. |
-| `bracket` | [nvim-ts-autotag](https://github.com/windwp/nvim-ts-autotag)-style / rainbow bracket pairs. |
-| `indentline` | Indent guide characters (`IblIndent`, `IblScope`, …). |
-| `markdown` | Markdown-specific groups — headings, code blocks, links, tables. |
-| `nvimtree` | [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) explorer. |
-| `neotree` | [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim) explorer. |
-| `dashboard` | [dashboard-nvim](https://github.com/nvimdev/dashboard-nvim) start screen. |
-| `telescope` | [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) prompt, results, preview. |
-| `todo` | [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) — `TODO`, `FIXME`, `HACK`, … |
-| `gitsigns` | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) add/change/delete signs. |
-| `dap` | [nvim-dap](https://github.com/mfussenegger/nvim-dap) + [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui). |
-| `diffview` | [diffview.nvim](https://github.com/sindrets/diffview.nvim) diff panes. |
-| `notify` | [nvim-notify](https://github.com/rcarriga/nvim-notify) popups. |
-| `navic` | [nvim-navic](https://github.com/SmiteshP/nvim-navic) breadcrumb icons and text. |
-| `scrollbar` | [nvim-scrollbar](https://github.com/petertriho/nvim-scrollbar) scrollbar handles and marks. |
+| Name         | Highlights                                                                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `core`       | Base editor groups — `Normal`, `Comment`, `Visual`, `Search`, `StatusLine`, popups, borders, etc. **Required** — every palette expects it. |
+| `treesitter` | Tree-sitter capture groups — `@function`, `@keyword`, `@variable`, `@type`, `@string`, …                                                   |
+| `lsp`        | LSP semantic tokens and diagnostic groups (`DiagnosticError`, …).                                                                          |
+| `blink-cmp`  | [blink.cmp](https://github.com/Saghen/blink.cmp) completion menu.                                                                          |
+| `cmp`        | [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) completion menu (alternative to `blink-cmp`).                                              |
+| `terminal`   | `:terminal` buffer groups — `TermCursor`, terminal color table.                                                                            |
+| `bracket`    | [nvim-ts-autotag](https://github.com/windwp/nvim-ts-autotag)-style / rainbow bracket pairs.                                                |
+| `indentline` | Indent guide characters (`IblIndent`, `IblScope`, …).                                                                                      |
+| `markdown`   | Markdown-specific groups — headings, code blocks, links, tables.                                                                           |
+| `nvimtree`   | [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) explorer.                                                                      |
+| `neotree`    | [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim) explorer.                                                                  |
+| `dashboard`  | [dashboard-nvim](https://github.com/nvimdev/dashboard-nvim) start screen.                                                                  |
+| `telescope`  | [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) prompt, results, preview.                                               |
+| `todo`       | [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) — `TODO`, `FIXME`, `HACK`, …                                             |
+| `gitsigns`   | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) add/change/delete signs.                                                       |
+| `dap`        | [nvim-dap](https://github.com/mfussenegger/nvim-dap) + [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui).                             |
+| `diffview`   | [diffview.nvim](https://github.com/sindrets/diffview.nvim) diff panes.                                                                     |
+| `notify`     | [nvim-notify](https://github.com/rcarriga/nvim-notify) popups.                                                                             |
+| `navic`      | [nvim-navic](https://github.com/SmiteshP/nvim-navic) breadcrumb icons and text.                                                            |
+| `scrollbar`  | [nvim-scrollbar](https://github.com/petertriho/nvim-scrollbar) scrollbar handles and marks.                                                |
 
 To list them at runtime:
 
@@ -180,17 +177,17 @@ end
 
 ### Lazy-loading rules
 
-| `lazy` | `ft` / `event` | Behavior |
-|:------:|:----------------|:---------|
-| `false` | — | Loaded immediately during `setup`. |
-| `true`/`nil` | `ft = "x"` | Loaded on `FileType x` (or matching type already open at setup). |
-| `true`/`nil` | `event = "X"` | Loaded on event `X`. |
-| `true`/`nil` | `event = { "X", "Y" }` | Loaded on the first of `X`/`Y`. |
-| `true`/`nil` | `event = { X = true }` | Loaded on event `X`. |
-| `true`/`nil` | `event = { X = "pattern" }` | Loaded on `X pattern` (glob). |
-| `true`/`nil` | `event = { User = "Name" }` | Loaded on `User Name`. |
-| `true`/`nil` | `event = { User = { "A", "B" } }` | Loaded on `User A` or `User B`. |
-| `true`/`nil` | nothing | **Never loaded** — misleading config, will not fire. |
+|    `lazy`    | `ft` / `event`                    | Behavior                                                         |
+| :----------: | :-------------------------------- | :--------------------------------------------------------------- |
+|   `false`    | —                                 | Loaded immediately during `setup`.                               |
+| `true`/`nil` | `ft = "x"`                        | Loaded on `FileType x` (or matching type already open at setup). |
+| `true`/`nil` | `event = "X"`                     | Loaded on event `X`.                                             |
+| `true`/`nil` | `event = { "X", "Y" }`            | Loaded on the first of `X`/`Y`.                                  |
+| `true`/`nil` | `event = { X = true }`            | Loaded on event `X`.                                             |
+| `true`/`nil` | `event = { X = "pattern" }`       | Loaded on `X pattern` (glob).                                    |
+| `true`/`nil` | `event = { User = "Name" }`       | Loaded on `User Name`.                                           |
+| `true`/`nil` | `event = { User = { "A", "B" } }` | Loaded on `User A` or `User B`.                                  |
+| `true`/`nil` | nothing                           | **Never loaded** — misleading config, will not fire.             |
 
 Triggers are batched into a single autocmd per group (FileType, pattern-less events, `User` events). Glob-pattern events (`BufEnter = "*.lua"` etc.) are not batched — one autocmd per module, self-destructing after the first match.
 
@@ -198,12 +195,12 @@ Triggers are batched into a single autocmd per group (FileType, pattern-less eve
 
 ### Built-in
 
-| Name | Description |
-|------|-------------|
-| `dark` | Default dark palette. |
-| `light` | Light palette. |
-| `umber` | Warm dark palette. |
-| `parchment` | Warm light palette. |
+| Name        | Description           |
+| ----------- | --------------------- |
+| `dark`      | Default dark palette. |
+| `light`     | Light palette.        |
+| `umber`     | Warm dark palette.    |
+| `parchment` | Warm light palette.   |
 
 ### Custom
 
@@ -250,18 +247,18 @@ The `build` function is called every time the module is loaded **and** every tim
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
+| Command            | Description                                                                                                                 |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------- |
 | `:Witch <palette>` | Switch to the given palette. Falls back silently if the name is unknown. Tab-completes over all built-in + custom palettes. |
-| `:WitchDimToggle` | Toggle dimming of inactive windows. Only registered when `dim.enabled = true`, on the first `WinNew`. |
+| `:WitchDimToggle`  | Toggle dimming of inactive windows. Only registered when `dim.enabled = true`, on the first `WinNew`.                       |
 
 `g.colors_name` is set to `witch-<palette>` after each `:Witch`, so `:colorscheme` (no args) reports the active palette.
 
 ## Events
 
-| `User` event | Data | Fired when |
-|--------------|------|------------|
-| `WitchModuleLoaded` | module name | A module finishes building its highlights. |
+| `User` event          | Data         | Fired when                                                               |
+| --------------------- | ------------ | ------------------------------------------------------------------------ |
+| `WitchModuleLoaded`   | module name  | A module finishes building its highlights.                               |
 | `WitchPaletteChanged` | palette name | `:Witch <palette>` (or `require("witch").apply_palette(...)`) completes. |
 
 Example — react to a specific module:
@@ -291,17 +288,17 @@ witch.active_palette()         -- the raw palette table
 
 ## Migration from v1
 
-| v1 | v2 |
-|----|-----|
-| `theme.style = "dark"` | `palette = "dark"` |
-| `theme.enabled = true` | handled by per-module `enabled` |
+| v1                                  | v2                                                         |
+| ----------------------------------- | ---------------------------------------------------------- |
+| `theme.style = "dark"`              | `palette = "dark"`                                         |
+| `theme.enabled = true`              | handled by per-module `enabled`                            |
 | `theme.extras = { bracket = true }` | `modules = { bracket = { enabled = true, lazy = false } }` |
-| `theme.customs = { mod }` | `modules = { [name] = { build = fn } }` |
-| `theme.on_highlight = fn` | per-module `build` function |
-| `more_themes = { X = {} }` | `palletes = { X = {} }` |
-| `dim_inactive` | `dim` (same fields, plus `fade_bg`) |
-| `switcher` | removed (`:Witch` is always available) |
-| `User WitchHighlightDone` | `User WitchModuleLoaded` |
+| `theme.customs = { mod }`           | `modules = { [name] = { build = fn } }`                    |
+| `theme.on_highlight = fn`           | per-module `build` function                                |
+| `more_themes = { X = {} }`          | `palletes = { X = {} }`                                    |
+| `dim_inactive`                      | `dim` (same fields, plus `fade_bg`)                        |
+| `switcher`                          | removed (`:Witch` is always available)                     |
+| `User WitchHighlightDone`           | `User WitchModuleLoaded`                                   |
 
 ## Contributing
 
