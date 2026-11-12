@@ -1,1 +1,1 @@
-require("witch").load(require("witch.config").get_config())
+require("witch").apply_palette("dark")

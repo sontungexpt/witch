@@ -1,0 +1,123 @@
+--- A color value: hex string (`"#rrggbb"`) or 24-bit integer (`0xrrggbb`).
+--- @alias Color string|integer
+
+--- @class Palette
+---
+--- Backgrounds (dark → light).
+--- @field bg_0 Color Darkest (bars, sidebar).
+--- @field bg_1 Color Main background.
+--- @field bg_2 Color Elevated (floats).
+--- @field bg_3 Color Gutter.
+--- @field bg_4 Color Cursor line.
+--- @field bg_5 Color Visual selection.
+---
+--- Foregrounds.
+--- @field fg_0 Color Primary text.
+--- @field fg_1 Color Secondary text.
+---
+--- Semantic UI.
+--- @field bg Color Main background (alias of `bg_1`).
+--- @field bg_dark Color Darkest background (alias of `bg_0`).
+--- @field bg_float Color Elevated background (alias of `bg_2`).
+--- @field bg_bar Color Bar background (alias of `bg_0`).
+--- @field bg_visual Color Visual selection (alias of `bg_5`).
+--- @field bg_highlight Color Cursor line (alias of `bg_4`).
+--- @field bg_gutter Color Gutter (alias of `bg_3`).
+--- @field fg Color Primary text (alias of `fg_0`).
+--- @field fg_dark Color Secondary text (alias of `fg_1`).
+--- @field border Color Primary border.
+--- @field dark_border Color Darker border.
+--- @field graphite_border Color Subtle border.
+---
+--- Semantic syntax.
+--- @field comment Color Comment text.
+--- @field string Color String literal.
+--- @field operator Color Operator.
+---
+--- Semantic diagnostic.
+--- @field error Color Error.
+--- @field warn Color Warning.
+--- @field info Color Info.
+--- @field hint Color Hint.
+--- @field todo Color Todo.
+--- @field unnecessary Color Unnecessary code.
+---
+--- Red accents.
+--- @field red Color Base red.
+--- @field red1 Color Light red.
+--- @field red2 Color Dark red.
+---
+--- Orange accents.
+--- @field orange Color Base orange.
+--- @field orange1 Color Light orange.
+--- @field orange2 Color Dark orange.
+--- @field light_orange Color Light orange variant.
+---
+--- Yellow accents.
+--- @field yellow Color Base yellow.
+--- @field yellow1 Color Dark yellow.
+--- @field bright_yellow Color Light yellow.
+---
+--- Green accents.
+--- @field green Color Base green.
+--- @field green1 Color Light green.
+--- @field green2 Color Dark green.
+---
+--- Cyan accents.
+--- @field cyan Color Base cyan.
+--- @field cyan1 Color Dark cyan.
+--- @field cyan2 Color Light cyan.
+---
+--- Blue accents.
+--- @field blue Color Base blue.
+--- @field blue1 Color Light blue.
+--- @field blue2 Color Dark blue.
+---
+--- Purple accents.
+--- @field purple Color Base purple.
+--- @field purple1 Color Light purple.
+--- @field purple2 Color Dark purple.
+---
+--- Magenta accents.
+--- @field magenta Color Base magenta.
+--- @field magenta1 Color Light magenta.
+--- @field magenta2 Color Dark magenta.
+---
+--- Pink accents.
+--- @field pink Color Base pink.
+--- @field pink1 Color Dark pink.
+--- @field pink2 Color Darker pink.
+---
+--- Teal accents.
+--- @field teal Color Base teal.
+--- @field teal1 Color Light teal.
+--- @field teal2 Color Dark teal.
+---
+--- Link.
+--- @field link Color Link color.
+---
+--- Neutrals.
+--- @field black Color Pure black.
+--- @field white Color Pure white.
+--- @field gray Color Gray.
+--- @field graphite Color Graphite.
+--- @field light_gray Color Light gray.
+--- @field brown Color Brown.
+---
+--- Terminal (16 colors).
+--- @field term_0 Color ANSI black.
+--- @field term_1 Color ANSI red.
+--- @field term_2 Color ANSI green.
+--- @field term_3 Color ANSI yellow.
+--- @field term_4 Color ANSI blue.
+--- @field term_5 Color ANSI magenta.
+--- @field term_6 Color ANSI cyan.
+--- @field term_7 Color ANSI white.
+--- @field term_8 Color ANSI bright black.
+--- @field term_9 Color ANSI bright red.
+--- @field term_10 Color ANSI bright green.
+--- @field term_11 Color ANSI bright yellow.
+--- @field term_12 Color ANSI bright blue.
+--- @field term_13 Color ANSI bright magenta.
+--- @field term_14 Color ANSI bright cyan.
+--- @field term_15 Color ANSI bright white.
