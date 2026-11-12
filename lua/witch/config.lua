@@ -1,6 +1,8 @@
 local type, pairs = type, pairs
 local islist = vim.islist
 
+--- @alias PascalCaseString string
+
 --- @class Module
 --- @field enabled? boolean Whether the module is enabled.
 --- @field build? fun(palette: Palette, palette_name: string): table[] The highlight builder function.
@@ -20,7 +22,7 @@ local islist = vim.islist
 --- @class Config
 --- @field palette string Active palette name.
 --- @field modules table<string, Module> Per-module configuration overrides.
---- @field palletes table<string, Palette> User-defined custom palettes.
+--- @field palletes table<PascalCaseString, Palette> User-defined custom palettes. the keys must be PascalCase (e.g., "DarkPalette").
 --- @field dim DimConfig Configuration for dimming inactive windows.
 
 --- @class DimConfig
@@ -35,7 +37,7 @@ local config = {
     palletes = {},
     dim = {
         enabled = true,
-        level = 0.35,
+        level = 0.3,
         excluded = {
             filetypes = { NvimTree = true },
             buftypes = { nofile = true, prompt = true, terminal = true },

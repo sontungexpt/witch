@@ -24,7 +24,7 @@ local color = require("witch.util.color")
 
 --- @type Dim.Config
 local config = {
-	keep = 0.46,
+	keep = 0.7,
 	dim_bg = true,
 	excluded = { filetypes = {}, buftypes = {} },
 }
