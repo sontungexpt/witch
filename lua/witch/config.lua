@@ -47,18 +47,22 @@ local config = {
             lazy = false,
             enabled = true,
         },
+
         treesitter = {
             event = "FileType",
             enabled = true,
         },
+
         lsp = {
             event = "LspAttach",
             enabled = true,
         },
+
         ["blink-cmp"] = {
             enabled = true,
             event = { "InsertEnter", "CmdlineEnter" },
         },
+
         terminal = {
             enabled = true,
             event = "TermOpen",
@@ -109,22 +113,24 @@ local config = {
             },
         },
 
-        dap = {},
-
-        diffview = {
+        dap = {
             ft = "diffview",
         },
 
+        diffview = {
+            event = "CursorHold"
+        },
+
         notify = {
-            ft = "notify",
+            event = "CursorHold"
         },
 
         navic = {
-            ft = "navic",
+            event = "LspAttach"
         },
 
         scrollbar = {
-            ft = "scrollbar",
+            event = "CursorHold"
         },
     },
 }
