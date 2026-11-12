@@ -21,19 +21,27 @@ local islist = vim.islist
 --- @field palette string Active palette name.
 --- @field modules table<string, Module> Per-module configuration overrides.
 --- @field palletes table<string, Palette> User-defined custom palettes.
---- @field dim DimInactiveConfig Configuration for dimming inactive windows.
---- @field switcher boolean Whether the `:Witch` command is enabled.
+--- @field dim DimConfig Configuration for dimming inactive windows.
 
---- @class DimInactiveConfig
+--- @class DimConfig
 --- @field enabled boolean Whether dimming is active.
 --- @field level number Dim level from `0` to `1`.
 --- @field excluded table{ filetypes: table<string, boolean>, buftypes: table<string, boolean> } Buffers excluded from dimming.
---- @field bg boolean Whether to also fade background groups.
+--- @field fade_bg boolean Whether to also fade background groups.
 
 --- @type Config
 local config = {
     palette = "dark",
     palletes = {},
+    dim = {
+        enabled = true,
+        level = 0.35,
+        excluded = {
+            filetypes = { NvimTree = true },
+            buftypes = { nofile = true, prompt = true, terminal = true },
+        },
+        fade_bg = true,
+    },
     modules = {
         core = {
             lazy = false,
@@ -122,16 +130,7 @@ local config = {
 
         },
     },
-    dim = {
-        enabled = true,
-        level = 0.54,
-        excluded = {
-            filetypes = { NvimTree = true },
-            buftypes = { nofile = true, prompt = true, terminal = true },
-        },
-        bg = true,
-    },
-    switcher = true,
+
 }
 
 --- Deep-merge `user` into `base`, preserving type consistency.

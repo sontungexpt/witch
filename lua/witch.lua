@@ -15,6 +15,8 @@ local group = augroup(PLUG_NAME, { clear = true })
 local DEFAULT_PALETTES = {
     ["dark"] = "witch.palette.dark",
     ["light"] = "witch.palette.light",
+    ["umber"] = "witch.palette.umber",
+    ["parchment"] = "witch.palette.parchment",
 }
 local FALLBACK_PALETTE = "dark"
 
@@ -29,6 +31,33 @@ local PALETTE_DICT = setmetatable({}, {
         return palette
     end,
 })
+--- Get a sorted list of all available theme names (built-in + custom).
+--- @return string[]
+local function available_palette_names()
+    local names = {}
+    local seen = {}
+
+    -- 1. Add built-in themes
+    for name, _ in pairs(DEFAULT_PALETTES) do
+        names[#names + 1] = name
+        seen[name] = true
+    end
+
+    -- 2. Add custom themes from config
+    if config.palletes then
+        for name, _ in pairs(config.palletes) do
+            local lower_name = name:gsub("^%u", string.lower)
+            if not seen[lower_name] then
+                names[#names + 1] = lower_name
+                seen[lower_name] = true
+            end
+        end
+    end
+
+    table.sort(names)
+    return names
+end
+
 
 local active_palette_name
 
@@ -164,7 +193,6 @@ end
 --- `loaded` is a module-level cache so that already-loaded modules can be
 --- re-loaded with the new palette when switching themes.
 local function setup_modules()
-
     for name, mod in pairs(modules) do
         if not mod.enabled then
             goto continue
@@ -247,7 +275,8 @@ M.load_palette = function(palette_name)
     end
 
     g.colors_name = PLUG_NAME .. "-" .. active_palette_name
-    api.nvim_exec_autocmds("User", {pattern = "WitchPaletteChanged", data = active_palette_name})
+
+    api.nvim_exec_autocmds("User", { pattern = "WitchPaletteChanged", data = active_palette_name })
 end
 
 --- Set up the Witch plugin.
@@ -261,15 +290,36 @@ M.setup = function(opts)
     M.load_palette(config.palette)
     setup_modules()
 
-    if config.switcher then
-        api.nvim_create_user_command("Witch", function(args)
-            M.load_palette(args.args)
-        end, { nargs = 1, force = true })
-    end
+    api.nvim_create_user_command("Witch", function(args)
+        M.load_palette(vim.trim(args.args))
+    end, {
+        nargs = 1,
+        force = true,
+        complete = function(arg_lead)
+            return vim.tbl_filter(function(theme)
+                return vim.startswith(theme, arg_lead)
+            end, available_palette_names())
+        end,
+    })
 
     local dim_config = config.dim
     if dim_config.enabled then
-        require("witch.dim").setup(dim_config.excluded, dim_config.level, dim_config.bg)
+        autocmd("WinNew", {
+            once = true,
+            callback = function()
+                local dim = require("witch.dim")
+                dim.config(
+                    dim_config.excluded,
+                    dim_config.level,
+                    dim_config.fade_bg
+                )
+                dim.enable()
+                api.nvim_create_user_command("WitchDimToggle", dim.toggle, {
+                    desc = "Toggle Witch dimming",
+                    force = true
+                })
+            end,
+        })
     end
 end
 

@@ -200,4 +200,38 @@ M.lighten_int = function(color, amount, foreground)
 	return blend_int(color, foreground or BLEND_FG, 1 - amount)
 end
 
+--- Check if a color is perceived as light (high luminance).
+--- Uses the standard relative luminance formula.
+--- @param color string|integer|nil The color to check.
+--- @return boolean is_light True if the color is light, false if dark or invalid.
+M.is_light = function(color)
+	if color == nil then
+		return false
+	end
+
+	local c
+	if type(color) == "number" then
+		c = color
+	elseif type(color) == "string" then
+		c = parse(color)
+	else
+		return false
+	end
+
+	if not c then
+		return false
+	end
+
+	-- Extract R, G, B channels
+	local r = rshift(c, 16)
+	local g = band(rshift(c, 8), 255)
+	local b = band(c, 255)
+
+	-- Calculate perceived luminance (ITU-R BT.601)
+	local luminance = 0.299 * r + 0.587 * g + 0.114 * b
+
+	-- Standard threshold: > 128 is considered a light color.
+	return luminance > 128
+end
+
 return M
