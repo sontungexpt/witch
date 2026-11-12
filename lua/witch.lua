@@ -1,427 +1,298 @@
-local vim, type, require, ipairs, pairs = vim, type, require, ipairs, pairs
-local uv, g, api, defer_fn = (vim.uv or vim.loop), vim.g, vim.api, vim.defer_fn
-local hl, autocmd, augroup = api.nvim_set_hl, api.nvim_create_autocmd, api.nvim_create_augroup
-
-local PLUG_NAME = "witch"
-local PALETTE_DIR = "witch.palette."
-local MODULE_DIR = "witch.theme.module."
-local STARTUP_MODULE_DIR = "witch.theme.module.startup."
-local STARTUP_MODULES = {
-	"main",
-	"nvimtree",
-	"markdown",
-	"terminal",
-	"cmp",
-}
-
-local group_ids = {
-	[PLUG_NAME] = augroup(PLUG_NAME, { clear = true }),
-}
-local current_theme_style
-
-local dimmed_ns = nil -- dimmed_ns == nil means dim is disabled
-local dimmed_level = 0.46
+local vim = vim
+local type, require, ipairs, pairs = type, require, ipairs, pairs
+local g, api = vim.g, vim.api
+local nvim_set_hl, autocmd, augroup = api.nvim_set_hl, api.nvim_create_autocmd, api.nvim_create_augroup
 
 local M = {}
+local PLUG_NAME = "witch"
 
---- Get the global group ID, creating it if necessary.
---- @return number The global group ID.
-local function get_global_group_id()
-	return group_ids[PLUG_NAME]
-		or (function()
-			group_ids[PLUG_NAME] = augroup(PLUG_NAME, { clear = true })
-			return group_ids[PLUG_NAME]
-		end)()
-end
+local builder = require("witch.builder")
+local config = require("witch.config")
+local modules = config.modules
 
---- Generate a random unique name.
---- @return string A unique name.
-local function rand_unique_name()
-	---@diagnostic disable-next-line: undefined-field
-	return PLUG_NAME .. "_" .. uv.now() .. "_" .. math.random(100000, 999999)
-end
+local DEFAULT_PALETTES = {
+    ["dark"] = "witch.palette.dark",
+    ["light"] = "witch.palette.light",
+}
+local FALLBACK_PALETTE = "dark"
+---@type table<string, Palette>
+local PALETTE_DICT = setmetatable({}, {
+    __index = function(t, name)
+        local found_path = DEFAULT_PALETTES[name]
+        local palette = found_path and require(found_path)
+            -- The config palette name must be PascalCase (e.g. "DarkPalette")
+            or config.palletes[name:gsub("^%l", string.upper)]
+        rawset(t, name, palette)
+        return palette
+    end,
+})
 
+local active_palette_name
 --- Get the current theme style.
---- @return string The current theme style.
-function M.current_theme_style() return current_theme_style end
-
---- Get the color palette for the given style.
---- @param style string The name of the style.
---- @param configs table The configuration table.
---- @return table, string The color palette and the resolved style name.
-function M.get_palette(style, configs)
-	local default, palette = pcall(require, PALETTE_DIR .. style)
-	if default then return palette, style end
-
-	-- Check user custom themes, fallback to default
-	local pascal_style_theme = style:gsub("^%l", string.upper)
-
-	if configs.more_themes[pascal_style_theme] then
-		return configs.more_themes[pascal_style_theme], pascal_style_theme
-	else
-		local fallback_theme = configs.theme.fallback
-		require("witch.util.notify").warn(
-			"Theme " .. style .. " not found. Using default theme" .. fallback_theme
-		)
-		return require(PALETTE_DIR .. fallback_theme), fallback_theme
-	end
+--- @return string
+M.active_palette_name = function()
+    return active_palette_name or FALLBACK_PALETTE
 end
 
---- Asynchronously load a batch of syntax highlights.
---- @param syntaxs table The syntax highlight definitions.
---- @param batch_size number The number of highlights to process in each batch.
---- @param step_delay number The delay between batches.
---- @param module_name string The name of the module.
-local function async_load_syntax_batch(syntaxs, batch_size, step_delay, module_name)
-	local darken = require("witch.util").darken
-	local coroutine = coroutine
-	local co
-
-	local function resume_coroutine()
-		if coroutine.status(co) ~= "dead" then
-			local success, errorMsg = coroutine.resume(co)
-			if not success then require("witch.util.notify").error("Error in coroutine:", errorMsg) end
-		end
-	end
-
-	local highlight = function(group_name, styles)
-		hl(0, group_name, styles)
-
-		if dimmed_ns then
-			if group_name == "VertSplit" or group_name == "WinSeparator" then
-				hl(dimmed_ns, group_name, styles)
-			else
-				styles.fg = darken(styles.fg, dimmed_level)
-				styles.bg = darken(styles.bg, dimmed_level)
-				hl(dimmed_ns, group_name, styles)
-			end
-		end
-	end
-
-	co = coroutine.create(function()
-		if syntaxs[1] == nil then
-			local index = 1
-			for group_name, styles in pairs(syntaxs) do
-				highlight(group_name, styles)
-
-				index = index + 1
-				if index % (batch_size or 10) == 0 then
-					defer_fn(resume_coroutine, step_delay or 100)
-					coroutine.yield()
-				end
-			end
-		else
-			local len = #syntaxs
-			for i = 1, len do
-				highlight(syntaxs[i][1], syntaxs[i][2])
-				if i % (batch_size or 10) == 0 then
-					defer_fn(resume_coroutine, step_delay or 100)
-					coroutine.yield()
-				end
-			end
-		end
-
-		api.nvim_exec_autocmds("User", {
-			pattern = "WitchHighlightDone",
-			data = module_name,
-			modeline = false,
-		})
-	end)
-
-	resume_coroutine()
+--- Get the current palette.
+--- @return Palette
+M.active_palette = function()
+    return PALETTE_DICT[M.active_palette_name()]
 end
 
---- Highlight syntax using the provided syntax definition.
---- @param get_syntax function The function to get the syntax definitions.
---- @param palette table The color palette.
---- @param on_highlight function The callback function to apply additional highlight.
---- @param module_name string The name of the module.
-function M.highlight(get_syntax, palette, on_highlight, module_name)
-	local syntax = get_syntax(palette, current_theme_style)
+--- Cache of already-loaded module names for the current palette.
+--- Reset on every palette switch.
+---@type table<string, boolean>
+local loaded = {}
 
-	if type(syntax) == "table" then
-		if type(on_highlight) == "function" then
-			if syntax[1] ~= nil then
-				-- Create a lookup cache table for fast access
-				local lookup = {}
-				setmetatable(syntax, {
-					__index = function(_, k)
-						if lookup[k] then return lookup[k] end
-						for i = 1, #syntax do
-							local key = syntax[i][1]
-							local value = syntax[i][2]
-							lookup[key] = value
-							if key == k then return value end
-						end
-					end,
-					__newindex = function(_, k, v)
-						lookup[k] = v -- update cache
-						local len = #syntax
-						for i = 1, len do
-							if syntax[i][1] == k then
-								syntax[i][2] = v
-								return
-							end
-						end
-						syntax[len + 1] = { k, v }
-					end,
-				})
-			end
-			on_highlight(current_theme_style, palette, syntax)
-		end
+--- Apply a list of highlight definitions synchronously.
+---@param highlights table array of {group_name, opts} or dict {group_name = opts}
+---@param palette Palette
+---@param palette_name string
+---@param module_name string
+local function apply_highlights(highlights, palette, palette_name, module_name)
+    for i = 1, #highlights do
+        local hl = highlights[i]
+        local hl_name = hl[1]
+        hl[1] = nil -- remove group_name from entry because it is invalid field
+        nvim_set_hl(0, hl_name, hl)
+    end
 
-		async_load_syntax_batch(syntax, 35, 80, module_name)
-	end
+    api.nvim_exec_autocmds("User", { pattern = "WitchHighlightDone", data = module_name })
 end
 
---- Load and apply highlight for a module based on its configuration.
---- @param module table The module to load.
---- @param palette table The default color palette.
---- @param on_highlight function The callback function to apply highlight.
-local function load_module_highlight(module, palette, on_highlight)
-	local module_autocmd_group = augroup(rand_unique_name(), { clear = true })
-	local should_run_on_startup = true
+--- Load a single theme module by name using the registry.
+---@param name string module name
+---@param palette Palette
+---@param palette_name string
+local function load_module(name, palette, palette_name)
+    local module = modules[name]
+    if not module then
+        return
+    end
 
-	palette = module.palette or palette
-	on_highlight = module.on_highlight or on_highlight
-
-	local function apply_syntax(get_syntax)
-		if type(get_syntax) == "function" then
-			M.highlight(get_syntax, palette, on_highlight, module.name or "unknown")
-		else
-			M.highlight(module.syntax, palette, on_highlight, module.name or "unknown")
-		end
-	end
-
-	--- Create an autocommand for a module based on its configuration. The autocommand will be removed after the first run.
-	--- @param event table|string The event to trigger the autocommand.
-	--- @param callback function The callback function to execute. If the callback returns false, the autocommand will not be removed.
-	--- @param pattern string|table|nil The pattern to match for the autocommand.
-	--- @param new_group boolean|nil Whether to create a new group for the autocommand.
-	local create_autocmd = function(event, callback, pattern, new_group)
-		local group = new_group and augroup(rand_unique_name(), { clear = true }) or module_autocmd_group
-		group_ids[group] = group
-		autocmd(event, {
-			group = group,
-			pattern = pattern or "*",
-			callback = function(args)
-				if callback(args) ~= false then
-					api.nvim_del_augroup_by_id(group)
-					group_ids[group] = nil
-				end
-			end,
-		})
-	end
-
-	local filetypes = module.filetypes
-	if type(filetypes) == "table" then
-		should_run_on_startup = filetypes[1] == nil
-		for key, value in pairs(filetypes) do
-			if type(key) == "number" then
-				create_autocmd("FileType", apply_syntax, value)
-			else
-				create_autocmd("FileType", function() apply_syntax(value) end, key, true)
-			end
-		end
-	end
-
-	local buftypes = module.buftypes
-	if type(buftypes) == "table" then
-		if buftypes[1] ~= nil then
-			should_run_on_startup = false
-			create_autocmd("BufReadPost", function(args)
-				local buftype = api.nvim_get_option_value("buftype", { buf = args.buf })
-				for _, value in ipairs(buftypes) do
-					if buftype == value then
-						apply_syntax()
-						return true -- break the loop and cleanup the group
-					end
-				end
-				return false
-			end)
-		end
-		for key, value in pairs(buftypes) do
-			if type(value) == "function" then
-				create_autocmd("BufReadPost", function(args)
-					if api.nvim_get_option_value("buftype", { buf = args.buf }) == key then
-						apply_syntax(value)
-						return true
-					end
-					return false
-				end, "*", true)
-			end
-		end
-	end
-
-	local events = module.events
-	if type(events) == "table" then
-		should_run_on_startup = events[1] == nil
-		for key, value in pairs(events) do
-			if type(key) == "number" then
-				create_autocmd(value, apply_syntax)
-			elseif type(value) == "function" then
-				create_autocmd(key, function() apply_syntax(value) end, "*", true)
-			elseif
-				type(value) == "table"
-				and (type(value.pattern) == "table" or type(value.pattern) == "string")
-			then
-				if type(value.syntax) == "function" then
-					create_autocmd(key, function() apply_syntax(value.syntax) end, value.pattern, true)
-				else
-					should_run_on_startup = false
-					create_autocmd(key, apply_syntax, value.pattern)
-				end
-			end
-		end
-	end
-
-	if should_run_on_startup then apply_syntax() end
+    local b = module.build or builder.require(name)
+    if type(b) == "function" then
+        local highlights = b(palette, palette_name)
+        if type(highlights) == "table" then
+            apply_highlights(highlights, palette, palette_name, name)
+        end
+    end
 end
 
---- Load extra modules.
---- @param extras table The extra modules to load.
---- @param palette table The color palette.
---- @param on_highlight function The callback function to apply additional highlight.
-local function load_extra_modules(extras, palette, on_highlight)
-	--support for both table and array
-	for key, enabled in pairs(extras) do
-		if enabled then
-			local module_name = type(key) == "number" and enabled or key
-			local ok, module = pcall(require, MODULE_DIR .. module_name)
-			if ok then
-				load_module_highlight(module, palette, on_highlight)
-			else
-				require("witch.util.notify").warn("Extra module " .. module_name .. " not found")
-			end
-		end
-	end
+
+--- Set up lazy loading for all modules with `ft` or `event` triggers.
+---
+--- Modules with `lazy = false` are loaded immediately.
+--- Modules with `ft` are loaded on the matching FileType.
+--- Modules with `event` are loaded on the matching event.
+--- Modules with neither are left alone (manual `registry.require` only).
+---
+--- Autocmds use `once = true` and self-destruct after firing.
+--- `loaded` is a module-level cache so that already-loaded modules can be
+--- re-loaded with the new palette when switching themes.
+local function setup_modules()
+
+    --- Normalize `spec.event` into a flat list of `{ event, pattern }` pairs.
+    ---
+    --- `event_spec` accepts three top-level forms:
+    ---
+    --- 1. **String** — a single event with the default pattern:
+    ---
+    ---    ```lua
+    ---    "TermOpen"
+    ---    -- → { { event = "TermOpen", pattern = "*" } }
+    ---    ```
+    ---
+    --- 2. **Array** — each element is an event name with the default pattern:
+    ---
+    ---    ```lua
+    ---    { "InsertEnter", "CmdlineEnter" }
+    ---    -- → { { event = "InsertEnter",  pattern = "*" },
+    ---    --     { event = "CmdlineEnter", pattern = "*" } }
+    ---    ```
+    ---
+    --- 3. **Map** — each key is an event name, each value is its pattern:
+    ---
+    ---    ```lua
+    ---    {
+    ---        User         = "LazyLoad",            -- single pattern
+    ---        FileType     = { "lua", "python" },   -- multiple patterns
+    ---        BufReadPost  = true,                  -- non-string/table → "*"
+    ---    }
+    ---    -- → { { event = "User",        pattern = "LazyLoad" },
+    ---    --     { event = "FileType",    pattern = "lua" },
+    ---    --     { event = "FileType",    pattern = "python" },
+    ---     --     { event = "BufReadPost", pattern = "*" } }
+    ---    ```
+    ---
+    --- A single table can also **mix array elements and map entries**:
+    ---
+    ---    ```lua
+    ---    {
+    ---        "InsertEnter",                        -- array element → "*"
+    ---        User        = "LazyLoad",             -- map entry → "LazyLoad"
+    ---        FileType    = { "lua", "python" },    -- map entry → two patterns
+    ---        BufReadPost = true,                   -- map entry → "*"
+    ---    }
+    ---    ```
+    ---
+    --- **Rules:**
+    ---   - Array elements (numeric keys) contribute an event with `pattern = "*"`.
+    ---   - Map entries (string keys) contribute an event whose pattern is:
+    ---       - the string value, if the value is a string;
+    ---       - each element, if the value is an array of strings;
+    ---       - `"*"`, for any other value type.
+    ---   - Keys that are neither numbers nor strings are ignored.
+    ---
+    --- @param event_spec string|table The event specification from a module.
+    --- @return table[] pairs A flat list of `{ event: string, pattern: string }`.
+    local function normalize_events(event_spec)
+        if type(event_spec) == "string" then
+            return { { event = event_spec, pattern = "*" } }
+        end
+
+        if type(event_spec) ~= "table" then
+            return {}
+        end
+
+        local result = {}
+        local n = 0
+
+        for ev, pattern in pairs(event_spec) do
+            local ev_type = type(ev)
+            if ev_type == "number" then
+                -- Array element: event name, default pattern.
+                n = n + 1
+                result[n] = { event = pattern, pattern = "*" }
+            elseif ev_type == "string" then
+                local pattern_type = type(pattern)
+                -- Map entry: event → pattern (string | array | fallback "*").
+                if pattern_type == "string" then
+                    n = n + 1
+                    result[n] = { event = ev, pattern = pattern }
+                elseif pattern_type == "table" then
+                    for j = 1, #pattern do
+                        n = n + 1
+                        result[n] = { event = ev, pattern = pattern[j] }
+                    end
+                else
+                    n = n + 1
+                    result[n] = { event = ev, pattern = "*" }
+                end
+            end
+        end
+
+        return result
+    end
+
+
+    local group = augroup(PLUG_NAME, { clear = true })
+    for name, mod in pairs(modules) do
+        if not mod.enabled then
+            goto continue
+        end
+
+        -- Immediate load
+        if mod.lazy == false then
+            if not loaded[name] then
+                loaded[name] = true
+                load_module(name, M.active_palette(), M.active_palette_name())
+            end
+            goto continue
+        end
+
+        -- FileType trigger
+        if mod.ft then
+            local fts = type(mod.ft) == "table" and mod.ft or { mod.ft }
+            autocmd("FileType", {
+                group = group,
+                pattern = fts,
+                once = true,
+                callback = function()
+                    if not loaded[name] then
+                        loaded[name] = true
+                        load_module(name, M.active_palette(), M.active_palette_name())
+                    end
+                end,
+            })
+        end
+
+        -- Event trigger (lazy.nvim-style)
+        if mod.event then
+            local events = normalize_events(mod.event)
+            for _, ev in ipairs(events) do
+                autocmd(ev.event, {
+                    group = group,
+                    pattern = ev.pattern,
+                    once = true,
+                    callback = function()
+                        if not loaded[name] then
+                            loaded[name] = true
+                            load_module(name, M.active_palette(), M.active_palette_name())
+                        end
+                    end,
+                })
+            end
+        end
+
+        ::continue::
+    end
 end
 
---- Load custom modules.
---- @param customs table The custom modules to load.
---- @param palette table The color palette.
---- @param on_highlight function The callback function to apply additional highlight.
-local function load_custom_modules(customs, palette, on_highlight)
-	local read_only_colors = require("witch.util").read_only(palette)
-	for _, module in ipairs(customs) do
-		if type(module) == "table" then load_module_highlight(module, read_only_colors, on_highlight) end
-	end
-end
-
---- Switch to a different theme style.
---- @param configs table The configuration table.
---- @param new_style string The new theme style to switch to.
-function M.switch_style(configs, new_style)
-	if new_style ~= current_theme_style then M.load(configs, new_style) end
-end
-
---- Enable the theme switcher command.
---- @param configs table The configuration table.
-function M.enable_switcher(configs)
-	api.nvim_create_user_command("Witch", function(args) M.switch_style(configs, args.args) end, {
-		nargs = 1,
-	})
+--- Enable the :Witch <style> user command.
+M.enable_switcher = function()
+    api.nvim_create_user_command("Witch", function(args)
+        M.load_palette(args.args)
+    end, { nargs = 1, force = true })
 end
 
 --- Load the theme with the given configuration and style.
---- @param configs table The configuration table.
---- @param theme_style string|nil The theme style to load. If nil, the default style is used.
-function M.load(configs, theme_style)
-	if g.colors_name then api.nvim_command("hi clear") end
+---@param palette_name string|nil
+M.load_palette = function(palette_name)
+    ---@type string
+    palette_name = palette_name or FALLBACK_PALETTE
 
-	local theme_conf = configs.theme
-	local on_highlight = theme_conf.on_highlight
+    if active_palette_name == palette_name then
+        return
+    end
 
-	local palette = nil
+    --- Clear the highlight cache and reload the theme.
+    if g.colors_name then
+        api.nvim_command("hi clear")
+    end
 
-	palette, current_theme_style = M.get_palette(theme_style or theme_conf.style, configs)
+    local active_palette = PALETTE_DICT[palette_name]
+    if active_palette then
+        active_palette_name = palette_name
+    else
+        active_palette = PALETTE_DICT[FALLBACK_PALETTE]
+        active_palette_name = FALLBACK_PALETTE
+    end
 
-	if theme_conf.enabled then
-		for _, name in ipairs(STARTUP_MODULES) do
-			load_module_highlight(require(STARTUP_MODULE_DIR .. name), palette, on_highlight)
-		end
-	end
+    -- Re-load modules that were already loaded under the previous palette.
+    for name in pairs(loaded) do
+        loaded[name] = true
+        load_module(name, active_palette, active_palette_name)
+    end
 
-	if next(theme_conf.extras) then load_extra_modules(theme_conf.extras, palette, on_highlight) end
-	if next(theme_conf.customs) then load_custom_modules(theme_conf.customs, palette, on_highlight) end
-
-	g.colors_name = PLUG_NAME .. "-" .. current_theme_style
+    g.colors_name = PLUG_NAME .. "-" .. active_palette_name
 end
 
---- Enable dimming of inactive windows.
---- @param excluded table The table of excluded filetypes and buftypes.
-function M.enable_dim(excluded)
-	local is_excluded = function(bufnr)
-		return excluded.filetypes[api.nvim_get_option_value("filetype", { buf = bufnr })]
-			or excluded.buftypes[api.nvim_get_option_value("buftype", { buf = bufnr })]
-			or vim.tbl_contains(excluded.filetypes, api.nvim_get_option_value("filetype", { buf = bufnr }))
-			or vim.tbl_contains(excluded.buftypes, api.nvim_get_option_value("buftype", { buf = bufnr }))
-	end
-
-	-- Dim other windows when entering a window
-	-- (excluding the current window and the win that list in excluded)
-	local wins_dimmed = {}
-	local dim_wins = function(event)
-		if is_excluded(0) then
-			if event == "WinClosed" then
-				local id, _ = next(wins_dimmed)
-				if id then
-					api.nvim_win_set_hl_ns(id, 0)
-					wins_dimmed[id] = nil
-				end
-			end
-			return
-		end
-
-		local win_ids = api.nvim_list_wins()
-		local curr_win_id = api.nvim_get_current_win()
-
-		for _, win_id in ipairs(win_ids) do
-			if win_id ~= curr_win_id and not is_excluded(api.nvim_win_get_buf(win_id)) then
-				wins_dimmed[win_id] = true
-				api.nvim_win_set_hl_ns(win_id, dimmed_ns)
-			end
-		end
-		wins_dimmed[curr_win_id] = nil
-		api.nvim_win_set_hl_ns(curr_win_id, 0)
-	end
-
-	autocmd({ "WinEnter", "WinClosed" }, {
-		group = get_global_group_id(),
-		callback = function(args)
-			if args.event == "WinClosed" then wins_dimmed[api.nvim_get_current_win()] = nil end
-			defer_fn(function() dim_wins(args.event) end, 10) -- delay 10ms to make sure the window is completely loaded
-		end,
-	})
-end
-
---- Set up the Witch plugin with the user options.
---- @param opts UserConfig The user configuration options.
+--- Set up the Witch plugin.
+---@param opts table|nil
 M.setup = function(opts)
-	local configs = require("witch.config").setup(opts)
+    if opts then
+        config(opts)
+    end
+    vim.o.termguicolors = true
 
-	vim.opt.termguicolors = true
+    M.load_palette(config.palette)
+    setup_modules()
 
-	if configs.dim_inactive.enabled then
-		dimmed_ns = api.nvim_create_namespace(PLUG_NAME .. "_dimmed")
-		dimmed_level = configs.dim_inactive.level or dimmed_level
-
-		M.enable_dim(configs.dim_inactive.excluded)
-	end
-
-	M.load(configs)
-
-	if configs.switcher then M.enable_switcher(configs) end
-
-	autocmd("ColorSchemePre", {
-		group = get_global_group_id(),
-		callback = function()
-			for key, id in pairs(group_ids) do
-				api.nvim_del_augroup_by_id(id)
-				group_ids[key] = nil
-			end
-		end,
-	})
+    if config.switcher then
+        M.enable_switcher()
+    end
 end
 
 return M

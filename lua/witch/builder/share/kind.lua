@@ -1,4 +1,8 @@
-return {
+local type, require, ipairs, pairs = type, require, ipairs, pairs
+
+local M = {}
+
+local default_kinds = {
 	Array = { link = "@punctuation.bracket" },
 	Boolean = { link = "@boolean" },
 	Class = { link = "@type" },
@@ -34,3 +38,39 @@ return {
 	Variable = { link = "@variable" },
 	Value = { link = "@string" },
 }
+
+
+
+--- Precompute kind-based highlight links into an array of flat specs.
+---
+--- Each entry is `{ "GroupName", link = "Target" }` — no nested table.
+---
+---@param formatable_strings string|string[] Format strings like "CmpItemKind%s".
+---@param highlight table[] Array of `{ name, ...spec }` to append to.
+---@param kinds table|nil Kind definitions (default: `witch.theme.kind`).
+---@return table[] highlight The mutated array.
+M.link_kind = function(formatable_strings, highlight, kinds)
+	kinds = type(kinds) == "table" and kinds or default_kinds
+
+	local function link_prefix(formatable_string)
+		for kind, hl_opts in pairs(kinds) do
+			local entry = { formatable_string:format(kind) }
+			for k, v in pairs(hl_opts) do
+				entry[k] = v
+			end
+			highlight[#highlight + 1] = entry
+		end
+	end
+
+	if type(formatable_strings) == "string" then
+		link_prefix(formatable_strings)
+	elseif type(formatable_strings) == "table" then
+		for _, formatable_string in ipairs(formatable_strings) do
+			link_prefix(formatable_string)
+		end
+	end
+
+	return highlight
+end
+
+return M
