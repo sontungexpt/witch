@@ -40,26 +40,22 @@ local active_palette_name
 --- Get a sorted list of all available theme names (built-in + custom).
 --- @return string[]
 local function available_palette_names()
-    local names = {}
     local seen = {}
-
-    -- Add built-in themes
     for name, _ in pairs(BUILTIN_PALETTES) do
-        names[#names + 1] = name
         seen[name] = true
     end
 
     -- Add custom themes from config
     if config.palletes then
         for name, _ in pairs(config.palletes) do
-            local lower_name = name:gsub("^%u", string.lower)
-            if not seen[lower_name] then
-                names[#names + 1] = lower_name
-                seen[lower_name] = true
+            --- User provided palette name must be PascalCase (e.g., "DarkPalette")
+            if name:match("^%l") then
+                seen[name] = true
             end
         end
     end
 
+    local names = vim.tbl_keys(seen)
     table.sort(names)
     return names
 end

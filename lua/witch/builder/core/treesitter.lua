@@ -31,15 +31,15 @@ return function(palette, palette_name)
 		{ "@function.method.call", link = "Function" },
 		{ "@function.macro", link = "Macro" },
 		{ "@constructor", fg = palette.red },
-		{ "@constructor.tsx", fg = palette.blue1 },
 
+		{ "@constructor.tsx", fg = palette.blue1 },
 		-- ====================================================================
 		-- Treesitter — types
 		-- ====================================================================
 		{ "@type", link = "Type" },
 		{ "@type.builtin", fg = palette.blue2 },
-		{ "@type.definition", link = "Typedef" },
 		{ "@type.qualifier", link = "Keyword" },
+		{ "@type.definition", link = "Typedef" },
 
 		-- ====================================================================
 		-- Treesitter — keywords
@@ -57,8 +57,8 @@ return function(palette, palette_name)
 		{ "@keyword.modifier", link = "Keyword" },
 		{ "@keyword.operator", link = "Operator" },
 		{ "@keyword.repeat", link = "Repeat" },
-		{ "@keyword.return", link = "Keyword" },
 		{ "@keyword.storage", link = "StorageClass" },
+		{ "@keyword.return", link = "Keyword" },
 		{ "@keyword.type", link = "Keyword" },
 
 		-- ====================================================================
@@ -86,8 +86,6 @@ return function(palette, palette_name)
 		-- ====================================================================
 		{ "@comment", link = "Comment" },
 		{ "@comment.error", fg = palette.error },
-		{ "@comment.hint", fg = palette.hint },
-		{ "@comment.info", fg = palette.info },
 		{ "@comment.note", fg = palette.hint },
 		{ "@comment.todo", fg = palette.todo },
 		{ "@comment.warning", fg = palette.warn },
@@ -105,14 +103,13 @@ return function(palette, palette_name)
 		-- ====================================================================
 		{ "@tag", link = "Label" },
 		{ "@tag.attribute", link = "Identifier" },
-		{ "@tag.delimiter", link = "Delimiter" },
 		{ "@tag.tsx", fg = palette.red },
 		{ "@tag.delimiter.tsx", fg = palette.blue2 },
+		{ "@tag.delimiter", link = "Delimiter" },
 
 		-- ====================================================================
 		-- Treesitter — markup
 		-- ====================================================================
-		{ "@markup", link = "@none" },
 		{ "@markup.heading", link = "Title" },
 		{ "@markup.list", fg = palette.blue },
 		{ "@markup.list.checked", fg = palette.green },
@@ -123,11 +120,8 @@ return function(palette, palette_name)
 		{ "@markup.link.url", link = "Underlined" },
 		{ "@markup.math", link = "Special" },
 		{ "@markup.strong", bold = true },
-		{ "@markup.emphasis", italic = true },
 		{ "@markup.strikethrough", strikethrough = true },
 		{ "@markup.underline", underline = true },
-		{ "@markup.environment", link = "Macro" },
-		{ "@markup.environment.name", link = "Type" },
 
 		-- ====================================================================
 		-- Treesitter — diff
