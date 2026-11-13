@@ -33,7 +33,7 @@ local islist = vim.islist
 
 --- @type Config
 local config = {
-    palette = "dark",
+    palette = "umber",
     palletes = {},
     dim = {
         enabled = true,

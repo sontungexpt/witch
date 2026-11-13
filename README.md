@@ -220,9 +220,9 @@ Triggers are batched into a single autocmd per group (FileType, pattern-less eve
 
 | Name        | Description           |
 | ----------- | --------------------- |
-| `dark`      | Default dark palette. |
+| `dark`      | Dark palette. |
 | `light`     | Light palette.        |
-| `umber`     | Warm dark palette.    |
+| `umber`     | Default warm dark palette.    |
 | `parchment` | Warm light palette.   |
 | `norturne`  | Cool dark palette.    |
 
