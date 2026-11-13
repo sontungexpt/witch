@@ -65,6 +65,11 @@ local config = {
             event = "TermOpen",
         },
 
+        markdown = {
+            enabled = true,
+            ft = "markdown",
+        },
+
         ["blink-cmp"] = {
             enabled = true,
             event = { "InsertEnter", "CmdlineEnter" },
@@ -80,10 +85,6 @@ local config = {
             event = "CursorHold",
         },
 
-        markdown = {
-            enabled = true,
-            ft = "markdown",
-        },
 
         nvimtree = {
             ft = "NvimTree",
@@ -100,7 +101,6 @@ local config = {
         },
 
         dap = {
-            ft = "diffview",
         },
 
         diffview = {
@@ -112,7 +112,7 @@ local config = {
         },
 
         noice = {
-            event = "CmdlineEnter",
+            event = "CursorHold"
         },
 
         navic = {

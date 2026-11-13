@@ -7,19 +7,21 @@ local PATH = {
 	treesitter = "witch.builder.core.treesitter",
 	lsp = "witch.builder.core.lsp",
 	terminal = "witch.builder.core.terminal",
+	markdown = "witch.builder.core.markdown",
 
 	-- Extra
 	["blink-cmp"] = "witch.builder.extra.blink-cmp",
-	markdown = "witch.builder.extra.markdown",
+	cmp = "witch.builder.extra.cmp",
+
+	nvimtree = "witch.builder.extra.nvimtree",
+
 	indentline = "witch.builder.extra.indentline",
 	bracket = "witch.builder.extra.bracket",
 
 	gitsigns = "witch.builder.extra.gitsigns",
+
 	dap = "witch.builder.extra.dap",
 
-	nvimtree = "witch.builder.extra.nvimtree",
-
-	cmp = "witch.builder.extra.cmp",
 	diffview = "witch.builder.extra.diffview",
 	notify = "witch.builder.extra.notify",
 	navic = "witch.builder.extra.navic",
