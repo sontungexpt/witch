@@ -31,6 +31,7 @@ return {
     bg_float   = 0x292f39,
     bg_panel   = 0x262b35,
     bg_bar     = 0x1b1f27,
+    bg_block   = 0x1b1f27,
 
     -- Editor interaction
     bg_visual       = 0x303947,

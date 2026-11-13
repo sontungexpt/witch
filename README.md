@@ -6,7 +6,7 @@ Easy to use, easy to config, easy to extend.
 
 ## Features
 
-- 🎨 **Five built-in palettes** — dark, light, umber, parchment, norturne for any lighting condition
+- 🎨 **Five built-in palettes** — umber, dark, light, parchment, nocturne for any lighting condition
 - 🧩 **Modular by design** — load only the highlight groups you actually use
 - ⚡ **Lazy & fast** — modules load on demand, keeping startup snappy
 - 🪟 **Focus-friendly** — dim inactive windows so your buffer stands out
@@ -49,7 +49,7 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
 require("witch").setup({ palette = "dark" })
 ```
 
-Switch palettes anytime with `:Witch light`, `:Witch umber`, or `:Witch parchment`. Tab-completion works over all built-in and custom palettes.
+Switch palettes anytime with `:Witch light`, `:Witch umber`, or `:Witch parchment`. Tab-completion works over all built-in palettes.
 
 ## Installation
 
@@ -78,12 +78,12 @@ Full example with every option:
 ```lua
 require("witch").setup({
     -- Active palette name.
-    -- Built-in: "dark", "light", "umber", "parchment", "norturne".
-    -- Custom: any key you define in `palletes` (lowercased).
-    palette = "dark",
+    -- Built-in: "umber" (default), "dark", "light", "parchment", "nocturne".
+    -- Custom: reference your `palletes` key with the first letter lowercased.
+    palette = "umber",
 
-    -- User-defined custom palettes. Keys must be PascalCase
-    -- (e.g., `MyPalette`).
+    -- User-defined custom palettes. Keys must start with an uppercase
+    -- letter (e.g., `MyPalette`) and are referenced as `myPalette`.
     palletes = {},
 
     -- Dim inactive windows.
@@ -97,7 +97,8 @@ require("witch").setup({
         },
     },
 
-    -- Per-module configuration. Each key is a module name.
+    -- Per-module configuration. Enabled by default:
+    -- core, treesitter, lsp, terminal, markup, blink-cmp, bracket, indentline.
     modules = {
         core       = { lazy = false, enabled = true },
         treesitter = { event = "FileType", enabled = true },
@@ -106,12 +107,13 @@ require("witch").setup({
         terminal   = { event = "TermOpen", enabled = true },
         bracket    = { event = "CursorHold", enabled = true },
         indentline = { event = "CursorHold", enabled = true },
-        markdown   = { ft = "markdown", enabled = true },
+        markup     = { ft = { "markdown", "latex", "tex", "html", "typst", "org", "rst", "xml" }, enabled = true },
+
+        -- Disabled by default — add `enabled = true` to use them.
         nvimtree   = { ft = "NvimTree" },
         cmp        = { event = { "InsertEnter", "CmdlineEnter" } },
-        telescope  = { ft = "TelescopePrompt" },
         gitsigns   = { event = { User = "GitSignsUpdate" } },
-        dap        = { ft = "diffview" },
+        dap        = {},
         diffview   = { event = "CursorHold" },
         notify     = { event = "CursorHold" },
         navic      = { event = "LspAttach" },
@@ -119,7 +121,9 @@ require("witch").setup({
 })
 ```
 
-`setup` may be called multiple times — each call merges your options into the existing config and clears the plugin's augroup before rebuilding lazy-load autocmds.
+`setup` may be called multiple times — each call merges your options into the existing config and clears the plugin's augroup before rebuilding lazy-load autocmds. Witch also enables `termguicolors` automatically during setup.
+
+The `dim.excluded` tables accept either a map (`{ NvimTree = true }`) or a plain list (`{ "NvimTree" }`).
 
 ## Modules
 
@@ -148,7 +152,7 @@ All modules below ship with Witch. Each maps to a `build` function under `lua/wi
 | `terminal`   | `:terminal` buffer groups — `TermCursor`, terminal color table.                                                                            |
 | `bracket`    | [nvim-ts-autotag](https://github.com/windwp/nvim-ts-autotag)-style / rainbow bracket pairs.                                                |
 | `indentline` | Indent guide characters (`IblIndent`, `IblScope`, …).                                                                                      |
-| `markdown`   | Markdown-specific groups — headings, code blocks, links, tables.                                                                           |
+| `markup`     | Markup-specific groups — headings, code blocks, links, tables.                                                                           |
 | `nvimtree`   | [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) explorer.                                                                      |
 | `gitsigns`   | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) add/change/delete signs.                                                       |
 | `dap`        | [nvim-dap](https://github.com/mfussenegger/nvim-dap) + [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui).                             |
@@ -209,6 +213,7 @@ end
 | `true`/`nil` | `event = { X = "pattern" }`       | Loaded on `X pattern` (glob).                                    |
 | `true`/`nil` | `event = { User = "Name" }`       | Loaded on `User Name`.                                           |
 | `true`/`nil` | `event = { User = { "A", "B" } }` | Loaded on `User A` or `User B`.                                  |
+| `true`/`nil` | `event = { BufEnter = { "*.lua", "*.md" } }` | Loaded on the first matching glob pattern.             |
 | `true`/`nil` | nothing                           | **Never loaded** — misleading config, will not fire.             |
 
 Triggers are batched into a single autocmd per group (FileType, pattern-less events, `User` events). Glob-pattern events (`BufEnter = "*.lua"` etc.) are not batched — one autocmd per module, self-destructing after the first match.
@@ -219,38 +224,51 @@ Triggers are batched into a single autocmd per group (FileType, pattern-less eve
 
 | Name        | Description           |
 | ----------- | --------------------- |
+| `umber`     | Warm dark palette (default).  |
 | `dark`      | Dark palette. |
 | `light`     | Light palette.        |
-| `umber`     | Default warm dark palette.    |
 | `parchment` | Warm light palette.   |
-| `norturne`  | Cool dark palette.    |
+| `nocturne`  | Cool dark palette.    |
 
 ### Custom
 
-Add your own palette under `palletes`. Keys must be PascalCase (referenced as lowercased at runtime):
+Add your own palette under `palletes`. Keys must start with an uppercase letter; at runtime the palette is referenced by the same name with the first letter lowercased (key `MyPalette` → `myPalette`):
 
 ```lua
 require("witch").setup({
     palletes = {
-        -- Key must be PascalCase; referenced as `mypalette` at runtime.
+        -- Key starts with an uppercase letter; referenced as `myPalette`.
         MyPalette = {
             bg       = "#161f31",
             fg       = "#c9d8ee",
             comment  = "#5c6a7d",
             keyword  = "#c678dd",
-            -- override only the fields you want to change;
-            -- the rest inherit from the base palette
+            -- ...
         },
     },
-    palette = "mypalette",
+    palette = "myPalette",
 })
 ```
 
-Any key added to `palletes` is discoverable via tab-completion on `:Witch`.
+> **Important:** a custom palette is used **as-is** — its fields are **not** merged with any built-in palette. Any field you leave out simply stays unset, so groups relying on it render without that color. The easiest way to build one is to start from a built-in palette and extend it:
+
+```lua
+local palette = require("witch.palette.umber")
+
+require("witch").setup({
+    palletes = {
+        MyPalette = vim.tbl_extend("force", palette, {
+            comment = "#5c6a7d",   -- override only what you want
+            keyword = "#c678dd",
+        }),
+    },
+    palette = "myPalette",
+})
+```
 
 ### Palette schema
 
-Every palette is a single flat table of named color slots. You can override **any** field; unspecified fields fall back to the active built-in palette.
+Every palette is a single flat table of named color slots. A palette must define every field it needs — see the `vim.tbl_extend` recipe above for how to derive one from a built-in palette.
 
 #### `Color`
 
@@ -276,6 +294,7 @@ palletes = {
 | --- | --- |
 | `bg`                | Canonical editor background. |
 | `bg_float`          | Floating windows and secondary popups. |
+| `bg_block`          | Recessed surfaces — code blocks, terminal, quotes. |
 | `bg_panel`          | Sidebars, explorers and secondary panels. |
 | `bg_bar`            | Statusline, tabline and winbar. |
 | `bg_gutter`         | Sign column, line number and fold column. |
@@ -414,16 +433,18 @@ Raw hues for reusable semantic accents. Use only when no dedicated semantic fiel
 
 ### 💡 Example: dim unused functions
 
-`unnecessary` is the slot mapped to `DiagnosticUnnecessary` — the group LSP uses to flag unused functions, variables and parameters. To dim them, override just one field:
+`unnecessary` is the slot mapped to `DiagnosticUnnecessary` — the group LSP uses to flag unused functions, variables and parameters. To dim them, derive a palette from a built-in and override just that field:
 
 ```lua
+local palette = require("witch.palette.umber")
+
 require("witch").setup({
     palletes = {
-        MyPalette = {
+        MyPalette = vim.tbl_extend("force", palette, {
             unnecessary = "#565f89",  -- e.g. reuse your comment color
-        },
+        }),
     },
-    palette = "MyPalette",
+    palette = "myPalette",
 })
 ```
 
@@ -431,7 +452,7 @@ Because Witch already maps `unnecessary` → `DiagnosticUnnecessary` in the `lsp
 
 ### 🔍 Inspecting the active palette
 
-Print the resolved palette (after merge with defaults):
+Print the active palette table:
 
 ```vim
 :lua vim.print(require("witch").active_palette())
@@ -441,8 +462,8 @@ Or use `:Inspect` on a specific token to see which highlight group and color is 
 
 ### 📌 Notes
 
-- Overriding palette fields is the **recommended** way to customize — colors propagate consistently across the whole UI (diagnostics, floats, borders, diffs, …).
-- Every field is **optional**; declare only what you want to change. The rest inherit from the active built-in palette.
+- Overriding palette fields is the **recommended** way to customize — colors propagate consistently across the whole UI (diagnostics, floats, borders, diffs, …). Use the `vim.tbl_extend("force", builtin, { ... })` recipe from the [Custom](#custom) section to tweak a built-in palette.
+- To build a palette from scratch, copy a built-in file from `lua/witch/palette/` and edit it — it doubles as a reference for every available slot.
 - If you want a completely different variant (e.g. a new light mode), override the `bg*` and `fg*` fields first — they drive most of the visual difference.
 
 ## Custom modules
@@ -470,12 +491,13 @@ The `build` function is called every time the module is loaded **and** every tim
 
 ## Commands
 
-| Command            | Description                                                                                                                 |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------- |
-| `:Witch <palette>` | Switch to the given palette. Falls back silently if the name is unknown. Tab-completes over all built-in + custom palettes. |
-| `:WitchDimToggle`  | Toggle dimming of inactive windows. Only registered when `dim.enabled = true`, on the first `WinNew`.                       |
+| Command                       | Description                                                                                                                 |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `:Witch <palette>`            | Switch to the given palette. An unknown name falls back to `dark`. Tab-completes over built-in palettes.                    |
+| `:colorscheme witch-<palette>` | Standard colorscheme entry points (`witch-dark`, `witch-light`, `witch-umber`, `witch-parchment`, `witch-nocturne`) — equivalent to `:Witch <palette>` after setup. |
+| `:WitchDimToggle`             | Toggle dimming of inactive windows. Only registered when `dim.enabled = true`, on the first `WinNew`.                       |
 
-`g.colors_name` is set to `witch-<palette>` after each `:Witch`, so `:colorscheme` (no args) reports the active palette. `:Witch` (and `apply_palette`) also emits a `ColorScheme` autocmd with `witch-<palette>` as the pattern, so ecosystem plugins (lualine, nvim-tree, …) pick up the switch.
+`g.colors_name` is set to `witch-<palette>` after each palette switch, so `:colorscheme` (no args) reports the active palette. Every switch (via `:Witch <palette>` or `apply_palette`) also emits a `ColorScheme` autocmd with `witch-<palette>` as the pattern, so ecosystem plugins (lualine, nvim-tree, …) pick up the switch.
 
 ## Events
 

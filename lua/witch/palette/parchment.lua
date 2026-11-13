@@ -38,6 +38,7 @@ return {
 	bg_panel          = 0xe7e3d9,
 	bg_bar            = 0xd6d1c6,
 	bg_gutter         = 0xd6d1c6,
+	bg_block          = 0xd6d1c6,
 
 	bg_visual         = 0xc7c1b3,
 	bg_popup_selected = 0xc7c1b3,

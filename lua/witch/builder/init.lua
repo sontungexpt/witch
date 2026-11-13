@@ -7,7 +7,7 @@ local PATH = {
 	treesitter = "witch.builder.core.treesitter",
 	lsp = "witch.builder.core.lsp",
 	terminal = "witch.builder.core.terminal",
-	markdown = "witch.builder.core.markdown",
+	markup = "witch.builder.core.markup",
 
 	-- Extra
 	["blink-cmp"] = "witch.builder.extra.blink-cmp",

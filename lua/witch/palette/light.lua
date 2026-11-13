@@ -8,6 +8,7 @@ return {
 	bg                = 0xf3f4f6,
 	bg_float          = 0xf9fafb,
 	bg_panel          = 0xf9fafb,
+	bg_block          = 0xe5e7eb,
 	bg_bar            = 0xe5e7eb,
 	bg_gutter         = 0xd1d5db,
 

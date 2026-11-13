@@ -65,9 +65,21 @@ local config = {
             event = "TermOpen",
         },
 
-        markdown = {
+        markup = {
             enabled = true,
-            ft = "markdown",
+            ft = {
+                "markdown",
+                "latex",
+                "tex",
+                "html",
+                "typst",
+                "org",
+                "rst",
+                "xml",
+                -- "pandoc",
+                -- "rmd",
+                -- "quarto",
+            },
         },
 
         ["blink-cmp"] = {

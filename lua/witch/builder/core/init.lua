@@ -1,3 +1,5 @@
+--- @param palette Palette
+--- @param palette_name string
 return function(palette, palette_name)
 	return {
 		-- ====================================================================
@@ -6,8 +8,9 @@ return function(palette, palette_name)
 		-- ====================================================================
 
 		{ "Normal", bg = palette.bg, fg = palette.fg },
-		{ "NormalNC", bg = palette.bg, fg = palette.fg },
 
+		-- Non-current windows and the message area share the normal surface.
+		{ "NormalNC", link = "Normal" },
 		{ "NormalFloat", bg = palette.bg_float, fg = palette.fg },
 
 		{
@@ -17,20 +20,30 @@ return function(palette, palette_name)
 			bold = true,
 		},
 
+		{ "FloatFooter", link = "FloatTitle" },
+
 		{
 			"FloatBorder",
 			bg = palette.bg_float,
 			fg = palette.border_subtle,
 		},
 
+		-- Floating-window shadow (border = "shadow").
+		{ "FloatShadow", bg = palette.bg_block },
+		{ "FloatShadowThrough", bg = palette.bg_block },
+
 		-- Statusline and tabline.
 		{ "StatusLine", bg = palette.bg_bar, fg = palette.fg_muted },
 		{ "StatusLineNC", bg = palette.bg_bar, fg = palette.fg_subtle },
 
+		{ "StatusLineTerm", link = "StatusLine" },
+		{ "StatusLineTermNC", link = "StatusLineNC" },
+
 		{ "WinBar", link = "StatusLine" },
 		{ "WinBarNC", link = "StatusLineNC" },
 
-		{ "TabLine", bg = palette.bg_bar, fg = palette.fg_muted },
+		-- Tabline matches the statusline surface.
+		{ "TabLine", link = "StatusLine" },
 
 		{
 			"TabLineSel",
@@ -61,8 +74,11 @@ return function(palette, palette_name)
 
 		{ "TermCursor", link = "Cursor" },
 		{ "lCursor", link = "Cursor" },
+		{ "CursorIM", link = "Cursor" },
 
 		{ "LineNr", fg = palette.fg_muted },
+		{ "LineNrAbove", link = "LineNr" },
+		{ "LineNrBelow", link = "LineNr" },
 
 		{
 			"CursorLineNr",
@@ -80,6 +96,12 @@ return function(palette, palette_name)
 			bg = palette.bg_cursorline,
 		},
 
+		-- Column ruler set via 'colorcolumn'.
+		{
+			"ColorColumn",
+			bg = palette.bg_block,
+		},
+
 		-- Fold column must not create a contrasting vertical strip.
 		{
 			"FoldColumn",
@@ -92,6 +114,10 @@ return function(palette, palette_name)
 			bg = palette.bg_panel,
 			fg = palette.fg_muted,
 		},
+
+		-- Cursorline indicators for fold/sign columns.
+		{ "CursorLineFold", link = "FoldColumn" },
+		{ "CursorLineSign", link = "SignColumn" },
 
 		-- ====================================================================
 		-- Selection, search and spelling
@@ -163,8 +189,9 @@ return function(palette, palette_name)
 		{ "Identifier", fg = palette.variable },
 		{ "Function", fg = palette.fn },
 
+		-- Labels and tags share the "marker" accent.
 		{ "Label", fg = palette.brown },
-		{ "Tag", fg = palette.brown },
+		{ "Tag", link = "Label" },
 
 		-- Statements and keywords.
 		{ "Keyword", fg = palette.keyword },
@@ -209,15 +236,30 @@ return function(palette, palette_name)
 
 		{ "ErrorMsg", fg = palette.error },
 		{ "WarningMsg", fg = palette.warn },
+		{ "OkMsg", fg = palette.green },
+
+		-- Error/status message variants and health checks share the
+		-- corresponding semantic source-of-truth group.
+		-- StderrMsg/StdoutMsg are introduced in Neovim 0.12.
+		-- Defining them is harmless on older versions (no effect).
+		{ "StderrMsg", link = "ErrorMsg" },
+		{ "StdoutMsg", fg = palette.fg_muted },
+
+		-- health* groups were replaced by Diagnostic* groups in Neovim 0.11+.
+		-- The links below are the canonical, version-proof equivalents.
+		{ "DiagnosticError", link = "ErrorMsg" },
+		{ "DiagnosticWarn", link = "WarningMsg" },
+		{ "DiagnosticOk", link = "OkMsg" },
 
 		{ "ModeMsg", fg = palette.fg_muted },
-		{ "MsgArea", fg = palette.fg },
+		{ "MsgArea", link = "Normal" },
 
 		{ "MsgSeparator", fg = palette.border_subtle },
 
+		-- "More", prompt and directory listing all use the link accent.
 		{ "MoreMsg", fg = palette.link },
-		{ "Question", fg = palette.link },
-		{ "Directory", fg = palette.link },
+		{ "Question", link = "MoreMsg" },
+		{ "Directory", link = "MoreMsg" },
 
 		{
 			"Title",
@@ -230,7 +272,7 @@ return function(palette, palette_name)
 		-- ====================================================================
 
 		{ "NonText", fg = palette.fg_invisible },
-		{ "Whitespace", fg = palette.fg_invisible },
+		{ "Whitespace", link = "NonText" },
 		{ "SpecialKey", link = "Whitespace" },
 
 		{ "Conceal", fg = palette.fg_muted },
@@ -251,6 +293,33 @@ return function(palette, palette_name)
 			fg = palette.fg_strong,
 		},
 
+		-- Item "kind" (Function, Variable, ...) inside the popup.
+		{ "PmenuKind", bg = palette.bg_float, fg = palette.fg_muted },
+		{
+			"PmenuKindSel",
+			bg = palette.bg_popup_selected,
+			fg = palette.fg_subtle,
+		},
+
+		-- Item "extra text" (source/annotation) inside the popup.
+		{ "PmenuExtra", bg = palette.bg_float, fg = palette.fg_subtle },
+		{
+			"PmenuExtraSel",
+			bg = palette.bg_popup_selected,
+			fg = palette.fg_muted,
+		},
+
+		-- Matched text within the popup menu (combined with Pmenu/PmenuSel).
+		-- PmenuMatch/PmenuMatchSel are available from Neovim 0.10+ (vim-patch:9.1.0476).
+		{ "PmenuMatch", fg = palette.orange, bold = true },
+		{ "PmenuMatchSel", fg = palette.yellow, bold = true },
+
+		{
+			"PmenuBorder",
+			bg = palette.bg_float,
+			fg = palette.border,
+		},
+
 		-- Scrollbar track blends into the floating window.
 		{
 			"PmenuSbar",
@@ -263,16 +332,50 @@ return function(palette, palette_name)
 			bg = palette.border_subtle,
 		},
 
-		{
-			"WildMenu",
-			bg = palette.bg_popup_selected,
-			fg = palette.fg_strong,
-		},
+		-- Popup-menu shadow (border = "shadow").
+		{ "PmenuShadow", bg = palette.bg_block },
+		{ "PmenuShadowThrough", bg = palette.bg_block },
+
+		-- Wildmenu selection mirrors the popup selection.
+		{ "WildMenu", link = "PmenuSel" },
 
 		{
 			"QuickFixLine",
 			bg = palette.bg_cursorline,
 			fg = palette.fg,
+		},
+
+		-- ====================================================================
+		-- Completion and snippets
+		-- ====================================================================
+
+		-- Matched text of the currently inserted completion.
+		-- ComplMatchIns is available from Neovim 0.10+ (vim-patch:9.1.0936).
+		{ "ComplMatchIns", link = "PmenuMatch" },
+
+		-- Text inserted when "preinsert" is in 'completeopt'.
+		{
+			"PreInsert",
+			fg = palette.fg_subtle,
+			italic = true,
+		},
+
+		-- Virtual text of the selected completion.
+		{ "ComplHint", fg = palette.fg_subtle, italic = true },
+		{ "ComplHintMore", link = "ComplHint" },
+
+		-- Snippet tabstops.
+		{
+			"SnippetTabstop",
+			bg = palette.bg_reference,
+			fg = palette.fg,
+		},
+
+		{
+			"SnippetTabstopActive",
+			bg = palette.bg_signature,
+			fg = palette.fg_strong,
+			bold = true,
 		},
 
 		-- ====================================================================
@@ -305,12 +408,6 @@ return function(palette, palette_name)
 			bold = true,
 		},
 
-		-- ====================================================================
-		-- Health
-		-- ====================================================================
-
-		{ "healthError", fg = palette.error },
-		{ "healthWarning", fg = palette.warn },
-		{ "healthSuccess", fg = palette.green },
+		{ "DiffTextAdd", link = "DiffText" },
 	}
 end

@@ -7,8 +7,9 @@
 --- UI SURFACES
 --- ========================================================================
 ---
---- @field bg                Color Canonical editor background.
---- @field bg_float          Color Floating windows and secondary popups.
+--- @field bg                Color Main editor background. Never pure #000/#fff.
+--- @field bg_float          Color Floats, popups, completion, folded lines.
+--- @field bg_block          Color Recessed surfaces: code blocks, terminal, quotes.
 --- @field bg_panel          Color Sidebars, explorers and secondary panels.
 --- @field bg_bar            Color Statusline, tabline and winbar.
 --- @field bg_gutter         Color Sign column, line number and fold column.

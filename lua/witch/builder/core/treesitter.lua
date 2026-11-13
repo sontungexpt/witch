@@ -11,7 +11,6 @@ return function(palette, palette_name)
 
 		{ "@module", fg = palette.namespace },
 		{ "@module.builtin", link = "@module" },
-		{ "@namespace.builtin", link = "@module" },
 
 		{ "@property", fg = palette.property },
 		{ "@variable.member", link = "@property" },
@@ -112,7 +111,7 @@ return function(palette, palette_name)
 		{ "@punctuation.special", link = "Special" },
 
 		-- ====================================================================
-		-- Tags
+		-- Tags (HTML, JSX, TSX, XML, Vue, Svelte)
 		-- ====================================================================
 
 		{ "@tag", link = "Tag" },
@@ -120,29 +119,6 @@ return function(palette, palette_name)
 		{ "@tag.tsx", link = "Type" },
 		{ "@tag.delimiter", link = "Delimiter" },
 		{ "@tag.delimiter.tsx", link = "Delimiter" },
-
-		-- ====================================================================
-		-- Markup
-		-- ====================================================================
-
-		{ "@markup.heading", link = "Title" },
-
-		{ "@markup.list", link = "Delimiter" },
-		{ "@markup.list.checked", fg = palette.green },
-		{ "@markup.list.unchecked", fg = palette.fg_muted },
-
-		-- Inline code and code blocks.
-		{ "@markup.raw", link = "String" },
-
-		{ "@markup.link", fg = palette.link },
-		{ "@markup.link.label", link = "@markup.link" },
-		{ "@markup.link.url", link = "Underlined" },
-
-		{ "@markup.math", link = "Special" },
-
-		{ "@markup.strong", bold = true },
-		{ "@markup.strikethrough", strikethrough = true },
-		{ "@markup.underline", underline = true },
 
 		-- ====================================================================
 		-- Diff

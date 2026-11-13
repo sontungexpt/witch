@@ -9,6 +9,7 @@ return {
 	bg                = 0x161f31, -- old: bg
 	bg_float          = 0x121928, -- old: bg_dark
 	bg_panel          = 0x121928, -- old: bg_dark
+	bg_block          = 0x0e131f,
 	bg_bar            = 0x0d1829, -- old: bg_bar
 	bg_gutter         = 0x1b305d, -- old: bg_gutter
 	bg_visual         = 0x253557, -- old: bg_visual

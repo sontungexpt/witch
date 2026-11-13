@@ -1,23 +1,22 @@
 ---@type Palette
 -- ============================================================================
--- UMBER FOCUS v4
+-- UMBER FOCUS v4.1
 -- UVEITIS-AWARE HIGH-READABILITY DARK DEVELOPER PALETTE
 --
--- Soft espresso / readable foregrounds / colorful semantic syntax.
+-- Warm espresso / readable foregrounds / colorful semantic syntax.
 --
 -- PRIORITY 1: PHOTOPHOBIA-AWARE DESIGN
 --   * Avoid pure black and pure white.
 --   * Avoid unnecessarily bright large surfaces.
---   * Use a moderately dark, warm-neutral background.
---   * Keep interactive backgrounds restrained.
+--   * Use a consistent warm-neutral background hierarchy.
+--   * Keep interactive highlights restrained.
 --   * Avoid excessive saturation and neon-like colors.
 --
 -- PRIORITY 2: CODE READABILITY
---   * Increase essential text clarity.
---   * Keep comments and punctuation readable.
---   * Separate important syntax categories by hue AND luminance.
---   * Avoid making every syntax foreground equally dim.
---   * Preserve syntax colors over selected code.
+--   * Maintain readable essential and secondary text.
+--   * Preserve syntax contrast on selected and highlighted code.
+--   * Keep comments and punctuation distinguishable.
+--   * Avoid unnecessary luminance competition.
 --
 -- PRIORITY 3: SEMANTIC COLOR DIFFERENTIATION
 --   * Strings: botanical green.
@@ -33,7 +32,7 @@
 -- CONTRAST:
 --   Calculated using WCAG relative luminance in sRGB.
 --   Main foreground: approximately 7.34:1 against bg.
---   Essential syntax colors are checked against coding surfaces.
+--   Main syntax colors: at least 4.6:1 across tested coding surfaces.
 --   Disabled and invisible elements are intentional exceptions.
 --
 -- Medical limitation:
@@ -51,6 +50,7 @@ return {
     bg_gutter = 0x292723,
     bg_float  = 0x302d27,
     bg_panel  = 0x2e2b25,
+    bg_block  = 0x383328,
     bg_bar    = 0x22201c,
 
     -- Editor interaction
@@ -64,7 +64,7 @@ return {
     bg_popup_sel       = 0x333027,
     bg_popup_selected  = 0x333027,
     bg_popup_scrollbar = 0x292723,
-    bg_popup_thumb     = 0x786b59,
+    bg_popup_thumb     = 0x847660,
 
     -- LSP references / signature help
     bg_reference = 0x302d27,
@@ -77,8 +77,8 @@ return {
     bg_diff_text   = 0x333027,
 
     -- Search surfaces
-    bg_search        = 0x393327,
-    bg_search_active = 0x40372a,
+    bg_search        = 0x353027,
+    bg_search_active = 0x393127,
 
     -- ========================================================================
     -- 2. TEXT HIERARCHY
@@ -97,8 +97,7 @@ return {
     fg_invisible = 0x686158,
 
     -- Selection foreground
-    -- Do not force this as the global Visual foreground:
-    -- preserve individual syntax foregrounds when selecting code.
+    -- Preserve individual syntax foregrounds on Visual selections.
     selection_fg = 0xc7bfb2,
 
     -- Cursor
@@ -111,7 +110,7 @@ return {
 
     border        = 0x554d43,
     border_subtle = 0x3d3932,
-    border_focus  = 0x806f58,
+    border_focus  = 0x89785f,
 
     -- ========================================================================
     -- 4. SYNTAX: COMMENTS AND LITERALS
@@ -199,6 +198,7 @@ return {
     unnecessary  = 0x81796e,
 
     -- Subtle diagnostic backgrounds
+    -- Prefer undercurl and signs over large colored backgrounds.
     bg_diagnostic_error = 0x302421,
     bg_diagnostic_warn  = 0x2b281f,
     bg_diagnostic_info  = 0x24292c,
@@ -209,10 +209,10 @@ return {
     -- ========================================================================
 
     search           = 0xc5bba9,
-    search_bg        = 0x393327,
+    search_bg        = 0x353027,
 
     search_active    = 0xcbb093,
-    search_active_bg = 0x40372a,
+    search_active_bg = 0x393127,
 
     -- ========================================================================
     -- 13. SIGNATURE AND REFERENCES
