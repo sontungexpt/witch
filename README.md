@@ -30,8 +30,7 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
 
 ## Requirements
 
-- **Neovim >= 0.10** — uses `vim.islist`, `nvim_set_hl` with list-form highlights
-- **`termguicolors`** — set automatically by `setup`
+- **Neovim >= 0.10**
 
 ## Quick Start
 
