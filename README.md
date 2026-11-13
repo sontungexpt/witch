@@ -6,7 +6,7 @@ Easy to use, easy to config, easy to extend.
 
 ## Features
 
-- 🎨 **Four built-in palettes** — dark, light, umber, parchment for any lighting condition
+- 🎨 **Five built-in palettes** — dark, light, umber, parchment, norturne for any lighting condition
 - 🧩 **Modular by design** — load only the highlight groups you actually use
 - ⚡ **Lazy & fast** — modules load on demand, keeping startup snappy
 - 🪟 **Focus-friendly** — dim inactive windows so your buffer stands out
@@ -22,7 +22,7 @@ Easy to use, easy to config, easy to extend.
 | `light`     | ![witch light](./docs/readme/witch-light.png)         |
 | `umber`     | ![witch umber](./docs/readme/witch-umber.png)         |
 | `parchment` | ![witch parchment](./docs/readme/witch-parchment.png) |
-| `norturne`  | ![witch norturne](./docs/readme/witch-norturne.png)  |
+| `norturne`  | ![witch norturne](./docs/readme/witch-norturne.png)   |
 
 https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0fa5895532
 
@@ -79,12 +79,12 @@ Full example with every option:
 ```lua
 require("witch").setup({
     -- Active palette name.
-    -- Built-in: "dark", "light", "umber", "parchment".
+    -- Built-in: "dark", "light", "umber", "parchment", "norturne".
     -- Custom: any key you define in `palletes` (lowercased).
     palette = "dark",
 
     -- User-defined custom palettes. Keys must be PascalCase
-    -- (e.g., `MyPalette`), 
+    -- (e.g., `MyPalette`).
     palletes = {},
 
     -- Dim inactive windows.
@@ -224,19 +224,23 @@ Triggers are batched into a single autocmd per group (FileType, pattern-less eve
 | `light`     | Light palette.        |
 | `umber`     | Warm dark palette.    |
 | `parchment` | Warm light palette.   |
+| `norturne`  | Cool dark palette.    |
 
 ### Custom
+
+Add your own palette under `palletes`. Keys must be PascalCase (referenced as lowercased at runtime):
 
 ```lua
 require("witch").setup({
     palletes = {
         -- Key must be PascalCase; referenced as `mypalette` at runtime.
         MyPalette = {
-            bg = "#161f31",
-            bg_dark = "#0d1829",
-            fg = "#c9d8ee",
-            fg_dark = "#a9bad6",
-            -- ... see `witch.palette.dark` for the full color set.
+            bg       = "#161f31",
+            fg       = "#c9d8ee",
+            comment  = "#5c6a7d",
+            keyword  = "#c678dd",
+            -- override only the fields you want to change;
+            -- the rest inherit from the base palette
         },
     },
     palette = "mypalette",
@@ -244,6 +248,203 @@ require("witch").setup({
 ```
 
 Any key added to `palletes` is discoverable via tab-completion on `:Witch`.
+
+### Palette schema
+
+Every palette is a single flat table of named color slots. You can override **any** field; unspecified fields fall back to the active built-in palette.
+
+#### `Color`
+
+Each field accepts one of two forms:
+
+| Form           | Example     | Notes              |
+| -------------- | ----------- | ------------------ |
+| Hex string     | `"#1e1e2e"` | `"#rrggbb"` format |
+| 24-bit integer | `0x1e1e2e`  | `0xrrggbb` format  |
+
+```lua
+palletes = {
+    MyPalette = {
+        bg = "#1e1e2e",   -- hex string
+        fg = 0xcdd6f4,    -- 24-bit integer
+    },
+},
+```
+
+#### UI Surfaces
+
+| Field | Description |
+| --- | --- |
+| `bg`                | Canonical editor background. |
+| `bg_float`          | Floating windows and secondary popups. |
+| `bg_panel`          | Sidebars, explorers and secondary panels. |
+| `bg_bar`            | Statusline, tabline and winbar. |
+| `bg_gutter`         | Sign column, line number and fold column. |
+| `bg_visual`         | Visual selection and selected text. |
+| `bg_popup_selected` | Selected completion/menu item. |
+| `bg_cursorline`     | `CursorLine` and `CursorColumn`. |
+| `bg_reference`      | LSP reference highlights. |
+| `bg_signature`      | Active LSP signature parameter. |
+| `bg_diff_add`       | Added-line background. |
+| `bg_diff_change`    | Changed-line background. |
+| `bg_diff_delete`    | Deleted-line background. |
+
+#### Text hierarchy
+
+| Field | Description |
+| --- | --- |
+| `fg`           | Primary editor text. |
+| `fg_strong`    | Important text, headings and emphasis. |
+| `fg_muted`     | Secondary text and navigation metadata. |
+| `fg_subtle`    | Low-emphasis but readable secondary text. |
+| `fg_disabled`  | Disabled text that remains identifiable. |
+| `fg_invisible` | Non-essential structural decoration only. |
+
+#### Cursor
+
+| Field | Description |
+| --- | --- |
+| `cursor`      | Cursor background. |
+| `cursor_text` | Foreground rendered underneath the cursor. |
+
+#### Borders and separators
+
+| Field | Description |
+| --- | --- |
+| `border`        | Standard floating-window and panel border. |
+| `border_focus`  | Focused window / active panel border. |
+| `border_subtle` | Quiet separators, splits and scrollbar details. |
+
+#### Syntax — comments & literals
+
+| Field | Description |
+| --- | --- |
+| `comment`  | Comments and documentation. |
+| `string`   | String and character literals. |
+| `number`   | Number and floating-point literals. |
+| `boolean`  | Boolean literals. |
+| `constant` | Constants and enum members. |
+
+#### Syntax — language structure
+
+| Field | Description |
+| --- | --- |
+| `keyword`  | Keywords, statements, conditionals and imports. |
+| `preproc`  | Preprocessor, annotations, decorators and macros. |
+| `operator` | Operators. |
+
+#### Syntax — callable entities
+
+| Field | Description |
+| --- | --- |
+| `fn`         | Functions, methods and calls. |
+| `fn_builtin` | Built-in functions. |
+
+#### Syntax — types
+
+| Field | Description |
+| --- | --- |
+| `type`         | Types, structs, classes and interfaces. |
+| `type_builtin` | Built-in types. |
+
+#### Syntax — variables & members
+
+| Field | Description |
+| --- | --- |
+| `variable`         | Ordinary identifiers. |
+| `variable_builtin` | Built-in variables (`self`, `this`, …). |
+| `parameter`        | Function parameters. |
+| `property`         | Object fields and struct members. |
+| `namespace`        | Modules, packages and namespaces. |
+
+#### Syntax — special tokens & punctuation
+
+| Field | Description |
+| --- | --- |
+| `special`   | Escape sequences and special characters. |
+| `delimiter` | Brackets and punctuation. |
+| `link`      | Navigation links and references. |
+
+#### Diagnostics
+
+| Field | Description |
+| --- | --- |
+| `error`       | LSP `ERROR`, `healthError` and `SpellBad`. |
+| `warn`        | LSP `WARN`, `healthWarning` and `SpellCap`. |
+| `info`        | LSP `INFO` and `SpellLocal`. |
+| `hint`        | LSP `HINT` and `SpellRare`. |
+| `todo`        | `TODO`, `FIXME` and related annotations. |
+| `unnecessary` | Unnecessary code and semantically dimmed content. |
+
+> Diagnostics should primarily use foregrounds, signs and undercurl. Avoid large, highly saturated diagnostic backgrounds.
+
+#### Search
+
+| Field | Description |
+| --- | --- |
+| `search`           | Search foreground. |
+| `search_bg`        | Ordinary search background. |
+| `search_active`    | Active search foreground. |
+| `search_active_bg` | Active search background. |
+
+> Keep search states distinguishable without excessive luminance.
+
+#### Raw accents
+
+Raw hues for reusable semantic accents. Use only when no dedicated semantic field is appropriate — examples: rainbow delimiters, git signs, plugin badges.
+
+| Field | | Field | | Field |
+| --- | --- | --- | --- | --- |
+| `red`     | | `cyan`    | | `pink`    |
+| `orange`  | | `blue`    | | `teal`    |
+| `yellow`  | | `purple`  | | `brown`   |
+| `green`   | | `magenta` | | `gray`    |
+
+#### Terminal ANSI
+
+| Field | Description | Field | Description |
+| --- | --- | --- | --- |
+| `term_0`  | ANSI black          | `term_8`  | ANSI bright black   |
+| `term_1`  | ANSI red            | `term_9`  | ANSI bright red     |
+| `term_2`  | ANSI green          | `term_10` | ANSI bright green   |
+| `term_3`  | ANSI yellow         | `term_11` | ANSI bright yellow  |
+| `term_4`  | ANSI blue           | `term_12` | ANSI bright blue    |
+| `term_5`  | ANSI magenta        | `term_13` | ANSI bright magenta |
+| `term_6`  | ANSI cyan           | `term_14` | ANSI bright cyan    |
+| `term_7`  | ANSI white          | `term_15` | ANSI bright white   |
+
+### 💡 Example: dim unused functions
+
+`unnecessary` is the slot mapped to `DiagnosticUnnecessary` — the group LSP uses to flag unused functions, variables and parameters. To dim them, override just one field:
+
+```lua
+require("witch").setup({
+    palletes = {
+        MyPalette = {
+            unnecessary = "#565f89",  -- e.g. reuse your comment color
+        },
+    },
+    palette = "MyPalette",
+})
+```
+
+Because Witch already maps `unnecessary` → `DiagnosticUnnecessary` in the `lsp` module, unused code is dimmed automatically — no need for `neodim` or similar plugins.
+
+### 🔍 Inspecting the active palette
+
+Print the resolved palette (after merge with defaults):
+
+```vim
+:lua vim.print(require("witch").active_palette())
+```
+
+Or use `:Inspect` on a specific token to see which highlight group and color is actually rendered.
+
+### 📌 Notes
+
+- Overriding palette fields is the **recommended** way to customize — colors propagate consistently across the whole UI (diagnostics, floats, borders, diffs, …).
+- Every field is **optional**; declare only what you want to change. The rest inherit from the active built-in palette.
+- If you want a completely different variant (e.g. a new light mode), override the `bg*` and `fg*` fields first — they drive most of the visual difference.
 
 ## Custom modules
 
