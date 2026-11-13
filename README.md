@@ -11,6 +11,7 @@ Easy to use, easy to config, easy to extend.
 - ⚡ **Lazy & fast** — modules load on demand, keeping startup snappy
 - 🪟 **Focus-friendly** — dim inactive windows so your buffer stands out
 - 🌈 **Your own colors** — define custom palettes and switch between them instantly
+- 📊 **Lualine ready** — statusline themes for every palette, re-applied on each switch
 - 🔧 **Fully extendable** — add custom highlight builders for any plugin
 - 🔄 **Live palette switching** — change colors on the fly with `:Witch <palette>`
 
@@ -185,10 +186,27 @@ require("lualine").setup({
 
 The builder lives in `lua/witch/lualine.lua`:
 
-| Function             | Returns                                                          |
-| -------------------- | ---------------------------------------------------------------- |
-| `get([name])`        | Theme for a palette by name (built-in or custom); active palette if omitted. |
-| `build(palette)`     | Theme from a raw palette table.                                  |
+| Function                    | Returns                                                        |
+| --------------------------- | -------------------------------------------------------------- |
+| `get([name], [opts])`       | Theme for a palette by name (built-in or custom); active palette if omitted. |
+| `build(palette, [opts])`    | Theme from a raw palette table.                                |
+
+#### Theme options
+
+| Option         | Default | Description                                                                                          |
+| -------------- | ------- | ---------------------------------------------------------------------------------------------------- |
+| `native`       | `true`  | Take bar/section colors from the applied core `StatusLine` / `StatusLineNC` groups so the statusline blends with the rest of the UI. Set `false` to derive them from the palette instead. |
+| `transparent`  | `false` | Use `NONE` for the bar background so lualine sections sit directly on the terminal background.        |
+
+```lua
+require("lualine").setup({
+    options = {
+        theme = function()
+            return require("witch.lualine").get(nil, { transparent = true })
+        end,
+    },
+})
+```
 
 ### `build`
 
@@ -370,6 +388,8 @@ require("witch").setup({
     palette = "myPalette",
 })
 ```
+
+> **Tip:** custom palettes have no auto-detected lualine theme file — see [Lualine](#lualine) for the dynamic `theme` function that follows the active palette.
 
 ### Palette schema
 
