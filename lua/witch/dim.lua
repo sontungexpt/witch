@@ -168,23 +168,51 @@ local function refresh(skip)
 	local ft_set = config.excluded.filetypes
 	local bt_set = config.excluded.buftypes
 	local set_ns = nvim_win_set_hl_ns
+	local win_valid = api.nvim_win_is_valid
+	local buf_valid = api.nvim_buf_is_valid
 
 	for _, win in ipairs(nvim_list_wins()) do
-		if win ~= skip and api.nvim_win_is_valid(win) then
+		-- Skip the window being closed (WinClosed fires while it is still listed),
+		-- and anything that became invalid since nvim_list_wins() returned.
+		if win == skip or not win_valid(win) then
+			goto continue
+		end
+
+		-- `do ... end` limits the scope of `target`. Lua forbids `goto continue`
+		-- from jumping into the scope of a local declared after the goto,
+		-- and the label sits at the end of the loop body.
+		do
+			-- 0 means "use the global highlight namespace" (no dimming).
 			local target = 0
 
+			-- The focused window is never dimmed, so only inspect the others.
 			if win ~= curr then
-				local bo = vim.bo[nvim_win_get_buf(win)]
+				-- pcall: the window can be closed between the validity check
+				-- above and this call (e.g. by another plugin's autocmd).
+				local ok, buf = pcall(nvim_win_get_buf, win)
+				if not ok or not buf_valid(buf) then
+					-- Window/buffer is dying: skip it entirely instead of
+					-- resetting it to namespace 0 with a wrong value.
+					goto continue
+				end
+
+				-- Dim unless the filetype or buftype is on the exclude list
+				-- (e.g. sidebars, terminals, popups that should stay bright).
+				local bo = vim.bo[buf]
 				if not (ft_set[bo.filetype] or bt_set[bo.buftype]) then
 					target = ns
 				end
 			end
 
-			if applied[win] ~= target then
+			-- Only touch the window when its namespace actually changes.
+			-- The cache is updated only if set_ns succeeded (pcall returns true),
+			-- so a failed call never leaves `applied` out of sync with reality.
+			if applied[win] ~= target and pcall(set_ns, win, target) then
 				applied[win] = target
-				set_ns(win, target)
 			end
 		end
+
+		::continue::
 	end
 end
 
@@ -198,12 +226,15 @@ local function run_pending()
 	end
 end
 
---- Debounces rebuild requests to save CPU cycles.
---- @return nil
+-- Terminal (and some plugin) buffers get their buftype/filetype set slightly
+-- after the window is entered. A 1ms timer defers past that, which a plain
+-- vim.schedule (next loop tick) can miss.
+local DEFER_MS = 1
+
 local function schedule_rebuild()
 	if not state.pending then
 		state.pending = true
-		vim.schedule(run_pending)
+		vim.defer_fn(run_pending, DEFER_MS)
 	end
 end
 
