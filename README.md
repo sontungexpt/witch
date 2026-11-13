@@ -16,7 +16,10 @@ Easy to use, easy to config, easy to extend.
 
 ## Preview
 
-![witch](./docs/readme/preview1.png)
+![witch dark](./docs/readme/witch-dark.png)
+![witch light](./docs/readme/witch-light.png)
+![witch umber](./docs/readme/witch-umber.png)
+![witch parchment](./docs/readme/witch-parchment.png)
 
 https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0fa5895532
 
@@ -43,6 +46,14 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
 
 ## Setup
 
+Minimal setup:
+
+```lua
+require("witch").setup({ palette = "dark" })
+```
+
+Full example with every option:
+
 ```lua
 require("witch").setup({
     -- Active palette name.
@@ -58,7 +69,7 @@ require("witch").setup({
     -- Dim inactive windows.
     dim = {
         enabled = true,
-        level = 0.3,        -- 0 = fully dimmed, 1 = no dimming
+        level = 0.35,       -- 0 = no dimming, 1 = fully dimmed
         fade_bg = true,      -- also fade background groups
         excluded = {
             filetypes = { NvimTree = true },
@@ -252,7 +263,7 @@ The `build` function is called every time the module is loaded **and** every tim
 | `:Witch <palette>` | Switch to the given palette. Falls back silently if the name is unknown. Tab-completes over all built-in + custom palettes. |
 | `:WitchDimToggle`  | Toggle dimming of inactive windows. Only registered when `dim.enabled = true`, on the first `WinNew`.                       |
 
-`g.colors_name` is set to `witch-<palette>` after each `:Witch`, so `:colorscheme` (no args) reports the active palette.
+`g.colors_name` is set to `witch-<palette>` after each `:Witch`, so `:colorscheme` (no args) reports the active palette. `:Witch` (and `apply_palette`) also emits a `ColorScheme` autocmd with `witch-<palette>` as the pattern, so ecosystem plugins (lualine, nvim-tree, …) pick up the switch.
 
 ## Events
 
