@@ -148,7 +148,7 @@ All modules below ship with Witch. Each maps to a `build` function under `lua/wi
 | `blink-cmp`  | [blink.cmp](https://github.com/Saghen/blink.cmp) completion menu.                                                                          |
 | `cmp`        | [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) completion menu (alternative to `blink-cmp`).                                              |
 | `terminal`   | `:terminal` buffer groups — `TermCursor`, terminal color table.                                                                            |
-| `bracket`    | [nvim-ts-autotag](https://github.com/windwp/nvim-ts-autotag)-style / rainbow bracket pairs.                                                |
+| `bracket`    | [rainbow-delimiters.nvim](https://github.com/HiPhish/rainbow-delimiters.nvim) — `RainbowDelimiter*` nesting colors.                       |
 | `indentline` | Indent guide characters (`IblIndent`, `IblScope`, …).                                                                                      |
 | `markup`     | Markup-specific groups — headings, code blocks, links, tables.                                                                           |
 | `nvimtree`   | [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) explorer.                                                                      |
@@ -204,7 +204,7 @@ Each module answers one question: **when should its highlights be applied?**
 - `lazy = false` — apply during `setup` (used by `core`, which everything else depends on)
 - otherwise — wait for a trigger given by `ft` (a filetype) or `event` (a Neovim event)
 
-If `lazy` is not `false` and you give **neither** `ft` nor `event`, the module is enabled but **never loads** — a trigger is required.
+If `lazy` is not `false` and you give **neither** `ft` nor `event`, the module is enabled but **never loads** on its own — a trigger is required, or you can load it yourself at any time (see [Manual lazy-loading](#manual-lazy-loading-with-load_module_once)).
 
 Typical recipes:
 
@@ -252,6 +252,48 @@ A few behaviors worth knowing:
 - A module loads **at most once per session**; afterwards its highlights are simply re-applied on every palette switch.
 - Filetypes of buffers that are already open when you call `setup` are detected too — those modules load immediately instead of waiting for the next `FileType`.
 - This is all internal plumbing, but if you're curious: filetype, plain-event and `User` triggers share one batched autocmd each; glob-pattern triggers get a private autocmd that removes itself after the first match.
+
+### Manual lazy-loading with `load_module_once`
+
+For plugins that don't map cleanly to a filetype or event, you can drive the loading yourself. Enable the module **without** a trigger (so Witch doesn't touch it), then call `require("witch").load_module_once(name)` whenever the moment is right:
+
+```lua
+require("witch").setup({
+    modules = {
+        -- Enabled, but no `ft`/`event` — stays dormant until you call it
+        ["my-module"] = {
+            enabled = true,
+            build = function(palette, palette_name)
+                return {
+                    { "MyGroup", fg = palette.fg },
+                }
+            end,
+        },
+    },
+})
+
+-- Load it from anywhere: an autocmd, a keymap, or a plugin callback
+vim.api.nvim_create_autocmd("User", {
+    pattern = "MyPluginReady",
+    callback = function()
+        require("witch").load_module_once("my-module")
+    end,
+})
+```
+
+What to expect from the call:
+
+- **Load-once semantics** — the highlights are applied the first time; every further call for the same module is a no-op.
+- **Palette-switch aware** — once a module has been loaded this way, Witch remembers it and re-applies its highlights automatically on every `:Witch <palette>`, exactly like its own lazy triggers do.
+- **Works for any module** — built-in names (`notify`, `navic`, …) or your custom ones. For example, load a built-in module right after its plugin loads:
+
+```lua
+require("witch").load_module_once("notify")
+```
+
+- Fires `User WitchModuleLoaded` (with the module name as data), so your own overrides can react to it — see [Events](#events).
+
+> **Tip:** this is the same function Witch's internal triggers call, so a manually loaded module is indistinguishable from an auto-loaded one — no duplicate work, no double bookkeeping.
 
 ## Palettes
 
@@ -528,7 +570,7 @@ The `build` function is called every time the module is loaded **and** every tim
 
 | Command                       | Description                                                                                                                 |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `:Witch <palette>`            | Switch to the given palette. An unknown name falls back to `dark`. Tab-completes over built-in palettes.                    |
+| `:Witch <palette>`            | Switch to the given palette. An unknown name is silently ignored. Tab-completes over built-in palettes.                     |
 | `:colorscheme witch-<palette>` | Standard colorscheme entry points (`witch-dark`, `witch-light`, `witch-umber`, `witch-parchment`, `witch-nocturne`) — equivalent to `:Witch <palette>` after setup. |
 | `:WitchDimToggle`             | Toggle dimming of inactive windows. Only registered when `dim.enabled = true`, on the first `WinNew`.                       |
 
@@ -587,9 +629,11 @@ This approach ensures your overrides survive palette switches and lazy-loading.
 local witch = require("witch")
 
 witch.setup(opts)              -- configure + apply
-witch.apply_palette(name)      -- apply a palette programmatically
+witch.apply_palette(name)      -- apply a palette programmatically (no-op if the name is unknown)
 witch.active_palette_name()    -- e.g. "dark"
-witch.active_palette()         -- the raw palette table
+witch.active_palette()         -- the active palette table
+witch.palette(name)            -- any palette table by name (built-in or custom), nil if unknown
+witch.load_module_once(name)   -- apply a module's highlights once; see Manual lazy-loading
 ```
 
 ## Migration from v1

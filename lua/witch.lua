@@ -73,6 +73,13 @@ M.active_palette = function()
     return PALETTE_DICT[M.active_palette_name()]
 end
 
+--- Get the palette table for a given palette name.
+--- @param name string
+--- @return Palette
+M.palette = function(name)
+    return PALETTE_DICT[name]
+end
+
 --- Cache of already-loaded module names for the current palette.
 --- @type table<string, boolean>
 local loaded_modules = {}
@@ -81,7 +88,7 @@ local loaded_modules = {}
 --- @param name string Module name.
 --- @param palette Palette The active palette.
 --- @param palette_name string The active palette name.
-local function load_module(name, palette, palette_name)
+local function load_module_inner(name, palette, palette_name)
     local module = modules[name]
     if not module then
         return
@@ -105,11 +112,21 @@ local function load_module(name, palette, palette_name)
     api.nvim_exec_autocmds("User", { pattern = "WitchModuleLoaded", data = name })
 end
 
+--- Keep this function local to avoid polluting the global namespace.
+--- Ensure a module is loaded only once.
+--- @param name string
+M.load_module_once = function(name)
+    if loaded_modules[name] then
+        return
+    end
+    loaded_modules[name] = true
+    load_module_inner(name, M.active_palette(), M.active_palette_name())
+end
+
 --- Set up lazy loading for all modules based on `ft` or `event` triggers.
 --- This batches all filetype and event triggers into single autocmds for performance.
 --- @param augroup integer The autocmd group ID to use for the lazy loading autocmds.
 local function setup_lazy_modules(augroup)
-
 
     --- Filetype → modules. Batched into a single `FileType` autocmd below.
     --- @type table<string, string[]>
@@ -136,17 +153,6 @@ local function setup_lazy_modules(augroup)
         list[#list + 1] = name
     end
 
-    --- Keep this function local to avoid polluting the global namespace.
-    --- Ensure a module is loaded only once.
-    --- @param name string
-    local function ensure_loaded(name)
-        if loaded_modules[name] then
-            return
-        end
-        loaded_modules[name] = true
-        load_module(name, M.active_palette(), M.active_palette_name())
-    end
-
     --- Pop the module list stored at `bucket[key]`, load each module, and
     --- report whether `bucket` is now empty (so the caller can self-destruct
     --- its autocmd).
@@ -160,7 +166,7 @@ local function setup_lazy_modules(augroup)
         end
         bucket[key] = nil
         for _, name in ipairs(names) do
-            ensure_loaded(name)
+            M.load_module_once(name)
         end
         return next(bucket) == nil
     end
@@ -170,7 +176,7 @@ local function setup_lazy_modules(augroup)
     for name, mod in pairs(modules) do
         if mod.enabled then
             if mod.lazy == false then
-                ensure_loaded(name)
+                M.load_module_once(name)
             else
                 local ft = mod.ft
                 local ft_type = type(ft)
@@ -215,7 +221,7 @@ local function setup_lazy_modules(augroup)
                                     once = true,
                                     pattern = pattern,
                                     callback = function()
-                                        ensure_loaded(name)
+                                        M.load_module_once(name)
                                     end,
                                 })
                             else
@@ -230,7 +236,7 @@ local function setup_lazy_modules(augroup)
     end
 
     -- 2. Single batched FileType autocmd
-    if next(modules_by_ft) ~= nil then
+    if next(modules_by_ft) then
         autocmd("FileType", {
             group = augroup,
             pattern = vim.tbl_keys(modules_by_ft),
@@ -239,18 +245,20 @@ local function setup_lazy_modules(augroup)
             end,
         })
 
-        -- Catch buffers already open before setup (Optimized O(M) loop)
-        for _, buf in ipairs(api.nvim_list_bufs()) do
-            if api.nvim_buf_is_loaded(buf) then
-                local names = modules_by_ft[vim.bo[buf].filetype]
-                if names then
-                    modules_by_ft[vim.bo[buf].filetype] = nil
-                    for _, name in ipairs(names) do
-                        ensure_loaded(name)
+        vim.schedule(function()
+            -- Catch buffers already open before setup
+            for _, buf in ipairs(api.nvim_list_bufs()) do
+                if api.nvim_buf_is_loaded(buf) then
+                    local names = modules_by_ft[vim.bo[buf].filetype]
+                    if names then
+                        modules_by_ft[vim.bo[buf].filetype] = nil
+                        for _, name in ipairs(names) do
+                            M.load_module_once(name)
+                        end
                     end
                 end
             end
-        end
+        end)
     end
 
     -- 3. Single batched autocmd for standard (pattern-less) events.
@@ -295,16 +303,18 @@ M.apply_palette = function(palette_name)
 
     -- Resolve and set the active palette
     local active_palette = PALETTE_DICT[palette_name]
-    if active_palette then
-        active_palette_name = palette_name
-    else
-        active_palette = PALETTE_DICT[FALLBACK_PALETTE]
-        active_palette_name = FALLBACK_PALETTE
+
+    -- No palette found, return early
+    if not active_palette then
+        return
     end
+    active_palette_name = palette_name
 
     -- Re-apply highlights for all modules that were already loaded
-    for name in pairs(loaded_modules) do
-        load_module(name, active_palette, active_palette_name)
+    if next(loaded_modules) then
+        for name in pairs(loaded_modules) do
+            load_module_inner(name, active_palette, active_palette_name)
+        end
     end
 
     g.colors_name = PLUG_NAME .. "-" .. active_palette_name
