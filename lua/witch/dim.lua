@@ -24,7 +24,7 @@ local color = require("witch.util.color")
 
 --- @type Dim.Config
 local config = {
-	keep = 0.7,
+	keep = 0.65,
 	dim_bg = true,
 	excluded = { filetypes = {}, buftypes = {} },
 }
@@ -263,13 +263,18 @@ M.enable = function()
 		group = state.group,
 		callback = on_win,
 	})
+
 	api.nvim_create_autocmd("ColorScheme", {
 		group = state.group,
 		callback = schedule_rebuild,
 	})
+
+	-- Only listen to WitchModuleLoaded because lazy-loaded modules inject new
+	-- highlight groups without firing a ColorScheme event.
+	-- No need to listen to WitchPaletteChanged because it's already covered by ColorScheme.
 	api.nvim_create_autocmd("User", {
 		group = state.group,
-		pattern = { "WitchModuleLoaded", "WitchPaletteChanged" },
+		pattern = "WitchModuleLoaded",
 		callback = schedule_rebuild,
 	})
 end

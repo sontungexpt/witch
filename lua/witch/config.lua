@@ -37,7 +37,7 @@ local config = {
     palletes = {},
     dim = {
         enabled = true,
-        level = 0.3,
+        level = 0.35,
         excluded = {
             filetypes = { NvimTree = true },
             buftypes = { nofile = true, prompt = true, terminal = true },

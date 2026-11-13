@@ -288,7 +288,7 @@ M.apply_palette = function(palette_name)
     end
 
     -- Clear the current highlight cache
-    if g.colors_name then
+    if g.colors_name and g.colors_name ~= "" then
         api.nvim_command("hi clear")
     end
 
@@ -307,6 +307,11 @@ M.apply_palette = function(palette_name)
     end
 
     g.colors_name = PLUG_NAME .. "-" .. active_palette_name
+
+    -- 1. Notify the Neovim ecosystem (lualine, nvim-tree, etc.)
+    api.nvim_exec_autocmds("ColorScheme", { pattern = g.colors_name })
+
+    -- 2. Notify custom listeners (specific to Witch)
     api.nvim_exec_autocmds("User", { pattern = "WitchPaletteChanged", data = active_palette_name })
 end
 
