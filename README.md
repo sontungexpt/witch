@@ -203,20 +203,62 @@ end
 
 ### Lazy-loading rules
 
-|    `lazy`    | `ft` / `event`                    | Behavior                                                         |
-| :----------: | :-------------------------------- | :--------------------------------------------------------------- |
-|   `false`    | —                                 | Loaded immediately during `setup`.                               |
-| `true`/`nil` | `ft = "x"`                        | Loaded on `FileType x` (or matching type already open at setup). |
-| `true`/`nil` | `event = "X"`                     | Loaded on event `X`.                                             |
-| `true`/`nil` | `event = { "X", "Y" }`            | Loaded on the first of `X`/`Y`.                                  |
-| `true`/`nil` | `event = { X = true }`            | Loaded on event `X`.                                             |
-| `true`/`nil` | `event = { X = "pattern" }`       | Loaded on `X pattern` (glob).                                    |
-| `true`/`nil` | `event = { User = "Name" }`       | Loaded on `User Name`.                                           |
-| `true`/`nil` | `event = { User = { "A", "B" } }` | Loaded on `User A` or `User B`.                                  |
-| `true`/`nil` | `event = { BufEnter = { "*.lua", "*.md" } }` | Loaded on the first matching glob pattern.             |
-| `true`/`nil` | nothing                           | **Never loaded** — misleading config, will not fire.             |
+Each module answers one question: **when should its highlights be applied?**
 
-Triggers are batched into a single autocmd per group (FileType, pattern-less events, `User` events). Glob-pattern events (`BufEnter = "*.lua"` etc.) are not batched — one autocmd per module, self-destructing after the first match.
+- `lazy = false` — apply during `setup` (used by `core`, which everything else depends on)
+- otherwise — wait for a trigger given by `ft` (a filetype) or `event` (a Neovim event)
+
+If `lazy` is not `false` and you give **neither** `ft` nor `event`, the module is enabled but **never loads** — a trigger is required.
+
+Typical recipes:
+
+```lua
+modules = {
+    -- Load right away
+    core = { lazy = false, enabled = true },
+
+    -- Load when a buffer with this filetype opens
+    nvimtree = { ft = "NvimTree", enabled = true },
+
+    -- Load when an event fires
+    lsp     = { event = "LspAttach", enabled = true },
+    bracket = { event = "CursorHold", enabled = true },   -- after you pause on a line
+
+    -- Load on the first of several events
+    ["blink-cmp"] = { event = { "InsertEnter", "CmdlineEnter" }, enabled = true },
+
+    -- Load on a custom (User) event fired by another plugin
+    gitsigns = { event = { User = "GitSignsUpdate" }, enabled = true },
+}
+```
+
+#### All accepted forms
+
+`ft` accepts a single filetype or a list — the module loads when **any** of them opens:
+
+```lua
+ft = "NvimTree"
+ft = { "markdown", "tex", "html" }
+```
+
+`event` accepts all lazy.nvim-style shapes:
+
+| You write                                        | What happens                                  |
+| ------------------------------------------------ | --------------------------------------------- |
+| `event = "LspAttach"`                            | Load when `LspAttach` fires (any buffer).     |
+| `event = { "InsertEnter", "CmdlineEnter" }`      | Load when the **first** of them fires.        |
+| `event = { InsertEnter = true }`                 | Same as the single-event form, written explicitly. |
+| `event = { BufEnter = "*.lua" }`                 | Load when `BufEnter` fires for a `*.lua` buffer. |
+| `event = { BufEnter = { "*.lua", "*.md" } }`     | Load on the first matching glob pattern.      |
+| `event = { User = "GitSignsUpdate" }`            | Load when that `User` event fires.            |
+| `event = { User = { "GitSignsUpdate", "VeryLazy" } }` | Load on the first of these `User` events. |
+| `event = { User = true }`                        | Load on **any** `User` event.                 |
+
+A few behaviors worth knowing:
+
+- A module loads **at most once per session**; afterwards its highlights are simply re-applied on every palette switch.
+- Filetypes of buffers that are already open when you call `setup` are detected too — those modules load immediately instead of waiting for the next `FileType`.
+- This is all internal plumbing, but if you're curious: filetype, plain-event and `User` triggers share one batched autocmd each; glob-pattern triggers get a private autocmd that removes itself after the first match.
 
 ## Palettes
 
