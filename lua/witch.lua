@@ -19,6 +19,7 @@ local BUILTIN_PALETTES = {
     ["light"] = "witch.palette.light",
     ["umber"] = "witch.palette.umber",
     ["parchment"] = "witch.palette.parchment",
+    ["nocturne"] = "witch.palette.nocturne",
 }
 local FALLBACK_PALETTE = "dark"
 

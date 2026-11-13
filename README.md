@@ -22,6 +22,7 @@ Easy to use, easy to config, easy to extend.
 | `light`     | ![witch light](./docs/readme/witch-light.png)         |
 | `umber`     | ![witch umber](./docs/readme/witch-umber.png)         |
 | `parchment` | ![witch parchment](./docs/readme/witch-parchment.png) |
+| `norturne`  | ![witch norturne](./docs/readme/witch-norturne.png)  |
 
 https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0fa5895532
 
@@ -83,9 +84,7 @@ require("witch").setup({
     palette = "dark",
 
     -- User-defined custom palettes. Keys must be PascalCase
-    -- (e.g., `MyPalette`), and are referenced in lowercase
-    -- (`:Witch mypalette`, or `palette = "mypalette"`).
-    -- NOTE: `palletes` is intentional (not `palettes`) — match this key exactly.
+    -- (e.g., `MyPalette`), 
     palletes = {},
 
     -- Dim inactive windows.
@@ -110,17 +109,13 @@ require("witch").setup({
         indentline = { event = "CursorHold", enabled = true },
         markdown   = { ft = "markdown", enabled = true },
         nvimtree   = { ft = "NvimTree" },
-        neotree    = { ft = "neotree" },
         cmp        = { event = { "InsertEnter", "CmdlineEnter" } },
-        dashboard  = { ft = "dashboard", lazy = false },
         telescope  = { ft = "TelescopePrompt" },
-        todo       = { event = "BufReadPost" },
         gitsigns   = { event = { User = "GitSignsUpdate" } },
         dap        = { ft = "diffview" },
         diffview   = { event = "CursorHold" },
         notify     = { event = "CursorHold" },
         navic      = { event = "LspAttach" },
-        scrollbar  = { event = "CursorHold" },
     },
 })
 ```
@@ -156,16 +151,11 @@ All modules below ship with Witch. Each maps to a `build` function under `lua/wi
 | `indentline` | Indent guide characters (`IblIndent`, `IblScope`, …).                                                                                      |
 | `markdown`   | Markdown-specific groups — headings, code blocks, links, tables.                                                                           |
 | `nvimtree`   | [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) explorer.                                                                      |
-| `neotree`    | [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim) explorer.                                                                  |
-| `dashboard`  | [dashboard-nvim](https://github.com/nvimdev/dashboard-nvim) start screen.                                                                  |
-| `telescope`  | [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) prompt, results, preview.                                               |
-| `todo`       | [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) — `TODO`, `FIXME`, `HACK`, …                                             |
 | `gitsigns`   | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) add/change/delete signs.                                                       |
 | `dap`        | [nvim-dap](https://github.com/mfussenegger/nvim-dap) + [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui).                             |
 | `diffview`   | [diffview.nvim](https://github.com/sindrets/diffview.nvim) diff panes.                                                                     |
 | `notify`     | [nvim-notify](https://github.com/rcarriga/nvim-notify) popups.                                                                             |
 | `navic`      | [nvim-navic](https://github.com/SmiteshP/nvim-navic) breadcrumb icons and text.                                                            |
-| `scrollbar`  | [nvim-scrollbar](https://github.com/petertriho/nvim-scrollbar) scrollbar handles and marks.                                                |
 
 To list them at runtime:
 
