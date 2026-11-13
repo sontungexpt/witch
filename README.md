@@ -22,7 +22,7 @@ Easy to use, easy to config, easy to extend.
 | `light`     | ![witch light](./docs/readme/witch-light.png)         |
 | `umber`     | ![witch umber](./docs/readme/witch-umber.png)         |
 | `parchment` | ![witch parchment](./docs/readme/witch-parchment.png) |
-| `norturne`  | ![witch norturne](./docs/readme/witch-norturne.png)   |
+| `norturne`  | ![witch norturne](./docs/readme/witch-nocturne.png)   |
 
 https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0fa5895532
 
