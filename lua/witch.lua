@@ -40,7 +40,7 @@ local active_palette_name
 
 --- Get a sorted list of all available theme names (built-in + custom).
 --- @return string[]
-local function available_palette_names()
+M.available_palette_names = function()
     local seen = {}
     for name, _ in pairs(BUILTIN_PALETTES) do
         seen[name] = true
@@ -56,9 +56,7 @@ local function available_palette_names()
         end
     end
 
-    local names = vim.tbl_keys(seen)
-    table.sort(names)
-    return names
+    return vim.tbl_keys(seen)
 end
 
 --- Get the name of the currently active palette.
@@ -127,7 +125,6 @@ end
 --- This batches all filetype and event triggers into single autocmds for performance.
 --- @param augroup integer The autocmd group ID to use for the lazy loading autocmds.
 local function setup_lazy_modules(augroup)
-
     --- Filetype → modules. Batched into a single `FileType` autocmd below.
     --- @type table<string, string[]>
     local modules_by_ft = {}
@@ -346,9 +343,13 @@ M.setup = function(opts)
         nargs = 1,
         force = true,
         complete = function(arg_lead)
-            return vim.tbl_filter(function(theme)
-                return vim.startswith(theme, arg_lead)
-            end, available_palette_names())
+            local candidates = M.available_palette_names()
+
+            if vim.trim(arg_lead) == "" then
+                return candidates
+            end
+
+            return vim.fn.matchfuzzy(candidates, arg_lead)
         end,
     })
 

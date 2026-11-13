@@ -40,16 +40,12 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
     "sontungexpt/witch",
     priority = 1000,
     lazy = false,
-    config = function(_, opts)
-        require("witch").setup(opts)
-    end,
+    opts = {}
 }
 
--- your config
-require("witch").setup({ palette = "dark" })
 ```
 
-Switch palettes anytime with `:Witch light`, `:Witch umber`, or `:Witch parchment`. Tab-completion works over all built-in palettes.
+Switch palettes anytime with `:Witch light`, `:Witch umber`, or `:Witch parchment`. Tab-completion fuzzy-matches over the built-in palette names — an empty argument lists them all.
 
 ## Installation
 
@@ -59,9 +55,7 @@ Switch palettes anytime with `:Witch light`, `:Witch umber`, or `:Witch parchmen
     "sontungexpt/witch",
     priority = 1000,
     lazy = false,
-    config = function(_, opts)
-        require("witch").setup(opts)
-    end,
+    opts = {}
 }
 ```
 
@@ -69,17 +63,11 @@ Switch palettes anytime with `:Witch light`, `:Witch umber`, or `:Witch parchmen
 
 Minimal setup:
 
-```lua
-require("witch").setup({ palette = "dark" })
-```
-
-Full example with every option:
 
 ```lua
 require("witch").setup({
     -- Active palette name.
     -- Built-in: "umber" (default), "dark", "light", "parchment", "nocturne".
-    -- Custom: reference your `palletes` key with the first letter lowercased.
     palette = "umber",
 
     -- User-defined custom palettes. Keys must start with an uppercase
@@ -92,7 +80,13 @@ require("witch").setup({
         level = 0.35,       -- 0 = no dimming, 1 = fully dimmed
         fade_bg = true,      -- also fade background groups
         excluded = {
+            -- Both format are ok 
+            -- filetypes =  {"NvimTree"} 
+            -- or 
+            -- filetypes = {NvimTree = true}
             filetypes = { NvimTree = true },
+
+            -- Same with filetypes
             buftypes  = { nofile = true, prompt = true, terminal = true },
         },
     },
@@ -119,9 +113,6 @@ require("witch").setup({
 })
 ```
 
-`setup` may be called multiple times — each call merges your options into the existing config and clears the plugin's augroup before rebuilding lazy-load autocmds. Witch also enables `termguicolors` automatically during setup.
-
-The `dim.excluded` tables accept either a map (`{ NvimTree = true }`) or a plain list (`{ "NvimTree" }`).
 
 ## Modules
 
@@ -570,7 +561,7 @@ The `build` function is called every time the module is loaded **and** every tim
 
 | Command                       | Description                                                                                                                 |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `:Witch <palette>`            | Switch to the given palette. An unknown name is silently ignored. Tab-completes over built-in palettes.                     |
+| `:Witch <palette>`            | Switch to the given palette. An unknown name is silently ignored. Tab-completion fuzzy-matches over built-in palettes.      |
 | `:colorscheme witch-<palette>` | Standard colorscheme entry points (`witch-dark`, `witch-light`, `witch-umber`, `witch-parchment`, `witch-nocturne`) — equivalent to `:Witch <palette>` after setup. |
 | `:WitchDimToggle`             | Toggle dimming of inactive windows. Only registered when `dim.enabled = true`, on the first `WinNew`.                       |
 
@@ -630,6 +621,7 @@ local witch = require("witch")
 
 witch.setup(opts)              -- configure + apply
 witch.apply_palette(name)      -- apply a palette programmatically (no-op if the name is unknown)
+witch.available_palette_names() -- list of all palette names (built-in + custom)
 witch.active_palette_name()    -- e.g. "dark"
 witch.active_palette()         -- the active palette table
 witch.palette(name)            -- any palette table by name (built-in or custom), nil if unknown
