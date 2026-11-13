@@ -10,7 +10,7 @@ local builder = require("witch.builder")
 local config = require("witch.config")
 local modules = config.modules
 
---- @class Palette
+--- @class witch.Palette
 --- @field [string] integer|string
 
 --- @type table<string, string>
@@ -24,7 +24,7 @@ local BUILTIN_PALETTES = {
 local FALLBACK_PALETTE = "dark"
 
 --- Cache for loaded palettes to avoid redundant require calls.
---- @type table<string, Palette>
+--- @type table<string, witch.Palette>
 local PALETTE_DICT = setmetatable({}, {
     __index = function(t, name)
         local found_path = BUILTIN_PALETTES[name]
@@ -66,14 +66,14 @@ M.active_palette_name = function()
 end
 
 --- Get the currently active palette table.
---- @return Palette
+--- @return witch.Palette
 M.active_palette = function()
     return PALETTE_DICT[M.active_palette_name()]
 end
 
 --- Get the palette table for a given palette name.
 --- @param name string
---- @return Palette
+--- @return witch.Palette
 M.palette = function(name)
     return PALETTE_DICT[name]
 end
@@ -84,7 +84,7 @@ local loaded_modules = {}
 
 --- Load and apply a single theme module by name.
 --- @param name string Module name.
---- @param palette Palette The active palette.
+--- @param palette witch.Palette The active palette.
 --- @param palette_name string The active palette name.
 local function load_module_inner(name, palette, palette_name)
     local module = modules[name]

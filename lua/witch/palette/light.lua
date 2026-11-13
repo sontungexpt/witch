@@ -1,5 +1,5 @@
 ---light palette
----@type Palette
+---@type witch.Palette
 return {
 	-- ========================================================================
 	-- UI SURFACES

@@ -1,11 +1,11 @@
 local type, pairs = type, pairs
 local islist = vim.islist
 
---- @alias PascalCaseString string
+--- @alias CustomPaletteName string
 
---- @class Module
+--- @class witch.Config.Module
 --- @field enabled? boolean Whether the module is enabled.
---- @field build? fun(palette: Palette, palette_name: string): table[] The highlight builder function.
+--- @field build? fun(palette: witch.Palette, palette_name: string): table[] The highlight builder function.
 --- @field lazy? boolean If `false`, the module is loaded immediately during setup.
 --- @field ft? string|string[] Filetype(s) that trigger loading.
 ---
@@ -19,19 +19,19 @@ local islist = vim.islist
 --- @field event? string|string[]|table<string, string|string[]>
 ---
 
---- @class Config
+--- @class witch.Config
 --- @field palette string Active palette name.
---- @field modules table<string, Module> Per-module configuration overrides.
---- @field palletes table<PascalCaseString, Palette> User-defined custom palettes. the keys must be PascalCase (e.g., "DarkPalette").
---- @field dim DimConfig Configuration for dimming inactive windows.
+--- @field modules table<string, witch.Config.Module> Per-module configuration overrides.
+--- @field palletes table<CustomPaletteName, witch.Palette> User-defined custom palettes. the keys must be PascalCase (e.g., "DarkPalette").
+--- @field dim witch.Config.Dim Configuration for dimming inactive windows.
 
---- @class DimConfig
+--- @class witch.Config.Dim
 --- @field enabled boolean Whether dimming is active.
 --- @field level number Dim level from `0` to `1`.
 --- @field excluded table{ filetypes: table<string, boolean>, buftypes: table<string, boolean> } Buffers excluded from dimming.
 --- @field fade_bg boolean Whether to also fade background groups.
 
---- @type Config
+--- @type witch.Config
 local config = {
     palette = "umber",
     palletes = {},
@@ -157,12 +157,12 @@ local function merge(base, user)
     return base
 end
 
---- @class ConfigMeta
---- @field __index Config
---- @field __newindex fun(self: ConfigMeta, key: string, value: any)
---- @field __call fun(self: ConfigMeta, override: table|nil): ConfigMeta
+--- @class witch.ConfigMeta
+--- @field __index witch.Config
+--- @field __newindex fun(self: witch.ConfigMeta, key: string, value: any)
+--- @field __call fun(self: witch.ConfigMeta, override: table|nil): witch.ConfigMeta
 
---- @type ConfigMeta
+--- @type witch.ConfigMeta
 local mt = {
     __index = config,
 
@@ -175,9 +175,9 @@ local mt = {
     --- Calling with `nil` returns the proxy unchanged.
     --- Calling with a table deep-merges it into the config.
     ---
-    --- @param self ConfigMeta The proxy table.
+    --- @param self witch.ConfigMeta The proxy table.
     --- @param override table|nil User options to merge.
-    --- @return ConfigMeta self The proxy table (for chaining).
+    --- @return witch.ConfigMeta self The proxy table (for chaining).
     __call = function(self, override)
         if override == nil then
             return self

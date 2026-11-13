@@ -1,53 +1,55 @@
---- A color value: hex string ("#rrggbb") or 24-bit integer (0xrrggbb).
---- @alias Color string|integer
+--- A color accepted by this module:
+--- - `string`: a Neovim color name (e.g. `"Red"`), `#rgb`, `#rrggbb`, or `#rrggbbaa` (alpha ignored).
+--- - `integer`: a 24-bit RGB value (e.g. `0xff8800`).
+--- @alias witch.Color string|integer
 ---
---- @class Palette
+--- @class witch.Palette
 ---
 --- ========================================================================
 --- UI SURFACES
 --- ========================================================================
 ---
---- @field bg                Color Main editor background. Never pure #000/#fff.
---- @field bg_float          Color Floats, popups, completion, folded lines.
---- @field bg_block          Color Recessed surfaces: code blocks, terminal, quotes.
---- @field bg_panel          Color Sidebars, explorers and secondary panels.
---- @field bg_bar            Color Statusline, tabline and winbar.
---- @field bg_gutter         Color Sign column, line number and fold column.
---- @field bg_visual         Color Visual selection and selected text.
---- @field bg_popup_selected Color Selected completion/menu item.
---- @field bg_cursorline     Color CursorLine and CursorColumn.
---- @field bg_reference      Color LSP reference highlights.
---- @field bg_signature      Color Active LSP signature parameter.
+--- @field bg                witch.Color Main editor background. Never pure #000/#fff.
+--- @field bg_float          witch.Color Floats, popups, completion, folded lines.
+--- @field bg_block          witch.Color Recessed surfaces: code blocks, terminal, quotes.
+--- @field bg_panel          witch.Color Sidebars, explorers and secondary panels.
+--- @field bg_bar            witch.Color Statusline, tabline and winbar.
+--- @field bg_gutter         witch.Color Sign column, line number and fold column.
+--- @field bg_visual         witch.Color Visual selection and selected text.
+--- @field bg_popup_selected witch.Color Selected completion/menu item.
+--- @field bg_cursorline     witch.Color CursorLine and CursorColumn.
+--- @field bg_reference      witch.Color LSP reference highlights.
+--- @field bg_signature      witch.Color Active LSP signature parameter.
 ---
---- @field bg_diff_add       Color Added-line background.
---- @field bg_diff_change    Color Changed-line background.
---- @field bg_diff_delete    Color Deleted-line background.
+--- @field bg_diff_add       witch.Color Added-line background.
+--- @field bg_diff_change    witch.Color Changed-line background.
+--- @field bg_diff_delete    witch.Color Deleted-line background.
 ---
 --- ========================================================================
 --- TEXT HIERARCHY
 --- ========================================================================
 ---
---- @field fg           Color Primary editor text.
---- @field fg_strong    Color Important text, headings and emphasis.
---- @field fg_muted     Color Secondary text and navigation metadata.
---- @field fg_subtle    Color Low-emphasis but readable secondary text.
---- @field fg_disabled  Color Disabled text that remains identifiable.
---- @field fg_invisible Color Non-essential structural decoration only.
+--- @field fg           witch.Color Primary editor text.
+--- @field fg_strong    witch.Color Important text, headings and emphasis.
+--- @field fg_muted     witch.Color Secondary text and navigation metadata.
+--- @field fg_subtle    witch.Color Low-emphasis but readable secondary text.
+--- @field fg_disabled  witch.Color Disabled text that remains identifiable.
+--- @field fg_invisible witch.Color Non-essential structural decoration only.
 ---
 --- ========================================================================
 --- CURSOR
 --- ========================================================================
 ---
---- @field cursor      Color Cursor background.
---- @field cursor_text Color Foreground rendered underneath the cursor.
+--- @field cursor      witch.Color Cursor background.
+--- @field cursor_text witch.Color Foreground rendered underneath the cursor.
 ---
 --- ========================================================================
 --- BORDERS AND SEPARATORS
 --- ========================================================================
 ---
---- @field border        Color Standard floating-window and panel border.
---- @field border_focus  Color Focused window / active panel border.
---- @field border_subtle Color Quiet separators, splits and scrollbar details.
+--- @field border        witch.Color Standard floating-window and panel border.
+--- @field border_focus  witch.Color Focused window / active panel border.
+--- @field border_subtle witch.Color Quiet separators, splits and scrollbar details.
 ---
 --- ========================================================================
 --- SYNTAX
@@ -55,52 +57,52 @@
 ---
 --- Comments and literals
 ---
---- @field comment Color Comments and documentation.
---- @field string  Color String and character literals.
---- @field number  Color Number and floating-point literals.
---- @field boolean Color Boolean literals.
---- @field constant Color Constants and enum members.
+--- @field comment witch.Color Comments and documentation.
+--- @field string  witch.Color String and character literals.
+--- @field number  witch.Color Number and floating-point literals.
+--- @field boolean witch.Color Boolean literals.
+--- @field constant witch.Color Constants and enum members.
 ---
 --- Language structure
 ---
---- @field keyword Color Keywords, statements, conditionals and imports.
---- @field preproc Color Preprocessor, annotations, decorators and macros.
---- @field operator Color Operators.
+--- @field keyword witch.Color Keywords, statements, conditionals and imports.
+--- @field preproc witch.Color Preprocessor, annotations, decorators and macros.
+--- @field operator witch.Color Operators.
 ---
 --- Callable entities
 ---
---- @field fn         Color Functions, methods and calls.
---- @field fn_builtin Color Built-in functions.
+--- @field fn         witch.Color Functions, methods and calls.
+--- @field fn_builtin witch.Color Built-in functions.
 ---
 --- Types
 ---
---- @field type         Color Types, structs, classes and interfaces.
---- @field type_builtin Color Built-in types.
+--- @field type         witch.Color Types, structs, classes and interfaces.
+--- @field type_builtin witch.Color Built-in types.
 ---
 --- Variables and members
 ---
---- @field variable         Color Ordinary identifiers.
---- @field variable_builtin Color Built-in variables (self, this, etc.).
---- @field parameter        Color Function parameters.
---- @field property         Color Object fields and struct members.
---- @field namespace        Color Modules, packages and namespaces.
+--- @field variable         witch.Color Ordinary identifiers.
+--- @field variable_builtin witch.Color Built-in variables (self, this, etc.).
+--- @field parameter        witch.Color Function parameters.
+--- @field property         witch.Color Object fields and struct members.
+--- @field namespace        witch.Color Modules, packages and namespaces.
 ---
 --- Special tokens and punctuation
 ---
---- @field special   Color Escape sequences and special characters.
---- @field delimiter Color Brackets and punctuation.
---- @field link      Color Navigation links and references.
+--- @field special   witch.Color Escape sequences and special characters.
+--- @field delimiter witch.Color Brackets and punctuation.
+--- @field link      witch.Color Navigation links and references.
 ---
 --- ========================================================================
 --- DIAGNOSTICS
 --- ========================================================================
 ---
---- @field error       Color LSP ERROR, healthError and SpellBad.
---- @field warn        Color LSP WARN, healthWarning and SpellCap.
---- @field info        Color LSP INFO and SpellLocal.
---- @field hint        Color LSP HINT and SpellRare.
---- @field todo        Color TODO, FIXME and related annotations.
---- @field unnecessary Color Unnecessary code and semantically dimmed content.
+--- @field error       witch.Color LSP ERROR, healthError and SpellBad.
+--- @field warn        witch.Color LSP WARN, healthWarning and SpellCap.
+--- @field info        witch.Color LSP INFO and SpellLocal.
+--- @field hint        witch.Color LSP HINT and SpellRare.
+--- @field todo        witch.Color TODO, FIXME and related annotations.
+--- @field unnecessary witch.Color Unnecessary code and semantically dimmed content.
 ---
 --- Diagnostics should primarily use foregrounds, signs and undercurl.
 --- Avoid large, highly saturated diagnostic backgrounds.
@@ -109,10 +111,10 @@
 --- SEARCH
 --- ========================================================================
 ---
---- @field search           Color Search foreground.
---- @field search_bg        Color Ordinary search background.
---- @field search_active    Color Active search foreground.
---- @field search_active_bg Color Active search background.
+--- @field search           witch.Color Search foreground.
+--- @field search_bg        witch.Color Ordinary search background.
+--- @field search_active    witch.Color Active search foreground.
+--- @field search_active_bg witch.Color Active search background.
 ---
 --- Keep search states distinguishable without excessive luminance.
 ---
@@ -124,18 +126,18 @@
 --- Use only when no dedicated semantic field is appropriate.
 --- Examples: rainbow delimiters, git signs and plugin badges.
 ---
---- @field red     Color
---- @field orange  Color
---- @field yellow  Color
---- @field green   Color
---- @field cyan    Color
---- @field blue    Color
---- @field purple  Color
---- @field magenta Color
---- @field pink    Color
---- @field teal    Color
---- @field brown   Color
---- @field gray    Color
+--- @field red     witch.Color
+--- @field orange  witch.Color
+--- @field yellow  witch.Color
+--- @field green   witch.Color
+--- @field cyan    witch.Color
+--- @field blue    witch.Color
+--- @field purple  witch.Color
+--- @field magenta witch.Color
+--- @field pink    witch.Color
+--- @field teal    witch.Color
+--- @field brown   witch.Color
+--- @field gray    witch.Color
 ---
 --- ========================================================================
 --- TERMINAL ANSI
@@ -143,22 +145,22 @@
 ---
 --- Normal colors
 ---
---- @field term_0 Color ANSI black.
---- @field term_1 Color ANSI red.
---- @field term_2 Color ANSI green.
---- @field term_3 Color ANSI yellow.
---- @field term_4 Color ANSI blue.
---- @field term_5 Color ANSI magenta.
---- @field term_6 Color ANSI cyan.
---- @field term_7 Color ANSI white.
+--- @field term_0 witch.Color ANSI black.
+--- @field term_1 witch.Color ANSI red.
+--- @field term_2 witch.Color ANSI green.
+--- @field term_3 witch.Color ANSI yellow.
+--- @field term_4 witch.Color ANSI blue.
+--- @field term_5 witch.Color ANSI magenta.
+--- @field term_6 witch.Color ANSI cyan.
+--- @field term_7 witch.Color ANSI white.
 ---
 --- Bright colors
 ---
---- @field term_8  Color ANSI bright black.
---- @field term_9  Color ANSI bright red.
---- @field term_10 Color ANSI bright green.
---- @field term_11 Color ANSI bright yellow.
---- @field term_12 Color ANSI bright blue.
---- @field term_13 Color ANSI bright magenta.
---- @field term_14 Color ANSI bright cyan.
---- @field term_15 Color ANSI bright white.
+--- @field term_8  witch.Color ANSI bright black.
+--- @field term_9  witch.Color ANSI bright red.
+--- @field term_10 witch.Color ANSI bright green.
+--- @field term_11 witch.Color ANSI bright yellow.
+--- @field term_12 witch.Color ANSI bright blue.
+--- @field term_13 witch.Color ANSI bright magenta.
+--- @field term_14 witch.Color ANSI bright cyan.
+--- @field term_15 witch.Color ANSI bright white.

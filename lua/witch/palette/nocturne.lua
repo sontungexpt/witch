@@ -1,4 +1,4 @@
----@type Palette
+---@type witch.Palette
 -- ============================================================================
 -- NOCTURNE
 -- UVEITIS-AWARE DARK DEVELOPER PALETTE

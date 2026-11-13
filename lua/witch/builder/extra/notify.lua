@@ -1,4 +1,4 @@
---- @param palette Palette
+--- @param palette witch.Palette
 --- @param palette_name string
 return function(palette, palette_name)
 	local result = {

@@ -2,6 +2,7 @@ local require, next = require, next
 
 local M = {}
 
+--- @type table<string, string>
 local PATH = {
 	core = "witch.builder.core",
 	treesitter = "witch.builder.core.treesitter",
@@ -27,7 +28,7 @@ local PATH = {
 
 --- Require a module by name.
 --- @param name string
---- @return table|nil
+--- @return fun()|nil
 M.require = function(name)
 	local path = PATH[name]
 	if not path then

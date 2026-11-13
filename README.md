@@ -163,6 +163,33 @@ To list them at runtime:
 :lua =vim.tbl_keys(require("witch.config").modules)
 ```
 
+### Lualine
+
+Lualine support ships out of the box — no module entry and no configuration required. Witch provides a theme file for every built-in palette under `lua/lualine/themes/`, and since `g.colors_name` is `witch-<palette>`, lualine's default `theme = "auto"` picks the right one and reloads it on every palette switch (Witch emits a `ColorScheme` event per switch):
+
+```lua
+require("lualine").setup()  -- `theme = "auto"` just works
+```
+
+For user-defined custom palettes (which have no theme file), pass a dynamic theme instead:
+
+```lua
+require("lualine").setup({
+    options = {
+        theme = function()
+            return require("witch.lualine").get() -- always follows the active palette
+        end,
+    },
+})
+```
+
+The builder lives in `lua/witch/lualine.lua`:
+
+| Function             | Returns                                                          |
+| -------------------- | ---------------------------------------------------------------- |
+| `get([name])`        | Theme for a palette by name (built-in or custom); active palette if omitted. |
+| `build(palette)`     | Theme from a raw palette table.                                  |
+
 ### `build`
 
 Optional. If omitted, Witch falls back to `require("witch.builder").require(name)`.

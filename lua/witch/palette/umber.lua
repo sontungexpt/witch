@@ -1,4 +1,4 @@
----@type Palette
+---@type witch.Palette
 -- ============================================================================
 -- UMBER FOCUS v4.1
 -- UVEITIS-AWARE HIGH-READABILITY DARK DEVELOPER PALETTE

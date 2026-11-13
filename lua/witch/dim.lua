@@ -12,17 +12,17 @@ local M = {}
 local color = require("witch.util.color")
 
 --- Excluded buffers configuration.
---- @class Dim.Excluded
+--- @class witch.dim.Config.Excluded
 --- @field filetypes table<string, boolean>|string[]
 --- @field buftypes   table<string, boolean>|string[]
 
 --- Configuration settings. These only change when M.config is called.
---- @class Dim.Config
+--- @class witch.dim.Config
 --- @field keep     number  Fraction of the original color to keep (0 to 1).
 --- @field dim_bg   boolean Whether to also dim background colors.
---- @field excluded Dim.Excluded Resolved exclusion sets.
+--- @field excluded witch.dim.Config.Excluded Resolved exclusion sets.
 
---- @type Dim.Config
+--- @type witch.dim.Config
 local config = {
 	keep = 0.65,
 	dim_bg = true,
@@ -30,7 +30,7 @@ local config = {
 }
 
 --- Runtime state. These change frequently during the plugin's lifecycle.
---- @class Dim.State
+--- @class witch.dim.State
 --- @field ns       integer|nil Highlight namespace used for dimming.
 --- @field group    integer|nil Autocmd group id.
 --- @field dimmed   table<string, boolean> Cache of groups currently written into the dim namespace.
@@ -38,7 +38,7 @@ local config = {
 --- @field pending  boolean Prevents multiple rebuilds from firing in the same event loop tick.
 
 --- Creates a fresh runtime state.
---- @return Dim.State
+--- @return witch.dim.State
 local function new_state()
 	return {
 		ns = nil,
@@ -49,7 +49,7 @@ local function new_state()
 	}
 end
 
---- @type Dim.State
+--- @type witch.dim.State
 local state = new_state()
 
 --- Highlight groups that should never be dimmed.
@@ -253,7 +253,7 @@ local function on_win(args)
 end
 
 --- Configures the dimming feature without enabling it.
---- @param excluded Dim.Excluded|nil Tables of filetypes and buftypes to exclude.
+--- @param excluded witch.dim.Config.Excluded|nil Tables of filetypes and buftypes to exclude.
 --- @param level    number|nil Opacity level (0 = visible, 1 = black).
 --- @param bg       boolean|nil Whether to dim background colors.
 --- @return nil
