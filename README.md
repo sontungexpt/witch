@@ -16,10 +16,12 @@ Easy to use, easy to config, easy to extend.
 
 ## Preview
 
-![witch dark](./docs/readme/witch-dark.png)
-![witch light](./docs/readme/witch-light.png)
-![witch umber](./docs/readme/witch-umber.png)
-![witch parchment](./docs/readme/witch-parchment.png)
+| Palette | Preview |
+| ------- | ------- |
+| `dark`   | ![witch dark](./docs/readme/witch-dark.png) |
+| `light`  | ![witch light](./docs/readme/witch-light.png) |
+| `umber`  | ![witch umber](./docs/readme/witch-umber.png) |
+| `parchment` | ![witch parchment](./docs/readme/witch-parchment.png) |
 
 https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0fa5895532
 
@@ -29,6 +31,25 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
 
 - **Neovim >= 0.10** — uses `vim.islist`, `nvim_set_hl` with list-form highlights
 - **`termguicolors`** — set automatically by `setup`
+
+## Quick Start
+
+```lua
+-- lazy.nvim
+{
+    "sontungexpt/witch",
+    priority = 1000,
+    lazy = false,
+    config = function(_, opts)
+        require("witch").setup(opts)
+    end,
+}
+
+-- your config
+require("witch").setup({ palette = "dark" })
+```
+
+Switch palettes anytime with `:Witch light`, `:Witch umber`, or `:Witch parchment`. Tab-completion works over all built-in and custom palettes.
 
 ## Installation
 
@@ -64,6 +85,7 @@ require("witch").setup({
     -- User-defined custom palettes. Keys must be PascalCase
     -- (e.g., `MyPalette`), and are referenced in lowercase
     -- (`:Witch mypalette`, or `palette = "mypalette"`).
+    -- NOTE: `palletes` is intentional (not `palettes`) — match this key exactly.
     palletes = {},
 
     -- Dim inactive windows.
@@ -285,6 +307,32 @@ vim.api.nvim_create_autocmd("User", {
     end,
 })
 ```
+
+### Overriding Highlights
+
+Because Witch loads modules lazily, setting a highlight directly at startup (e.g., `vim.api.nvim_set_hl(0, "@comment", ...)`) will be overwritten when Witch eventually loads that module. 
+
+If you only want to tweak a few specific highlight groups (without writing a whole custom module), you can catch the `WitchModuleLoaded` event and use `nvim_set_hl` to surgically override the colors *after* the module has finished loading.
+
+```lua
+vim.api.nvim_create_autocmd("User", {
+    pattern = "WitchModuleLoaded",
+    callback = function(ev)
+        if ev.data == "treesitter" then
+            -- Override specific Treesitter groups after Witch applies them
+            vim.api.nvim_set_hl(0, "@comment", { fg = "#5c6370", italic = true })
+            vim.api.nvim_set_hl(0, "@keyword", { fg = "#c678dd", bold = true })
+        elseif ev.data == "lsp" then
+            -- Tweak LSP diagnostic undercurls
+            vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { undercurl = true, sp = "#e06c75" })
+        end
+    end,
+})
+```
+
+This approach ensures your overrides survive palette switches and lazy-loading.
+
+> **Note:** If you find yourself overriding *too many* highlight groups, it is highly recommended to create a [Custom module](#custom-modules) instead. Alternatively, if you want to completely replace an existing module's highlights, you can simply override its `build` function directly in your `setup()`. The autocmd override approach is meant for quick, minor tweaks only.
 
 ## API
 
