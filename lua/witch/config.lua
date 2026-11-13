@@ -106,17 +106,7 @@ local config = {
             event = { "InsertEnter", "CmdlineEnter" },
         },
 
-        gitsigns = {
-            event = {
-                User = "GitSignsUpdate"
-            },
-        },
-
         dap = {
-        },
-
-        diffview = {
-            event = "CursorHold"
         },
 
         notify = {

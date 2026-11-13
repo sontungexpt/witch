@@ -1,3 +1,5 @@
+--- @param palette Palette
+--- @param palette_name string
 return function(palette, palette_name)
 	local g = vim.g
 

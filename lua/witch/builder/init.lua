@@ -18,11 +18,8 @@ local PATH = {
 	indentline = "witch.builder.extra.indentline",
 	bracket = "witch.builder.extra.bracket",
 
-	gitsigns = "witch.builder.extra.gitsigns",
-
 	dap = "witch.builder.extra.dap",
 
-	diffview = "witch.builder.extra.diffview",
 	notify = "witch.builder.extra.notify",
 	navic = "witch.builder.extra.navic",
 }

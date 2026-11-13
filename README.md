@@ -112,9 +112,7 @@ require("witch").setup({
         -- Disabled by default — add `enabled = true` to use them.
         nvimtree   = { ft = "NvimTree" },
         cmp        = { event = { "InsertEnter", "CmdlineEnter" } },
-        gitsigns   = { event = { User = "GitSignsUpdate" } },
         dap        = {},
-        diffview   = { event = "CursorHold" },
         notify     = { event = "CursorHold" },
         navic      = { event = "LspAttach" },
     },
@@ -154,9 +152,7 @@ All modules below ship with Witch. Each maps to a `build` function under `lua/wi
 | `indentline` | Indent guide characters (`IblIndent`, `IblScope`, …).                                                                                      |
 | `markup`     | Markup-specific groups — headings, code blocks, links, tables.                                                                           |
 | `nvimtree`   | [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) explorer.                                                                      |
-| `gitsigns`   | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) add/change/delete signs.                                                       |
 | `dap`        | [nvim-dap](https://github.com/mfussenegger/nvim-dap) + [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui).                             |
-| `diffview`   | [diffview.nvim](https://github.com/sindrets/diffview.nvim) diff panes.                                                                     |
 | `notify`     | [nvim-notify](https://github.com/rcarriga/nvim-notify) popups.                                                                             |
 | `navic`      | [nvim-navic](https://github.com/SmiteshP/nvim-navic) breadcrumb icons and text.                                                            |
 
@@ -226,9 +222,6 @@ modules = {
 
     -- Load on the first of several events
     ["blink-cmp"] = { event = { "InsertEnter", "CmdlineEnter" }, enabled = true },
-
-    -- Load on a custom (User) event fired by another plugin
-    gitsigns = { event = { User = "GitSignsUpdate" }, enabled = true },
 }
 ```
 
@@ -250,8 +243,8 @@ ft = { "markdown", "tex", "html" }
 | `event = { InsertEnter = true }`                 | Same as the single-event form, written explicitly. |
 | `event = { BufEnter = "*.lua" }`                 | Load when `BufEnter` fires for a `*.lua` buffer. |
 | `event = { BufEnter = { "*.lua", "*.md" } }`     | Load on the first matching glob pattern.      |
-| `event = { User = "GitSignsUpdate" }`            | Load when that `User` event fires.            |
-| `event = { User = { "GitSignsUpdate", "VeryLazy" } }` | Load on the first of these `User` events. |
+| `event = { User = "LazyLoad" }`                 | Load when that `User` event fires (e.g. from lazy.nvim). |
+| `event = { User = { "LazyLoad", "VeryLazy" } }` | Load on the first of these `User` events. |
 | `event = { User = true }`                        | Load on **any** `User` event.                 |
 
 A few behaviors worth knowing:

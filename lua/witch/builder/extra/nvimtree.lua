@@ -1,44 +1,37 @@
+---@param palette Palette
+---@param palette_name string
 return function(palette, palette_name)
 	return {
 		-- ====================================================================
-		-- Base UI
+		-- BASE UI
 		-- ====================================================================
-
-		{ "NvimTreeNormal", fg = palette.fg_muted, bg = palette.bg_bar },
+		{ "NvimTreeNormal", bg = palette.bg_bar, fg = palette.fg_muted },
 		{ "NvimTreeNormalNC", link = "NvimTreeNormal" },
-
-		{
-			"NvimTreeWinSeparator",
-			fg = palette.border_subtle,
-			bg = palette.bg_bar,
-		},
+		{ "NvimTreeWinSeparator", link = "WinSeparator" },
 
 		-- ====================================================================
-		-- Git status
+		-- GIT STATUS
 		-- ====================================================================
-
 		{ "NvimTreeGitDirty", link = "DiffChange" },
 		{ "NvimTreeGitNew", link = "DiffAdd" },
 		{ "NvimTreeGitDeleted", link = "DiffDelete" },
 
 		-- ====================================================================
-		-- Files and folders
+		-- FILES AND FOLDERS
 		-- ====================================================================
-
-		{ "NvimTreeRootFolder", fg = palette.cyan, bold = true },
-		{ "NvimTreeFolderIcon", fg = palette.border_subtle },
+		{ "NvimTreeRootFolder", fg = palette.fg_strong, bold = true },
+		{ "NvimTreeFolderIcon", link = "Directory" },
 		{ "NvimTreeFolderName", fg = palette.blue },
-		{ "NvimTreeOpenedFolderName", fg = palette.orange },
-		{ "NvimTreeSymlink", fg = palette.blue },
+		{ "NvimTreeOpenedFolderName", fg = palette.fg_strong, bold = true },
+		{ "NvimTreeSymlink", link = "Directory" },
 		{ "NvimTreeImageFile", fg = palette.pink },
-		{ "NvimTreeSpecialFile", fg = palette.magenta, underline = true },
+		{ "NvimTreeSpecialFile", fg = palette.special, underline = true },
 
 		-- ====================================================================
-		-- Decorations and interaction
+		-- DECORATIONS
 		-- ====================================================================
-
-		{ "NvimTreeIndentMarker", fg = palette.border_subtle },
-		{ "NvimTreeLiveFilterPrefix", fg = palette.pink },
-		{ "NvimTreeOpenedHL", fg = palette.blue },
+		{ "NvimTreeIndentMarker", link = "NonText" },
+		{ "NvimTreeLiveFilterPrefix", link = "IncSearch" },
+		{ "NvimTreeOpenedHL", link = "Special" },
 	}
 end
