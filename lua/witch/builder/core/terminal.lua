@@ -32,5 +32,4 @@ return function(palette, palette_name)
 	-- Cyan.
 	g.terminal_color_6 = palette.term_6
 	g.terminal_color_14 = palette.term_14
-
 end

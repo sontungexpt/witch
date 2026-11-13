@@ -1,89 +1,102 @@
 return function(palette, palette_name)
 	return {
 		-- ====================================================================
-		-- Treesitter — core
+		-- Variables and members
 		-- ====================================================================
-		{ "@variable", fg = palette.fg },
-		{ "@variable.builtin", fg = palette.red1 },
-		{ "@variable.member", fg = palette.teal },
-		{ "@variable.parameter", fg = palette.yellow1 },
-		{ "@variable.parameter.builtin", fg = palette.yellow },
-		{ "@module", link = "Include" },
-		{ "@module.builtin", fg = palette.red1 },
-		{ "@namespace.builtin", link = "Identifier" },
-		{ "@property", fg = palette.teal },
-		{ "@operator", fg = palette.operator },
+
+		{ "@variable", link = "Identifier" },
+		{ "@variable.builtin", fg = palette.variable_builtin },
+		{ "@variable.parameter", fg = palette.parameter },
+		{ "@variable.parameter.builtin", link = "@variable.parameter" },
+
+		{ "@module", fg = palette.namespace },
+		{ "@module.builtin", link = "@module" },
+		{ "@namespace.builtin", link = "@module" },
+
+		{ "@property", fg = palette.property },
+		{ "@variable.member", link = "@property" },
+
+		{ "@operator", link = "Operator" },
+
 		{ "@conceal", link = "Conceal" },
 		{ "@annotation", link = "PreProc" },
 		{ "@attribute", link = "PreProc" },
 		{ "@attribute.builtin", link = "PreProc" },
 		{ "@label", link = "Label" },
-		{ "@none" },
-		{ "dosIniLabel", link = "Identifier" },
 
 		-- ====================================================================
-		-- Treesitter — functions
+		-- Functions
 		-- ====================================================================
+
 		{ "@function", link = "Function" },
-		{ "@function.builtin", link = "Special" },
 		{ "@function.call", link = "Function" },
 		{ "@function.method", link = "Function" },
 		{ "@function.method.call", link = "Function" },
+		{ "@function.builtin", fg = palette.fn_builtin },
 		{ "@function.macro", link = "Macro" },
-		{ "@constructor", fg = palette.red },
 
-		{ "@constructor.tsx", fg = palette.blue1 },
+		{ "@constructor", link = "Type" },
+		{ "@constructor.tsx", link = "Type" },
+
 		-- ====================================================================
-		-- Treesitter — types
+		-- Types
 		-- ====================================================================
+
 		{ "@type", link = "Type" },
-		{ "@type.builtin", fg = palette.blue2 },
+		{ "@type.builtin", fg = palette.type_builtin },
 		{ "@type.qualifier", link = "Keyword" },
 		{ "@type.definition", link = "Typedef" },
 
 		-- ====================================================================
-		-- Treesitter — keywords
+		-- Keywords
 		-- ====================================================================
+
 		{ "@keyword", link = "Keyword" },
 		{ "@keyword.function", link = "Keyword" },
+		{ "@keyword.return", link = "Keyword" },
+		{ "@keyword.type", link = "Keyword" },
+		{ "@keyword.modifier", link = "Keyword" },
+		{ "@keyword.coroutine", link = "Keyword" },
+		{ "@keyword.import", link = "Keyword" },
+
 		{ "@keyword.conditional", link = "Conditional" },
 		{ "@keyword.conditional.ternary", link = "Conditional" },
-		{ "@keyword.coroutine", link = "Keyword" },
+		{ "@keyword.repeat", link = "Repeat" },
+		{ "@keyword.exception", link = "Exception" },
+		{ "@keyword.storage", link = "StorageClass" },
+		{ "@keyword.operator", link = "Operator" },
 		{ "@keyword.debug", link = "Debug" },
 		{ "@keyword.directive", link = "PreProc" },
 		{ "@keyword.directive.define", link = "Macro" },
-		{ "@keyword.exception", link = "Exception" },
-		{ "@keyword.import", link = "Include" },
-		{ "@keyword.modifier", link = "Keyword" },
-		{ "@keyword.operator", link = "Operator" },
-		{ "@keyword.repeat", link = "Repeat" },
-		{ "@keyword.storage", link = "StorageClass" },
-		{ "@keyword.return", link = "Keyword" },
-		{ "@keyword.type", link = "Keyword" },
 
 		-- ====================================================================
-		-- Treesitter — strings, numbers, constants
+		-- Strings, numbers and constants
 		-- ====================================================================
+
 		{ "@string", link = "String" },
-		{ "@string.documentation", fg = palette.yellow },
-		{ "@string.escape", fg = palette.magenta1 },
-		{ "@string.regexp", fg = palette.blue },
+		{ "@string.documentation", link = "String" },
+		{ "@string.escape", link = "SpecialChar" },
+		{ "@string.regexp", link = "SpecialChar" },
 		{ "@string.special", link = "SpecialChar" },
 		{ "@string.special.path", link = "Underlined" },
 		{ "@string.special.symbol", link = "Identifier" },
 		{ "@string.special.url", link = "Underlined" },
+
 		{ "@character", link = "Character" },
 		{ "@character.special", link = "SpecialChar" },
+
 		{ "@number", link = "Number" },
 		{ "@number.float", link = "Float" },
+
 		{ "@boolean", link = "Boolean" },
 		{ "@constant", link = "Constant" },
 		{ "@constant.builtin", link = "Special" },
 		{ "@constant.macro", link = "Macro" },
 
 		-- ====================================================================
-		-- Treesitter — comments
+		-- Comments
 		-- ====================================================================
+
 		{ "@comment", link = "Comment" },
 		{ "@comment.error", fg = palette.error },
 		{ "@comment.note", fg = palette.hint },
@@ -91,41 +104,50 @@ return function(palette, palette_name)
 		{ "@comment.warning", fg = palette.warn },
 
 		-- ====================================================================
-		-- Treesitter — punctuation
+		-- Punctuation
 		-- ====================================================================
-		{ "@punctuation.bracket", fg = palette.fg_dark },
-		{ "@punctuation.delimiter", fg = palette.blue },
-		{ "@punctuation.special", fg = palette.blue },
-		{ "@punctuation.special.markdown", fg = palette.border },
+
+		{ "@punctuation.bracket", link = "Delimiter" },
+		{ "@punctuation.delimiter", link = "Delimiter" },
+		{ "@punctuation.special", link = "Special" },
 
 		-- ====================================================================
-		-- Treesitter — tags
+		-- Tags
 		-- ====================================================================
-		{ "@tag", link = "Label" },
-		{ "@tag.attribute", link = "Identifier" },
-		{ "@tag.tsx", fg = palette.red },
-		{ "@tag.delimiter.tsx", fg = palette.blue2 },
+
+		{ "@tag", link = "Tag" },
+		{ "@tag.attribute", link = "@property" },
+		{ "@tag.tsx", link = "Type" },
 		{ "@tag.delimiter", link = "Delimiter" },
+		{ "@tag.delimiter.tsx", link = "Delimiter" },
 
 		-- ====================================================================
-		-- Treesitter — markup
+		-- Markup
 		-- ====================================================================
+
 		{ "@markup.heading", link = "Title" },
-		{ "@markup.list", fg = palette.blue },
+
+		{ "@markup.list", link = "Delimiter" },
 		{ "@markup.list.checked", fg = palette.green },
-		{ "@markup.list.unchecked", fg = palette.red },
+		{ "@markup.list.unchecked", fg = palette.fg_muted },
+
+		-- Inline code and code blocks.
 		{ "@markup.raw", link = "String" },
+
 		{ "@markup.link", fg = palette.link },
-		{ "@markup.link.label", link = "SpecialChar" },
+		{ "@markup.link.label", link = "@markup.link" },
 		{ "@markup.link.url", link = "Underlined" },
+
 		{ "@markup.math", link = "Special" },
+
 		{ "@markup.strong", bold = true },
 		{ "@markup.strikethrough", strikethrough = true },
 		{ "@markup.underline", underline = true },
 
 		-- ====================================================================
-		-- Treesitter — diff
+		-- Diff
 		-- ====================================================================
+
 		{ "@diff.plus", link = "DiffAdd" },
 		{ "@diff.minus", link = "DiffDelete" },
 		{ "@diff.delta", link = "DiffChange" },

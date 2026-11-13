@@ -1,75 +1,44 @@
-
 return function(palette, palette_name)
 	return {
-		-- NvimTree
-		{
-			"NvimTreeNormal",
-			fg = palette.fg_dark,
-			bg = palette.bg_bar,
-		},
+		-- ====================================================================
+		-- Base UI
+		-- ====================================================================
+
+		{ "NvimTreeNormal", fg = palette.fg_muted, bg = palette.bg_bar },
+		{ "NvimTreeNormalNC", link = "NvimTreeNormal" },
+
 		{
 			"NvimTreeWinSeparator",
-			fg = palette.dark_border,
+			fg = palette.border_subtle,
 			bg = palette.bg_bar,
 		},
-		{
-			"NvimTreeNormalNC",
-			fg = palette.fg_dark,
-			bg = palette.bg_bar,
-		},
-		{
-			"NvimTreeRootFolder",
-			fg = palette.cyan,
-			bold = true,
-		},
-		{
-			"NvimTreeGitDirty",
-			link = "DiffChange",
-		},
-		{
-			"NvimTreeGitNew",
-			link = "DiffAdd",
-		},
-		{
-			"NvimTreeGitDeleted",
-			link = "DiffDelete",
-		},
-		{
-			"NvimTreeSpecialFile",
-			fg = palette.magenta1,
-			underline = true,
-		},
-		{
-			"NvimTreeIndentMarker",
-			fg = palette.border,
-		},
-		{
-			"NvimTreeImageFile",
-			fg = palette.pink1,
-		},
-		{
-			"NvimTreeSymlink",
-			fg = palette.blue,
-		},
-		{
-			"NvimTreeFolderIcon",
-			fg = palette.graphite,
-		},
-		{
-			"NvimTreeOpenedFolderName",
-			fg = palette.orange1,
-		},
-		{
-			"NvimTreeFolderName",
-			fg = palette.blue1,
-		},
-		{
-			"NvimTreeLiveFilterPrefix",
-			fg = palette.pink,
-		},
-		{
-			"NvimTreeOpenedHL",
-			fg = palette.blue,
-		},
+
+		-- ====================================================================
+		-- Git status
+		-- ====================================================================
+
+		{ "NvimTreeGitDirty", link = "DiffChange" },
+		{ "NvimTreeGitNew", link = "DiffAdd" },
+		{ "NvimTreeGitDeleted", link = "DiffDelete" },
+
+		-- ====================================================================
+		-- Files and folders
+		-- ====================================================================
+
+		{ "NvimTreeRootFolder", fg = palette.cyan, bold = true },
+		{ "NvimTreeFolderIcon", fg = palette.border_subtle },
+		{ "NvimTreeFolderName", fg = palette.blue },
+		{ "NvimTreeOpenedFolderName", fg = palette.orange },
+		{ "NvimTreeSymlink", fg = palette.blue },
+		{ "NvimTreeImageFile", fg = palette.pink },
+		{ "NvimTreeSpecialFile", fg = palette.magenta, underline = true },
+
+		-- ====================================================================
+		-- Decorations and interaction
+		-- ====================================================================
+
+		{ "NvimTreeIndentMarker", fg = palette.border_subtle },
+		{ "NvimTreeLiveFilterPrefix", fg = palette.pink },
+		{ "NvimTreeOpenedHL", fg = palette.blue },
 	}
 end

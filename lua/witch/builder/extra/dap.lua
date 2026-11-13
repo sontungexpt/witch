@@ -4,6 +4,5 @@ return function(palette, palette_name)
 		-- Dap
 		{ "DapBreakpoint", fg = palette.red },
 		{ "DapStopped", fg = palette.green },
-
 	}
 end

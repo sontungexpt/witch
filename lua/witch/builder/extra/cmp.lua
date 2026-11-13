@@ -1,14 +1,21 @@
 return function(palette, palette_name)
 	local result = {
-		{ "CmpDocumentation", fg = palette.fg_dark, bg = palette.bg_dark },
-		{ "CmpDocumentationBorder", fg = palette.border, bg = palette.bg_dark },
-		{ "CmpGhostText", fg = palette.light_gray },
-		{ "CmpItemAbbr", fg = palette.fg_dark },
-		{ "CmpItemAbbrDeprecated", fg = palette.graphite, strikethrough = true },
+		-- Documentation window
+		{ "CmpDocumentation", link = "NormalFloat" },
+		{ "CmpDocumentationBorder", link = "FloatBorder" },
+
+		-- Ghost text
+		{ "CmpGhostText", link = "NonText" },
+
+		-- Completion item text
+		{ "CmpItemAbbr", fg = palette.fg_muted },
+		{ "CmpItemAbbrDeprecated", fg = palette.fg_disabled, strikethrough = true },
 		{ "CmpItemAbbrMatch", link = "Special" },
 		{ "CmpItemAbbrMatchFuzzy", link = "Special" },
-		{ "CmpItemMenu", fg = palette.comment },
-		{ "CmpItemKindDefault", fg = palette.fg_dark },
+		{ "CmpItemMenu", link = "Comment" },
+
+		-- Completion item kinds
+		{ "CmpItemKindDefault", fg = palette.fg_muted },
 		{ "CmpItemKindCodeium", fg = palette.teal },
 		{ "CmpItemKindCopilot", fg = palette.teal },
 		{ "CmpItemKindTabNine", fg = palette.teal },

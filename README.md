@@ -16,11 +16,11 @@ Easy to use, easy to config, easy to extend.
 
 ## Preview
 
-| Palette | Preview |
-| ------- | ------- |
-| `dark`   | ![witch dark](./docs/readme/witch-dark.png) |
-| `light`  | ![witch light](./docs/readme/witch-light.png) |
-| `umber`  | ![witch umber](./docs/readme/witch-umber.png) |
+| Palette     | Preview                                               |
+| ----------- | ----------------------------------------------------- |
+| `dark`      | ![witch dark](./docs/readme/witch-dark.png)           |
+| `light`     | ![witch light](./docs/readme/witch-light.png)         |
+| `umber`     | ![witch umber](./docs/readme/witch-umber.png)         |
 | `parchment` | ![witch parchment](./docs/readme/witch-parchment.png) |
 
 https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0fa5895532
@@ -310,9 +310,9 @@ vim.api.nvim_create_autocmd("User", {
 
 ### Overriding Highlights
 
-Because Witch loads modules lazily, setting a highlight directly at startup (e.g., `vim.api.nvim_set_hl(0, "@comment", ...)`) will be overwritten when Witch eventually loads that module. 
+Because Witch loads modules lazily, setting a highlight directly at startup (e.g., `vim.api.nvim_set_hl(0, "@comment", ...)`) will be overwritten when Witch eventually loads that module.
 
-If you only want to tweak a few specific highlight groups (without writing a whole custom module), you can catch the `WitchModuleLoaded` event and use `nvim_set_hl` to surgically override the colors *after* the module has finished loading.
+If you only want to tweak a few specific highlight groups (without writing a whole custom module), you can catch the `WitchModuleLoaded` event and use `nvim_set_hl` to surgically override the colors _after_ the module has finished loading.
 
 ```lua
 vim.api.nvim_create_autocmd("User", {
@@ -332,7 +332,7 @@ vim.api.nvim_create_autocmd("User", {
 
 This approach ensures your overrides survive palette switches and lazy-loading.
 
-> **Note:** If you find yourself overriding *too many* highlight groups, it is highly recommended to create a [Custom module](#custom-modules) instead. Alternatively, if you want to completely replace an existing module's highlights, you can simply override its `build` function directly in your `setup()`. The autocmd override approach is meant for quick, minor tweaks only.
+> **Note:** If you find yourself overriding _too many_ highlight groups, it is highly recommended to create a [Custom module](#custom-modules) instead. Alternatively, if you want to completely replace an existing module's highlights, you can simply override its `build` function directly in your `setup()`. The autocmd override approach is meant for quick, minor tweaks only.
 
 ## API
 

@@ -1,151 +1,242 @@
 ---@type Palette
 -- ============================================================================
--- UMBER FOCUS - EYE COMFORT (v4.1)
--- Warm espresso / muted botanical earth tones.
--- Designed for light-sensitive eyes with reduced contrast sensitivity
--- (e.g. uveitis). Readability-oriented design, NOT a medical treatment.
+-- UMBER FOCUS
+-- UVEITIS-AWARE DARK DEVELOPER PALETTE
 --
--- Contrast ratios are WCAG values measured against bg_1 (#1C1A18):
---   * Primary text 9.0:1; no color is brighter (term_15 = fg_0, no glaring white).
---   * Main syntax colors 6.6-7.2:1; light variants ("1") max ~8.4:1.
---   * Dark variants ("2") >= 5.2:1; error 6.6:1; comment 6.2:1.
--- Tip: use italic comments, bold keywords, and undercurl + icons for
--- diagnostics so meaning never depends on color alone.
+-- Warm espresso / muted botanical / restrained earth tones.
+--
+-- Design priorities:
+--   1. Readable essential text without pure-white foregrounds.
+--   2. Low-luminance, low-saturation editor surfaces.
+--   3. Distinct syntax categories with consistent luminance contrast.
+--   4. Restrained selection, search, and diagnostic backgrounds.
+--   5. Predictable focus and popup indicators.
+--   6. Reduced visual competition from nonessential information.
+--
+-- Contrast ratios are measured against each actual background.
+-- WCAG contrast is used as a design reference, not as a medical standard.
+--
+-- Medical limitation:
+--   An accessibility-oriented design experiment, not a treatment
+--   or medical recommendation for uveitis.
 -- ============================================================================
+
 return {
-	-- ========================================================================
-	-- Backgrounds
-	-- ========================================================================
-	bg_0 = 0x141312,
-	bg_1 = 0x1c1a18,
-	bg_2 = 0x282521,
-	bg_3 = 0x1c1a18,
-	bg_4 = 0x302c27,
-	bg_5 = 0x35322e,
+    -- ========================================================================
+    -- 1. UI SURFACES
+    -- ========================================================================
 
-	-- ========================================================================
-	-- Foregrounds
-	-- ========================================================================
-	fg_0 = 0xc0bab0, -- 9.0:1
-	fg_1 = 0xaaa49a, -- 7.0:1
+    -- Main editor surfaces
+    bg       = 0x1c1a18,
+    bg_gutter = 0x201e1b,
+    bg_float = 0x282521,
+    bg_panel = 0x282521,
+    bg_bar   = 0x151412,
 
-	-- ========================================================================
-	-- Semantic UI
-	-- ========================================================================
-	bg = 0x1c1a18,
-	bg_dark = 0x141312,
-	bg_float = 0x282521,
-	bg_bar = 0x141312,
-	bg_visual = 0x35322e,
-	bg_highlight = 0x302c27,
-	bg_gutter = 0x1c1a18,
-	fg = 0xc0bab0,
-	fg_dark = 0xaaa49a,
-	border = 0x45413b,
-	dark_border = 0x302d29,
-	graphite_border = 0x514c45,
+    -- Editor interaction
+    bg_visual       = 0x302b25,
+    bg_cursorline   = 0x29251f,
+    bg_cursorcolumn = 0x25221e,
+    bg_match        = 0x352e27,
 
-	-- ========================================================================
-	-- Semantic syntax
-	-- ========================================================================
-	comment = 0x9f9a92, -- 6.2:1 (italic recommended)
-	string = 0xb8a27d, -- 7.0:1
-	operator = 0x8ea4b5, -- 6.7:1
+    -- Popup / completion
+    bg_popup          = 0x282521,
+    bg_popup_sel      = 0x332d26,
+    bg_popup_selected = 0x332d26,
+    bg_popup_scrollbar = 0x211e1a,
+    bg_popup_thumb     = 0x796956,
 
-	-- ========================================================================
-	-- Semantic diagnostics (pair with undercurl/underline + icon)
-	-- ========================================================================
-	error = 0xd78c87, -- 6.6:1
-	warn = 0xc79c77,
-	info = 0x8ea4b5,
-	hint = 0x89afa7,
-	todo = 0xaf9dbd,
-	unnecessary = 0x625c54,
+    -- LSP references / signature help
+    bg_reference = 0x302b25,
+    bg_signature = 0x282521,
 
-	-- ========================================================================
-	-- Accents (main ~6.6-7.2:1, light variant "1" <= ~8.2:1, dark variant "2" >= ~5.2:1)
-	-- ========================================================================
+    -- Diff surfaces: deliberately low-saturation
+    bg_diff_add    = 0x252b23,
+    bg_diff_change = 0x2d2922,
+    bg_diff_delete = 0x302321,
+    bg_diff_text   = 0x352e27,
 
-	-- red: Muted Terracotta
-	red = 0xd78c87,
-	red1 = 0xe79692,
-	red2 = 0xbe7b77,
+    -- Search surfaces
+    bg_search        = 0x393229,
+    bg_search_active = 0x49352f,
 
-	-- orange: Warm Amber
-	orange = 0xc79c77,
-	orange1 = 0xd5a77f,
-	orange2 = 0xae8867,
-	light_orange = 0xc4b29a,
+    -- ========================================================================
+    -- 2. TEXT HIERARCHY
+    -- ========================================================================
 
-	-- yellow: Aged Sand
-	yellow = 0xbaa47a,
-	yellow1 = 0xc7b083,
-	yellow2 = 0xa3906b,
-	bright_yellow = 0xc7b083,
+    -- Essential text
+    fg        = 0xaaa49a,
+    fg_strong = 0xb6afa4,
 
-	-- green: Muted Sage
-	green = 0x95ae89,
-	green1 = 0x9fba93,
-	green2 = 0x809676,
+    -- Secondary information
+    fg_muted  = 0xa19b92,
+    fg_subtle = 0x969087,
 
-	-- cyan: Soft Seafoam
-	cyan = 0x89afa7,
-	cyan1 = 0x92bab3,
-	cyan2 = 0x759690,
+    -- Nonessential information
+    fg_disabled  = 0x89837a,
+    fg_invisible = 0x777168,
 
-	-- blue: Warm Slate
-	blue = 0x8ea4b5,
-	blue1 = 0x99b0c2,
-	blue2 = 0x7c8f9f,
+    -- Selection foreground
+    selection_fg = 0xc0b9ae,
 
-	-- purple: Dusty Mauve
-	purple = 0xaf9dbd,
-	purple1 = 0xbba8cb,
-	purple2 = 0x9888a5,
+    -- Cursor foreground/background
+    cursor      = 0xb89577,
+    cursor_text = 0x1c1a18,
 
-	-- magenta: Dusty Mauve (alias)
-	magenta = 0xaf9dbd,
-	magenta1 = 0xbba8cb,
-	magenta2 = 0x9888a5,
+    -- ========================================================================
+    -- 3. BORDERS AND STRUCTURAL ELEMENTS
+    -- ========================================================================
 
-	-- pink: Dusty Rose
-	pink = 0xc19595,
-	pink1 = 0xcfa0a0,
-	pink2 = 0xaa8383,
+    border        = 0x514c45,
+    border_subtle = 0x38332d,
+    border_focus  = 0x81705c,
 
-	-- teal: Soft Seafoam (alias)
-	teal = 0x89afa7,
-	teal1 = 0x92bab3,
-	teal2 = 0x759690,
-	link = 0x8ea4b5,
+    -- ========================================================================
+    -- 4. SYNTAX: COMMENTS AND LITERALS
+    -- ========================================================================
 
-	-- ========================================================================
-	-- Neutrals
-	-- ========================================================================
-	black = 0x141312,
-	white = 0xc0bab0,
-	gray = 0x9f9a92,
-	graphite = 0xaaa49a,
-	light_gray = 0x625c54,
-	brown = 0xb18966,
+    comment = 0xa19b92,
 
-	-- ========================================================================
-	-- Terminal (16 colors)
-	-- ========================================================================
-	term_0 = 0x1c1a18,
-	term_1 = 0xd78c87,
-	term_2 = 0x95ae89,
-	term_3 = 0xbaa47a,
-	term_4 = 0x8ea4b5,
-	term_5 = 0xaf9dbd,
-	term_6 = 0x89afa7,
-	term_7 = 0xc0bab0,
-	term_8 = 0x9f9a92,
-	term_9 = 0xe79692,
-	term_10 = 0x9fba93,
-	term_11 = 0xc7b083,
-	term_12 = 0x99b0c2,
-	term_13 = 0xbba8cb,
-	term_14 = 0x92bab3,
-	term_15 = 0xc0bab0,
+    string               = 0xb9a27c,
+    string_escape        = 0xc5a16f,
+    string_documentation = 0xa19b92,
+
+    number   = 0xc0aa7d,
+    boolean  = 0xc3949b,
+    constant = 0xc99b76,
+
+    -- ========================================================================
+    -- 5. SYNTAX: LANGUAGE STRUCTURE
+    -- ========================================================================
+
+    keyword = 0xb09fc0,
+    preproc = 0xa596b5,
+
+    operator  = 0xa69f94,
+    delimiter = 0xaaa49a,
+
+    -- ========================================================================
+    -- 6. SYNTAX: CALLABLE ENTITIES
+    -- ========================================================================
+
+    fn         = 0x91a6b7,
+    fn_builtin = 0x98afbf,
+
+    -- ========================================================================
+    -- 7. SYNTAX: TYPES
+    -- ========================================================================
+
+    type         = 0x96ad88,
+    type_builtin = 0x8eafa5,
+
+    -- ========================================================================
+    -- 8. SYNTAX: VARIABLES AND MEMBERS
+    -- ========================================================================
+
+    variable         = 0xaaa49a,
+    variable_builtin = 0x85a29b,
+
+    parameter = 0xb89577,
+    property  = 0x96b6ad,
+    namespace = 0x8c9eab,
+
+    -- ========================================================================
+    -- 9. SYNTAX: SPECIAL TOKENS
+    -- ========================================================================
+
+    special = 0xbda18f,
+
+    label = 0xb89476,
+    tag   = 0x96ad88,
+    macro = 0xa596b5,
+
+    -- Links and references
+    link = 0x91a6b7,
+
+    -- ========================================================================
+    -- 10. MARKUP
+    -- ========================================================================
+
+    markup_heading = 0xb09fc0,
+    markup_code    = 0xb9a27c,
+    markup_link    = 0x91a6b7,
+
+    -- ========================================================================
+    -- 11. DIAGNOSTICS
+    -- ========================================================================
+
+    -- Foregrounds
+    error       = 0xd18b85,
+    warn        = 0xc5a16f,
+    info        = 0x91a6b7,
+    hint        = 0x8eafa5,
+    todo        = 0xb09fc0,
+    unnecessary = 0x89837a,
+
+    -- Optional diagnostic backgrounds
+    -- Keep these subtle; prefer undercurl and signs.
+    bg_diagnostic_error = 0x302321,
+    bg_diagnostic_warn  = 0x302b22,
+    bg_diagnostic_info  = 0x252a2e,
+    bg_diagnostic_hint  = 0x252b28,
+
+    -- ========================================================================
+    -- 12. SEARCH
+    -- ========================================================================
+
+    search           = 0xb6afa4,
+    search_bg        = 0x393229,
+
+    search_active    = 0xc0b9ae,
+    search_active_bg = 0x49352f,
+
+    -- ========================================================================
+    -- 13. SIGNATURE AND REFERENCES
+    -- ========================================================================
+
+    signature = 0xb89577,
+    reference = 0x96b6ad,
+
+    -- ========================================================================
+    -- 14. RAW ACCENTS
+    --
+    -- Use these for semantic accents, not as arbitrary UI foregrounds.
+    -- ========================================================================
+
+    red     = 0xd18b85,
+    orange  = 0xc99b76,
+    yellow  = 0xb9a27c,
+    green   = 0x96ad88,
+    cyan    = 0x8eafa5,
+    blue    = 0x91a6b7,
+    purple  = 0xb09fc0,
+    magenta = 0xb68b9a,
+    pink    = 0xc3949b,
+    teal    = 0x8eafa5,
+    brown   = 0xb89476,
+    gray    = 0xa19b92,
+
+    -- ========================================================================
+    -- 15. TERMINAL ANSI
+    -- ========================================================================
+
+    -- Normal
+    term_0 = 0x1c1a18,
+    term_1 = 0xd18b85,
+    term_2 = 0x96ad88,
+    term_3 = 0xb9a27c,
+    term_4 = 0x91a6b7,
+    term_5 = 0xb09fc0,
+    term_6 = 0x8eafa5,
+    term_7 = 0xaaa49a,
+
+    -- Bright
+    term_8  = 0xa19b92,
+    term_9  = 0xd28f89,
+    term_10 = 0x9cb38f,
+    term_11 = 0xc0aa7d,
+    term_12 = 0x98afbf,
+    term_13 = 0xb8a6c7,
+    term_14 = 0x96b6ad,
+    term_15 = 0xb6afa4,
 }

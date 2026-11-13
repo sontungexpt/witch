@@ -4,7 +4,7 @@ return function(palette, palette_name)
     local highlights = {
         { "@markup.list", fg = palette.blue },
         -- Muted list markers
-        { "@markup.list.markdown", fg = palette.cyan1 },
+        { "@markup.list.markdown", fg = palette.cyan },
 
         -- Block code: use NONE to clear the ugly grey background and let inner syntax work.
         { "@markup.raw", bg = "NONE", fg = "NONE" },
@@ -14,12 +14,12 @@ return function(palette, palette_name)
         -- Neovim 0.10+ Treesitter compatibility
 
         -- Inline code: soft pastel orange with a subtle background
-        { "@markup.raw.markdown_inline", fg = palette.orange1, bg = palette.bg_dark },
+        { "@markup.raw.markdown_inline", fg = palette.orange, bg = palette.bg },
 
         -- Links: softer, underlined
-        { "@markup.link", fg = palette.blue1, underline = true },
+        { "@markup.link", fg = palette.blue, underline = true },
         { "@markup.link.url", link = "Underlined" },
-        { "@markup.link.label.markdown_inline", fg = palette.pink1 },
+        { "@markup.link.label.markdown_inline", fg = palette.pink },
         { "@markup.link.label", link = "SpecialChar" },
         { "@markup.link.label.symbol", link = "Identifier" },
         { "@markup.math", link = "Special" },
@@ -34,11 +34,11 @@ return function(palette, palette_name)
     -- Eye-friendly pastel heading colors (avoid harsh red2/purple)
     local heading_colors = {
         palette.blue,
-        palette.yellow1,
+        palette.yellow,
         palette.teal,
-        palette.cyan1,
+        palette.cyan,
         palette.green,
-        palette.orange1,
+        palette.orange,
     }
 
     for i, color in ipairs(heading_colors) do

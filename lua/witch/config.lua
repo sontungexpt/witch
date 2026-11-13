@@ -60,14 +60,14 @@ local config = {
             enabled = true,
         },
 
-        ["blink-cmp"] = {
-            enabled = true,
-            event = { "InsertEnter", "CmdlineEnter" },
-        },
-
         terminal = {
             enabled = true,
             event = "TermOpen",
+        },
+
+        ["blink-cmp"] = {
+            enabled = true,
+            event = { "InsertEnter", "CmdlineEnter" },
         },
 
         bracket = {
@@ -88,25 +88,9 @@ local config = {
         nvimtree = {
             ft = "NvimTree",
         },
-        neotree = {
-            ft = "neotree",
-        },
 
         cmp = {
             event = { "InsertEnter", "CmdlineEnter" },
-        },
-
-        dashboard = {
-            ft = "dashboard",
-            lazy = false,
-        },
-
-        telescope = {
-            ft = "TelescopePrompt",
-        },
-
-        todo = {
-            event = "BufReadPost",
         },
 
         gitsigns = {
@@ -127,12 +111,12 @@ local config = {
             event = "CursorHold"
         },
 
-        navic = {
-            event = "LspAttach"
+        noice = {
+            event = "CmdlineEnter",
         },
 
-        scrollbar = {
-            event = "CursorHold"
+        navic = {
+            event = "LspAttach"
         },
     },
 }

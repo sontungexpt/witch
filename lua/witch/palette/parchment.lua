@@ -1,18 +1,30 @@
+-- ============================================================================
+-- UMBER FOCUS (parchment palette)
+-- UVEITIS-AWARE LIGHT DEVELOPER PALETTE
+--
+-- Warm parchment / muted botanical / earthy slate.
+--
+-- Design priorities:
+--   1. Warm, low-glare light surfaces.
+--   2. Strong essential-text readability.
+--   3. Distinct but restrained syntax colors.
+--   4. Quiet UI surfaces and structural decoration.
+--   5. Consistent warm color temperature.
+--
+-- Existing colors preserved; new semantic fields reuse existing values.
+--
+-- Medical limitation:
+-- An accessibility-oriented design experiment, not a treatment
+-- or medical recommendation for uveitis.
+-- ============================================================================
+
 ---@type Palette
--- ============================================================================
--- PARCHMENT - EYE COMFORT (v1)
--- Parchment: dimmed warm paper background + deep earth-tone syntax colors (light variant of Umber).
--- Readability-oriented design for light-sensitive eyes, NOT a medical treatment.
--- Contrast ratios are WCAG values measured against bg_1 (#e0dbd0):
---   * Background luminance is ~79% of the original near-white paper (less glare).
---   * Primary text 9.0:1; no syntax color is darker than it.
---   * Main syntax colors 6.0-6.4:1; light variants ("1") >= 4.8:1.
---   * Dark variants ("2") <= 7.8:1; error 6.0:1; comment 5.2:1.
--- ============================================================================
 return {
 	-- ========================================================================
-	-- Backgrounds (dimmed parchment: much lower luminance than near-white paper)
+	-- UI SURFACES
 	-- ========================================================================
+
+	-- Background scale (dark → light)
 	bg_0 = 0xd6d1c6,
 	bg_1 = 0xe0dbd0,
 	bg_2 = 0xe7e3d9,
@@ -20,115 +32,131 @@ return {
 	bg_4 = 0xd8d3c7,
 	bg_5 = 0xc7c1b3,
 
-	-- ========================================================================
-	-- Foregrounds
-	-- ========================================================================
-	fg_0 = 0x37342f, -- 9.0:1
-	fg_1 = 0x494641, -- 6.8:1
+	-- Semantic surfaces
+	bg                = 0xe0dbd0,
+	bg_float          = 0xe7e3d9,
+	bg_panel          = 0xe7e3d9,
+	bg_bar            = 0xd6d1c6,
+	bg_gutter         = 0xd6d1c6,
+
+	bg_visual         = 0xc7c1b3,
+	bg_popup_selected = 0xc7c1b3,
+	bg_cursorline     = 0xd8d3c7,
+
+	bg_reference      = 0xd8d3c7,
+	bg_signature      = 0xc7c1b3,
+
+	-- Diff surfaces
+	bg_diff_add       = 0xd8d3c7,
+	bg_diff_change    = 0xe7e3d9,
+	bg_diff_delete    = 0xc7c1b3,
 
 	-- ========================================================================
-	-- Semantic UI
+	-- TEXT HIERARCHY
 	-- ========================================================================
-	bg = 0xe0dbd0,
-	bg_dark = 0xd6d1c6,
-	bg_float = 0xe7e3d9,
-	bg_bar = 0xd6d1c6,
-	bg_visual = 0xc7c1b3,
-	bg_highlight = 0xd8d3c7,
-	bg_gutter = 0xd6d1c6,
-	fg = 0x37342f,
-	fg_dark = 0x494641,
-	border = 0xb5afa2,
-	dark_border = 0x9d978a,
-	graphite_border = 0xc7c1b3,
+
+	fg           = 0x37342f,
+	fg_strong    = 0x37342f,
+	fg_muted     = 0x494641,
+	fg_subtle    = 0x5c5750,
+	fg_disabled  = 0xa8a295,
+	fg_invisible = 0xa8a295,
 
 	-- ========================================================================
-	-- Semantic syntax
+	-- CURSOR
 	-- ========================================================================
-	comment = 0x5c5750, -- 5.2:1 (italic recommended)
-	string = 0x5f4622, -- 6.4:1
-	operator = 0x3c4e5c, -- 6.2:1
+
+	cursor      = 0x694725,
+	cursor_text = 0xe0dbd0,
 
 	-- ========================================================================
-	-- Semantic diagnostics (pair with undercurl/underline + icon)
+	-- BORDERS AND SEPARATORS
 	-- ========================================================================
-	error = 0x793d3d, -- 6.0:1
-	warn = 0x694725,
-	info = 0x3c4e5c,
-	hint = 0x32514a,
-	todo = 0x5b4766,
+
+	border        = 0x9d978a,
+	border_focus  = 0x5d3b19,
+	border_subtle = 0xc7c1b3,
+
+	-- ========================================================================
+	-- SYNTAX
+	-- ========================================================================
+
+	-- Comments and literals
+	comment  = 0x5c5750,
+	string   = 0x5f4622,
+	number   = 0x614823,
+	boolean  = 0x5b4766,
+	constant = 0x694725,
+
+	-- Language structure
+	keyword = 0x5b4766,
+	preproc = 0x5b4766,
+
+	-- Operators
+	operator = 0x3c4e5c,
+
+	-- Callable entities
+	fn         = 0x3c4e5c,
+	fn_builtin = 0x495e6e,
+
+	-- Types
+	type         = 0x3b5133,
+	type_builtin = 0x32514a,
+
+	-- Variables and members
+	variable         = 0x37342f,
+	variable_builtin = 0x3e625a,
+	parameter        = 0x7c542d,
+	property         = 0x32514a,
+	namespace        = 0x31404c,
+
+	-- Special tokens and punctuation
+	special   = 0x74562b,
+	delimiter = 0x494641,
+	link      = 0x3c4e5c,
+
+	-- ========================================================================
+	-- DIAGNOSTICS
+	-- ========================================================================
+
+	error       = 0x793d3d,
+	warn        = 0x694725,
+	info        = 0x3c4e5c,
+	hint        = 0x32514a,
+	todo        = 0x5b4766,
 	unnecessary = 0xa8a295,
 
 	-- ========================================================================
-	-- Accents (main ~6-6.4:1, light variant '1' >= ~4.8:1, dark variant '2' <= ~7.8:1)
+	-- SEARCH
 	-- ========================================================================
 
-	-- red: Terracotta
-	red = 0x793d3d, -- base
-	red1 = 0x8e4848, -- light
-	red2 = 0x633030, -- dark
-
-	-- orange: Amber
-	orange = 0x694725, -- base
-	orange1 = 0x7c542d, -- light
-	orange2 = 0x56391d, -- dark
-	light_orange = 0x705c49,
-
-	-- yellow: Warm Sand
-	yellow = 0x614823, -- base
-	yellow1 = 0x74562b, -- light
-	yellow2 = 0x4f3a1b, -- dark
-	bright_yellow = 0x74562b,
-
-	-- green: Sage
-	green = 0x3b5133, -- base
-	green1 = 0x48623e, -- light
-	green2 = 0x304329, -- dark
-
-	-- cyan: Seafoam
-	cyan = 0x32514a, -- base
-	cyan1 = 0x3e625a, -- light
-	cyan2 = 0x28433d, -- dark
-
-	-- blue: Dusty Denim
-	blue = 0x3c4e5c, -- base
-	blue1 = 0x495e6e, -- light
-	blue2 = 0x31404c, -- dark
-
-	-- purple: Mauve
-	purple = 0x5b4766, -- base
-	purple1 = 0x6c5478, -- light
-	purple2 = 0x4b3a54, -- dark
-
-	-- magenta: Dusty Plum (alias)
-	magenta = 0x5b4766, -- base
-	magenta1 = 0x6c5478, -- light
-	magenta2 = 0x4b3a54, -- dark
-
-	-- pink: Dusty Rose
-	pink = 0x6f4242, -- base
-	pink1 = 0x834e4e, -- light
-	pink2 = 0x5c3636, -- dark
-
-	-- teal: Muted Teal (alias)
-	teal = 0x32514a, -- base
-	teal1 = 0x3e625a, -- light
-	teal2 = 0x28433d, -- dark
-	link = 0x3c4e5c,
+	search           = 0x37342f,
+	search_bg        = 0xe2c994,
+	search_active    = 0x37342f,
+	search_active_bg = 0xc99b76,
 
 	-- ========================================================================
-	-- Neutrals
+	-- RAW ACCENTS
 	-- ========================================================================
-	black = 0x2a2825,
-	white = 0xe7e3d9,
-	gray = 0x5c5750,
-	graphite = 0x494641,
-	light_gray = 0xa8a295,
-	brown = 0x5d3b19,
+
+	red     = 0x793d3d,
+	orange  = 0x694725,
+	yellow  = 0x614823,
+	green   = 0x3b5133,
+	cyan    = 0x32514a,
+	blue    = 0x3c4e5c,
+	purple  = 0x5b4766,
+	magenta = 0x5b4766,
+	pink    = 0x6f4242,
+	teal    = 0x32514a,
+	brown   = 0x5d3b19,
+	gray    = 0x5c5750,
 
 	-- ========================================================================
-	-- Terminal (16 colors) - 'white' slots stay readable on this light background
+	-- TERMINAL ANSI — 16 COLORS
 	-- ========================================================================
+
+	-- Normal
 	term_0 = 0x37342f,
 	term_1 = 0x793d3d,
 	term_2 = 0x3b5133,
@@ -137,8 +165,10 @@ return {
 	term_5 = 0x5b4766,
 	term_6 = 0x32514a,
 	term_7 = 0x494641,
-	term_8 = 0x5c5750,
-	term_9 = 0x8e4848,
+
+	-- Bright
+	term_8  = 0x5c5750,
+	term_9  = 0x8e4848,
 	term_10 = 0x48623e,
 	term_11 = 0x74562b,
 	term_12 = 0x495e6e,

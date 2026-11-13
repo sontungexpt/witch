@@ -1,71 +1,151 @@
+---light palette
 ---@type Palette
 return {
-	-- Backgrounds (Cool mist gray - zero glare)
-	-- We avoid pure white (#ffffff) to prevent screen glare.
-	bg_0 = 0xf9fafb, -- Lightest gray (Floating windows, Popups)
-	bg_1 = 0xf3f4f6, -- Main background (Soft, anti-glare)
-	bg_2 = 0xe5e7eb, -- UI elements (Statusline, Sidebars)
-	bg_3 = 0xd1d5db, -- Gutter (Line numbers, SignColumn)
-	bg_4 = 0xe5e7eb, -- CursorLine (Subtle highlight)
-	bg_5 = 0xbae6fd, -- Visual selection (Muted, dusty blue)
+	-- ========================================================================
+	-- UI SURFACES
+	-- ========================================================================
 
-	-- Foregrounds (Deep slate - soft but high enough contrast to read)
-	-- We avoid pure black (#000000) to reduce halation (text bleeding).
-	fg_0 = 0x1f2937, -- Primary text (Deep slate, easy on the eyes)
-	fg_1 = 0x4b5563, -- Secondary text (Comments, hints)
+	bg                = 0xf3f4f6,
+	bg_float          = 0xf9fafb,
+	bg_panel          = 0xf9fafb,
+	bg_bar            = 0xe5e7eb,
+	bg_gutter         = 0xd1d5db,
 
-	-- Semantic UI
-	bg = 0xf3f4f6,
-	bg_dark = 0xf9fafb,
-	bg_float = 0xf9fafb,
-	bg_bar = 0xe5e7eb,
-	bg_visual = 0xbae6fd,
-	bg_highlight = 0xe5e7eb,
-	bg_gutter = 0xd1d5db,
+	bg_visual         = 0xbae6fd,
+	bg_popup_selected = 0xbae6fd,
+	bg_cursorline     = 0xe5e7eb,
 
-	fg = 0x1f2937,
-	fg_dark = 0x4b5563,
+	bg_reference      = 0xe5e7eb,
+	bg_signature      = 0xbae6fd,
 
-	border = 0xd1d5db,
-	dark_border = 0x9ca3af,
-	graphite_border = 0xe5e7eb,
+	-- Preserve the original light surface instead of introducing
+	-- additional diff background colors.
+	bg_diff_add       = 0xf3f4f6,
+	bg_diff_change    = 0xf3f4f6,
+	bg_diff_delete    = 0xf3f4f6,
 
-	-- Semantic syntax (Muted, pastel tones)
-	-- Colors are desaturated and balanced in luminance to reduce chromatic aberration.
-	comment = 0x6b7280,     -- Soft cool gray
-	string = 0x047857,      -- Muted emerald green
-	operator = 0x6d28d9,    -- Soft violet
+	-- ========================================================================
+	-- TEXT HIERARCHY
+	-- ========================================================================
 
-	-- Semantic diagnostic
-	error = 0xbe123c,       -- Deep rose (strong but not neon)
-	warn = 0xb45309,        -- Muted amber
-	info = 0x1d4ed8,        -- Gentle blue
-	hint = 0x0f766e,        -- Soft teal
-	todo = 0x7e22ce,        -- Muted purple
+	fg           = 0x1f2937,
+	fg_strong    = 0x1f2937,
+	fg_muted     = 0x4b5563,
+	fg_subtle    = 0x6b7280,
+	fg_disabled  = 0x9ca3af,
+	fg_invisible = 0x9ca3af,
+
+	-- ========================================================================
+	-- CURSOR
+	-- ========================================================================
+
+	cursor      = 0x1d4ed8,
+	cursor_text = 0xf3f4f6,
+
+	-- ========================================================================
+	-- BORDERS AND SEPARATORS
+	-- ========================================================================
+
+	border        = 0x9ca3af,
+	border_focus  = 0x1d4ed8,
+	border_subtle = 0xe5e7eb,
+
+	-- ========================================================================
+	-- SYNTAX
+	-- ========================================================================
+
+	-- Comments and literals
+	comment  = 0x6b7280,
+	string   = 0x047857,
+	number   = 0xa16207,
+	boolean  = 0x6d28d9,
+	constant = 0xc2410c,
+
+	-- Language structure
+	keyword = 0x6d28d9,
+	preproc = 0xa21caf,
+
+	-- Operators
+	operator = 0x6d28d9,
+
+	-- Callable entities
+	fn         = 0x1d4ed8,
+	fn_builtin = 0x2563eb,
+
+	-- Types
+	type         = 0x0f766e,
+	type_builtin = 0x0e7490,
+
+	-- Variables and members
+	variable         = 0x1f2937,
+	variable_builtin = 0x0e7490,
+	parameter        = 0x9f1239,
+	property         = 0x1d4ed8,
+	namespace        = 0x1e40af,
+
+	-- Special tokens and punctuation
+	special   = 0xca8a04,
+	delimiter = 0x4b5563,
+	link      = 0x1d4ed8,
+
+	-- ========================================================================
+	-- DIAGNOSTICS
+	-- ========================================================================
+
+	error       = 0xbe123c,
+	warn        = 0xb45309,
+	info        = 0x1d4ed8,
+	hint        = 0x0f766e,
+	todo        = 0x7e22ce,
 	unnecessary = 0xd1d5db,
 
-	-- Accents (Gentle tones - 700 color range)
-	red = 0xbe123c, red1 = 0xe11d48, red2 = 0x9f1239,
-	orange = 0xc2410c, orange1 = 0xea580c, orange2 = 0x9a3412, light_orange = 0xfed7aa,
-	yellow = 0xa16207, yellow1 = 0xca8a04, yellow2 = 0x854d0e, bright_yellow = 0xeab308,
-	green = 0x15803d, green1 = 0x16a34a, green2 = 0x166534,
-	cyan = 0x0e7490, cyan1 = 0x0891b2, cyan2 = 0x155e75,
-	blue = 0x1d4ed8, blue1 = 0x2563eb, blue2 = 0x1e40af,
-	purple = 0x6d28d9, purple1 = 0x7c3aed, purple2 = 0x5b21b6,
-	magenta = 0xa21caf, magenta1 = 0xc026d3, magenta2 = 0x86198f,
-	pink = 0xbe185d, pink1 = 0xdb2777, pink2 = 0x9d174d,
-	teal = 0x0f766e, teal1 = 0x0d9488, teal2 = 0x115e59,
+	-- ========================================================================
+	-- SEARCH
+	-- ========================================================================
 
-	link = 0x1d4ed8,
+	search           = 0x1f2937,
+	search_bg        = 0xfde68a,
+	search_active    = 0x1f2937,
+	search_active_bg = 0xeab308,
 
-	-- Neutrals
-	black = 0x1f2937, -- Mapped to primary text (no pure black)
-	white = 0xf9fafb, -- Mapped to lightest bg (no pure white)
-	gray = 0x6b7280, graphite = 0x4b5563, light_gray = 0x9ca3af, brown = 0x78350f,
+	-- ========================================================================
+	-- RAW ACCENTS
+	-- ========================================================================
 
-	-- Terminal (16 colors)
-	term_0 = 0x1f2937, term_1 = 0xbe123c, term_2 = 0x15803d, term_3 = 0xa16207,
-	term_4 = 0x1d4ed8, term_5 = 0x6d28d9, term_6 = 0x0e7490, term_7 = 0xe5e7eb,
-	term_8 = 0x6b7280, term_9 = 0xe11d48, term_10 = 0x16a34a, term_11 = 0xca8a04,
-	term_12 = 0x2563eb, term_13 = 0x7c3aed, term_14 = 0x0891b2, term_15 = 0xf9fafb,
+	red     = 0xbe123c,
+	orange  = 0xc2410c,
+	yellow  = 0xa16207,
+	green   = 0x15803d,
+	cyan    = 0x0e7490,
+	blue    = 0x1d4ed8,
+	purple  = 0x6d28d9,
+	magenta = 0xa21caf,
+	pink    = 0xbe185d,
+	teal    = 0x0f766e,
+	brown   = 0x78350f,
+	gray    = 0x6b7280,
+
+	-- ========================================================================
+	-- TERMINAL ANSI — 16 COLORS
+	-- ========================================================================
+
+	-- Normal
+	term_0 = 0x1f2937,
+	term_1 = 0xbe123c,
+	term_2 = 0x15803d,
+	term_3 = 0xa16207,
+	term_4 = 0x1d4ed8,
+	term_5 = 0x6d28d9,
+	term_6 = 0x0e7490,
+	term_7 = 0xe5e7eb,
+
+	-- Bright
+	term_8  = 0x6b7280,
+	term_9  = 0xe11d48,
+	term_10 = 0x16a34a,
+	term_11 = 0xca8a04,
+	term_12 = 0x2563eb,
+	term_13 = 0x7c3aed,
+	term_14 = 0x0891b2,
+	term_15 = 0xf9fafb,
 }

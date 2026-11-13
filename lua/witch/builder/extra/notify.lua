@@ -1,7 +1,7 @@
 return function(palette, palette_name)
 	local result = {
 		-- Notify
-		{ "NotifyBackground", fg = palette.fg_dark, bg = palette.bg_float },
+		{ "NotifyBackground", fg = palette.fg_muted, bg = palette.bg_float },
 
 		-- Border
 		{ "NotifyERRORBorder", fg = palette.border, bg = palette.bg_float },
@@ -25,16 +25,12 @@ return function(palette, palette_name)
 		{ "NotifyTRACETitle", fg = palette.purple },
 
 		-- Body
-		{ "NotifyERRORBody", fg = palette.fg_dark, bg = palette.bg_float },
-		{ "NotifyWARNBody", fg = palette.fg_dark, bg = palette.bg_float },
-		{ "NotifyINFOBody", fg = palette.fg_dark, bg = palette.bg_float },
-		{ "NotifyDEBUGBody", fg = palette.fg_dark, bg = palette.bg_float },
-		{ "NotifyTRACEBody", fg = palette.fg_dark, bg = palette.bg_float },
+		{ "NotifyERRORBody", fg = palette.fg_muted, bg = palette.bg_float },
+		{ "NotifyWARNBody", fg = palette.fg_muted, bg = palette.bg_float },
+		{ "NotifyINFOBody", fg = palette.fg_muted, bg = palette.bg_float },
+		{ "NotifyDEBUGBody", fg = palette.fg_muted, bg = palette.bg_float },
+		{ "NotifyTRACEBody", fg = palette.fg_muted, bg = palette.bg_float },
 	}
-
-	require("witch.module.share.kind").link_kind({
-		"NoiceCompletionItemKind%s",
-	}, result)
 
 	return result
 end

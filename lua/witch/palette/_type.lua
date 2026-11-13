@@ -1,0 +1,163 @@
+--- A color value: hex string ("#rrggbb") or 24-bit integer (0xrrggbb).
+--- @alias Color string|integer
+---
+--- @class Palette
+---
+--- ========================================================================
+--- UI SURFACES
+--- ========================================================================
+---
+--- @field bg                Color Canonical editor background.
+--- @field bg_float          Color Floating windows and secondary popups.
+--- @field bg_panel          Color Sidebars, explorers and secondary panels.
+--- @field bg_bar            Color Statusline, tabline and winbar.
+--- @field bg_gutter         Color Sign column, line number and fold column.
+--- @field bg_visual         Color Visual selection and selected text.
+--- @field bg_popup_selected Color Selected completion/menu item.
+--- @field bg_cursorline     Color CursorLine and CursorColumn.
+--- @field bg_reference      Color LSP reference highlights.
+--- @field bg_signature      Color Active LSP signature parameter.
+---
+--- @field bg_diff_add       Color Added-line background.
+--- @field bg_diff_change    Color Changed-line background.
+--- @field bg_diff_delete    Color Deleted-line background.
+---
+--- ========================================================================
+--- TEXT HIERARCHY
+--- ========================================================================
+---
+--- @field fg           Color Primary editor text.
+--- @field fg_strong    Color Important text, headings and emphasis.
+--- @field fg_muted     Color Secondary text and navigation metadata.
+--- @field fg_subtle    Color Low-emphasis but readable secondary text.
+--- @field fg_disabled  Color Disabled text that remains identifiable.
+--- @field fg_invisible Color Non-essential structural decoration only.
+---
+--- ========================================================================
+--- CURSOR
+--- ========================================================================
+---
+--- @field cursor      Color Cursor background.
+--- @field cursor_text Color Foreground rendered underneath the cursor.
+---
+--- ========================================================================
+--- BORDERS AND SEPARATORS
+--- ========================================================================
+---
+--- @field border        Color Standard floating-window and panel border.
+--- @field border_focus  Color Focused window / active panel border.
+--- @field border_subtle Color Quiet separators, splits and scrollbar details.
+---
+--- ========================================================================
+--- SYNTAX
+--- ========================================================================
+---
+--- Comments and literals
+---
+--- @field comment Color Comments and documentation.
+--- @field string  Color String and character literals.
+--- @field number  Color Number and floating-point literals.
+--- @field boolean Color Boolean literals.
+--- @field constant Color Constants and enum members.
+---
+--- Language structure
+---
+--- @field keyword Color Keywords, statements, conditionals and imports.
+--- @field preproc Color Preprocessor, annotations, decorators and macros.
+--- @field operator Color Operators.
+---
+--- Callable entities
+---
+--- @field fn         Color Functions, methods and calls.
+--- @field fn_builtin Color Built-in functions.
+---
+--- Types
+---
+--- @field type         Color Types, structs, classes and interfaces.
+--- @field type_builtin Color Built-in types.
+---
+--- Variables and members
+---
+--- @field variable         Color Ordinary identifiers.
+--- @field variable_builtin Color Built-in variables (self, this, etc.).
+--- @field parameter        Color Function parameters.
+--- @field property         Color Object fields and struct members.
+--- @field namespace        Color Modules, packages and namespaces.
+---
+--- Special tokens and punctuation
+---
+--- @field special   Color Escape sequences and special characters.
+--- @field delimiter Color Brackets and punctuation.
+--- @field link      Color Navigation links and references.
+---
+--- ========================================================================
+--- DIAGNOSTICS
+--- ========================================================================
+---
+--- @field error       Color LSP ERROR, healthError and SpellBad.
+--- @field warn        Color LSP WARN, healthWarning and SpellCap.
+--- @field info        Color LSP INFO and SpellLocal.
+--- @field hint        Color LSP HINT and SpellRare.
+--- @field todo        Color TODO, FIXME and related annotations.
+--- @field unnecessary Color Unnecessary code and semantically dimmed content.
+---
+--- Diagnostics should primarily use foregrounds, signs and undercurl.
+--- Avoid large, highly saturated diagnostic backgrounds.
+---
+--- ========================================================================
+--- SEARCH
+--- ========================================================================
+---
+--- @field search           Color Search foreground.
+--- @field search_bg        Color Ordinary search background.
+--- @field search_active    Color Active search foreground.
+--- @field search_active_bg Color Active search background.
+---
+--- Keep search states distinguishable without excessive luminance.
+---
+--- ========================================================================
+--- RAW ACCENTS
+--- ========================================================================
+---
+--- Raw hues for reusable semantic accents.
+--- Use only when no dedicated semantic field is appropriate.
+--- Examples: rainbow delimiters, git signs and plugin badges.
+---
+--- @field red     Color
+--- @field orange  Color
+--- @field yellow  Color
+--- @field green   Color
+--- @field cyan    Color
+--- @field blue    Color
+--- @field purple  Color
+--- @field magenta Color
+--- @field pink    Color
+--- @field teal    Color
+--- @field brown   Color
+--- @field gray    Color
+---
+--- ========================================================================
+--- TERMINAL ANSI
+--- ========================================================================
+---
+--- Normal colors
+---
+--- @field term_0 Color ANSI black.
+--- @field term_1 Color ANSI red.
+--- @field term_2 Color ANSI green.
+--- @field term_3 Color ANSI yellow.
+--- @field term_4 Color ANSI blue.
+--- @field term_5 Color ANSI magenta.
+--- @field term_6 Color ANSI cyan.
+--- @field term_7 Color ANSI white.
+---
+--- Bright colors
+---
+--- @field term_8  Color ANSI bright black.
+--- @field term_9  Color ANSI bright red.
+--- @field term_10 Color ANSI bright green.
+--- @field term_11 Color ANSI bright yellow.
+--- @field term_12 Color ANSI bright blue.
+--- @field term_13 Color ANSI bright magenta.
+--- @field term_14 Color ANSI bright cyan.
+--- @field term_15 Color ANSI bright white.

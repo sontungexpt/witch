@@ -1,148 +1,314 @@
 return function(palette, palette_name)
 	return {
 		-- ====================================================================
-		-- Base UI (windows, floats, bars, tabs)
+		-- Base UI
+		-- Quiet surfaces with consistent background hierarchy.
 		-- ====================================================================
+
 		{ "Normal", bg = palette.bg, fg = palette.fg },
 		{ "NormalNC", bg = palette.bg, fg = palette.fg },
-		{ "NormalFloat", bg = palette.bg_float, fg = palette.fg_dark },
-		{ "FloatTitle", bg = palette.bg_float, fg = palette.fg_dark },
-		{ "FloatBorder", bg = palette.bg_float, fg = palette.border },
-		{ "StatusLine", bg = palette.bg_bar, fg = palette.fg },
-		{ "StatusLineNC", bg = palette.bg_dark, fg = palette.fg_dark },
+
+		{ "NormalFloat", bg = palette.bg_float, fg = palette.fg },
+
+		{
+			"FloatTitle",
+			bg = palette.bg_float,
+			fg = palette.fg_strong,
+			bold = true,
+		},
+
+		{
+			"FloatBorder",
+			bg = palette.bg_float,
+			fg = palette.border_subtle,
+		},
+
+		-- Statusline and tabline.
+		{ "StatusLine", bg = palette.bg_bar, fg = palette.fg_muted },
+		{ "StatusLineNC", bg = palette.bg_bar, fg = palette.fg_subtle },
+
 		{ "WinBar", link = "StatusLine" },
 		{ "WinBarNC", link = "StatusLineNC" },
-		{ "TabLine", bg = palette.bg_bar, fg = palette.fg },
-		{ "TabLineSel", bg = palette.bg_visual, fg = palette.fg, bold = true },
-		{ "TabLineFill", bg = palette.bg_dark },
-		{ "SignColumn" },
-		{ "WinSeparator", fg = palette.dark_border },
-		{ "VertSplit", fg = palette.dark_border },
+
+		{ "TabLine", bg = palette.bg_bar, fg = palette.fg_muted },
+
+		{
+			"TabLineSel",
+			bg = palette.bg_bar,
+			fg = palette.fg_strong,
+			bold = true,
+		},
+
+		{ "TabLineFill", bg = palette.bg_bar },
+
+		-- Seamless editor gutters.
+		{ "SignColumn", bg = palette.bg },
+
+		{ "WinSeparator", fg = palette.border_subtle },
+		{ "VertSplit", link = "WinSeparator" },
+
 		{ "EndOfBuffer", fg = palette.bg },
 
 		-- ====================================================================
-		-- Cursor, line numbers, folds
+		-- Cursor, line numbers and folds
 		-- ====================================================================
-		{ "LineNr", fg = palette.comment },
-		{ "CursorLineNr", fg = palette.pink, bold = true },
-		{ "CursorColumn", bg = palette.bg_highlight },
-		{ "CursorLine", bg = palette.bg_highlight },
-		{ "FoldColumn", bg = palette.bg, fg = palette.comment },
-		{ "Folded", bg = palette.bg_gutter, fg = palette.blue },
+
+		{
+			"Cursor",
+			bg = palette.cursor,
+			fg = palette.cursor_text,
+		},
+
+		{ "TermCursor", link = "Cursor" },
+		{ "lCursor", link = "Cursor" },
+
+		{ "LineNr", fg = palette.fg_muted },
+
+		{
+			"CursorLineNr",
+			fg = palette.fg_strong,
+			bold = true,
+		},
+
+		{
+			"CursorLine",
+			bg = palette.bg_cursorline,
+		},
+
+		{
+			"CursorColumn",
+			bg = palette.bg_cursorline,
+		},
+
+		-- Fold column must not create a contrasting vertical strip.
+		{
+			"FoldColumn",
+			bg = palette.bg,
+			fg = palette.fg_subtle,
+		},
+
+		{
+			"Folded",
+			bg = palette.bg_panel,
+			fg = palette.fg_muted,
+		},
 
 		-- ====================================================================
-		-- Selection, search, spelling
+		-- Selection, search and spelling
 		-- ====================================================================
-		{ "Visual", bg = palette.bg_visual },
-		{ "VisualNOS", bg = palette.bg_visual },
-		{ "Search", bg = palette.orange2, fg = palette.bg },
-		{ "IncSearch", bg = palette.orange, fg = palette.bg, bold = true },
+
+		{
+			"Visual",
+			bg = palette.bg_visual,
+			fg = palette.fg,
+		},
+
+		{ "VisualNOS", link = "Visual" },
+
+		-- Search remains distinguishable through its foreground/background
+		-- pairing rather than additional decoration.
+		{
+			"Search",
+			bg = palette.search_bg,
+			fg = palette.search,
+		},
+
+		{
+			"IncSearch",
+			bg = palette.search_active_bg,
+			fg = palette.search_active,
+		},
+
 		{ "CurSearch", link = "IncSearch" },
-		{ "Substitute", bg = palette.red2, fg = palette.bg },
-		{ "MatchParen", bold = true, fg = palette.orange },
+
+		{
+			"Substitute",
+			bg = palette.search_active_bg,
+			fg = palette.search_active,
+			underline = true,
+			sp = palette.error,
+		},
+
+		{
+			"MatchParen",
+			bg = palette.bg_cursorline,
+			fg = palette.orange,
+			underline = true,
+		},
+
+		-- Spelling: underline only, avoiding intrusive backgrounds.
 		{ "SpellBad", sp = palette.error, undercurl = true },
 		{ "SpellCap", sp = palette.warn, undercurl = true },
 		{ "SpellLocal", sp = palette.info, undercurl = true },
 		{ "SpellRare", sp = palette.hint, undercurl = true },
 
 		-- ====================================================================
-		-- Syntax (Vim classic) - full set for linking
+		-- Syntax: Vim classic
+		-- Semantic source-of-truth groups.
 		-- ====================================================================
-		-- Comments
-		{ "Comment", fg = palette.comment, italic = true },
-		{ "SpecialComment", fg = palette.comment, italic = true },
 
-		-- Literals
-		{ "Constant", fg = palette.orange },
+		-- Comments.
+		{ "Comment", fg = palette.comment },
+		{ "SpecialComment", link = "Comment" },
+
+		-- Literals.
+		{ "Constant", fg = palette.constant },
 		{ "String", fg = palette.string },
-		{ "Character", fg = palette.string },
-		{ "Number", fg = palette.orange1 },
-		{ "Boolean", fg = palette.red2, italic = true },
-		{ "Float", fg = palette.orange2 },
+		{ "Character", link = "String" },
+		{ "Number", fg = palette.number },
+		{ "Float", link = "Number" },
+		{ "Boolean", fg = palette.boolean },
 
-		-- Names and functions
-		{ "Identifier", fg = palette.magenta },
-		{ "Function", fg = palette.blue },
+		-- Identifiers and functions.
+		{ "Identifier", fg = palette.variable },
+		{ "Function", fg = palette.fn },
+
 		{ "Label", fg = palette.brown },
-		{ "Tag", fg = palette.blue },
+		{ "Tag", fg = palette.brown },
 
-		-- Statements and keywords
-		{ "Statement", fg = palette.magenta },
-		{ "Conditional", fg = palette.magenta },
-		{ "Repeat", fg = palette.magenta },
-		{ "Keyword", fg = palette.magenta },
-		{ "Exception", fg = palette.magenta },
-		{ "StorageClass", fg = palette.magenta },
+		-- Statements and keywords.
+		{ "Keyword", fg = palette.keyword },
+		{ "Statement", link = "Keyword" },
+		{ "Conditional", link = "Keyword" },
+		{ "Repeat", link = "Keyword" },
+		{ "Exception", link = "Keyword" },
+		{ "StorageClass", link = "Keyword" },
+
 		{ "Operator", fg = palette.operator },
 
-		-- Preprocessor
-		{ "PreProc", fg = palette.cyan1 },
-		{ "Include", fg = palette.cyan1 },
-		{ "Define", fg = palette.cyan1 },
-		{ "Macro", fg = palette.cyan1 },
-		{ "PreCondit", fg = palette.cyan1 },
+		-- Preprocessor.
+		{ "PreProc", fg = palette.preproc },
+		{ "Include", link = "PreProc" },
+		{ "Define", link = "PreProc" },
+		{ "Macro", link = "PreProc" },
+		{ "PreCondit", link = "PreProc" },
 
-		-- Types
-		{ "Type", fg = palette.cyan },
-		{ "Structure", fg = palette.cyan },
-		{ "Typedef", fg = palette.cyan },
+		-- Types.
+		{ "Type", fg = palette.type },
+		{ "Structure", link = "Type" },
+		{ "Typedef", link = "Type" },
 
-		-- Special and punctuation
-		{ "Special", fg = palette.orange2 },
-		{ "SpecialChar", fg = palette.orange2 },
-		{ "Delimiter", fg = palette.fg_dark },
-		{ "Debug", fg = palette.orange },
+		-- Special and punctuation.
+		{ "Special", fg = palette.special },
+		{ "SpecialChar", link = "Special" },
+		{ "Delimiter", fg = palette.delimiter },
+		{ "Debug", link = "Keyword" },
 
-		-- Misc
+		-- Miscellaneous.
 		{ "Underlined", underline = true },
-		{ "Ignore", fg = palette.gray },
+		{ "Ignore", fg = palette.fg_disabled },
 		{ "Error", fg = palette.error },
-		{ "Todo", bg = palette.yellow2, fg = palette.bg, bold = true },
+		{ "Todo", fg = palette.todo, bold = true },
+
 		{ "Bold", bold = true },
 		{ "Italic", italic = true },
 
 		-- ====================================================================
 		-- Messages and prompts
 		-- ====================================================================
+
 		{ "ErrorMsg", fg = palette.error },
 		{ "WarningMsg", fg = palette.warn },
-		{ "ModeMsg", fg = palette.fg_dark },
-		{ "MsgArea", fg = palette.fg_dark },
-		{ "MsgSeparator", fg = palette.border },
-		{ "MoreMsg", fg = palette.blue },
-		{ "Question", fg = palette.blue },
-		{ "Directory", fg = palette.blue },
-		{ "Title", bold = true, fg = palette.orange1 },
+
+		{ "ModeMsg", fg = palette.fg_muted },
+		{ "MsgArea", fg = palette.fg },
+
+		{ "MsgSeparator", fg = palette.border_subtle },
+
+		{ "MoreMsg", fg = palette.link },
+		{ "Question", fg = palette.link },
+		{ "Directory", fg = palette.link },
+
+		{
+			"Title",
+			fg = palette.fg_strong,
+			bold = true,
+		},
 
 		-- ====================================================================
 		-- Invisible and auxiliary characters
 		-- ====================================================================
-		{ "NonText", fg = palette.gray },
-		{ "SpecialKey", fg = palette.gray },
-		{ "Whitespace", fg = palette.light_gray },
-		{ "Conceal", fg = palette.orange2 },
+
+		{ "NonText", fg = palette.fg_invisible },
+		{ "Whitespace", fg = palette.fg_invisible },
+		{ "SpecialKey", link = "Whitespace" },
+
+		{ "Conceal", fg = palette.fg_muted },
 
 		-- ====================================================================
-		-- Popup menu, wildmenu, quickfix
+		-- Popup menu, wildmenu and quickfix
 		-- ====================================================================
-		{ "Pmenu", bg = palette.bg_float, fg = palette.fg_dark },
-		{ "PmenuSel", bg = palette.bg_visual, bold = true },
-		{ "PmenuSbar", bg = palette.light_gray },
-		{ "PmenuThumb", bg = palette.border },
-		{ "WildMenu", bg = palette.bg_visual },
-		{ "QuickFixLine", bg = palette.bg_visual, bold = true },
+
+		{
+			"Pmenu",
+			bg = palette.bg_float,
+			fg = palette.fg,
+		},
+
+		{
+			"PmenuSel",
+			bg = palette.bg_popup_selected,
+			fg = palette.fg_strong,
+		},
+
+		-- Scrollbar track blends into the floating window.
+		{
+			"PmenuSbar",
+			bg = palette.bg_float,
+		},
+
+		-- Thumb remains subtly visible.
+		{
+			"PmenuThumb",
+			bg = palette.border_subtle,
+		},
+
+		{
+			"WildMenu",
+			bg = palette.bg_popup_selected,
+			fg = palette.fg_strong,
+		},
+
+		{
+			"QuickFixLine",
+			bg = palette.bg_cursorline,
+			fg = palette.fg,
+		},
 
 		-- ====================================================================
 		-- Diff
+		-- Restrained backgrounds; semantic colors carry the information.
 		-- ====================================================================
-		{ "DiffAdd", fg = palette.green },
-		{ "DiffChange", fg = palette.orange },
-		{ "DiffDelete", fg = palette.red },
-		{ "DiffText", fg = palette.fg_dark },
+
+		{
+			"DiffAdd",
+			bg = palette.bg_diff_add,
+			fg = palette.green,
+		},
+
+		{
+			"DiffChange",
+			bg = palette.bg_diff_change,
+			fg = palette.orange,
+		},
+
+		{
+			"DiffDelete",
+			bg = palette.bg_diff_delete,
+			fg = palette.red,
+		},
+
+		{
+			"DiffText",
+			bg = palette.bg_diff_change,
+			fg = palette.fg_strong,
+			bold = true,
+		},
 
 		-- ====================================================================
 		-- Health
 		-- ====================================================================
+
 		{ "healthError", fg = palette.error },
 		{ "healthWarning", fg = palette.warn },
 		{ "healthSuccess", fg = palette.green },

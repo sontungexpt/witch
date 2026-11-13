@@ -1,37 +1,37 @@
 return function(palette, palette_name)
 	local result = {
-		-- Menu
-		{ "BlinkCmpMenu", fg = palette.fg_dark, bg = palette.bg_float or palette.bg_dark },
-		{ "BlinkCmpMenuBorder", fg = palette.border, bg = palette.bg_float or palette.bg_dark },
-		{ "BlinkCmpMenuSelection", fg = palette.fg, bg = palette.bg_highlight, bold = true },
+		-- Menu — link to core popup menu groups
+		{ "BlinkCmpMenu", link = "Pmenu" },
+		{ "BlinkCmpMenuBorder", link = "FloatBorder" },
+		{ "BlinkCmpMenuSelection", link = "PmenuSel" },
 
-		-- Scrollbar
-		{ "BlinkCmpScrollBarThumb", bg = palette.light_gray },
-		{ "BlinkCmpScrollBarGutter", bg = palette.bg_float or palette.bg_dark },
+		-- Scrollbar — link to core popup scrollbar groups
+		{ "BlinkCmpScrollBarThumb", link = "PmenuThumb" },
+		{ "BlinkCmpScrollBarGutter", link = "PmenuSbar" },
 
-		-- Label
-		{ "BlinkCmpLabel", fg = palette.fg_dark },
-		{ "BlinkCmpLabelDeprecated", fg = palette.graphite, strikethrough = true },
+		-- Label — explicit colors for text distinction
+		{ "BlinkCmpLabel", fg = palette.fg_muted },
+		{ "BlinkCmpLabelDeprecated", fg = palette.border_subtle, strikethrough = true },
 		{ "BlinkCmpLabelMatch", fg = palette.blue, bold = true },
 		{ "BlinkCmpLabelDetail", fg = palette.comment },
 		{ "BlinkCmpLabelDescription", fg = palette.comment },
 
-		-- Documentation
-		{ "BlinkCmpDoc", fg = palette.fg_dark, bg = palette.bg_float or palette.bg_dark },
-		{ "BlinkCmpDocBorder", fg = palette.border, bg = palette.bg_float or palette.bg_dark },
-		{ "BlinkCmpDocSeparator", fg = palette.border, bg = palette.bg_float or palette.bg_dark },
-		{ "BlinkCmpDocCursorLine", bg = palette.bg_highlight },
+		-- Documentation — link to core float groups
+		{ "BlinkCmpDoc", link = "NormalFloat" },
+		{ "BlinkCmpDocBorder", link = "FloatBorder" },
+		{ "BlinkCmpDocSeparator", link = "FloatBorder" },
+		{ "BlinkCmpDocCursorLine", link = "Visual" },
 
-		-- Signature help
-		{ "BlinkCmpSignatureHelp", fg = palette.fg_dark, bg = palette.bg_float or palette.bg_dark },
-		{ "BlinkCmpSignatureHelpBorder", fg = palette.border, bg = palette.bg_float or palette.bg_dark },
+		-- Signature help — link to core float groups
+		{ "BlinkCmpSignatureHelp", link = "NormalFloat" },
+		{ "BlinkCmpSignatureHelpBorder", link = "FloatBorder" },
 		{ "BlinkCmpSignatureHelpActiveParameter", fg = palette.orange, bold = true },
 
-		-- Ghost text
-		{ "BlinkCmpGhostText", fg = palette.light_gray },
+		-- Ghost text — link to core structural text
+		{ "BlinkCmpGhostText", link = "NonText" },
 
-		-- Kind base
-		{ "BlinkCmpKind", fg = palette.blue },
+		-- Kind base — link to core function group
+		{ "BlinkCmpKind", link = "Function" },
 	}
 
 	require("witch.builder.shared.kind").link_kind({
