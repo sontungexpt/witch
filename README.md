@@ -57,7 +57,17 @@ Switch palettes anytime with `:Witch light`, `:Witch umber`, or `:Witch parchmen
     lazy = false,
     opts = {}
 }
+
 ```
+
+```lua
+-- vim.pack
+vim.pack.add({
+    { src = "https://github.com/sontungexpt/witch" },
+})
+```
+
+
 
 ## Setup
 
