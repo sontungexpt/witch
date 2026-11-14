@@ -31,7 +31,7 @@ local PALETTE_DICT = setmetatable({}, {
         local found_path = BUILTIN_PALETTES[name]
         local palette = found_path and require(found_path)
             -- The config palette name must be PascalCase (e.g., "DarkPalette")
-            or config.palletes[name:gsub("^%l", string.upper)]
+            or config.palettes[name:gsub("^%l", string.upper)]
         rawset(t, name, palette)
         return palette
     end,
@@ -48,8 +48,8 @@ M.available_palette_names = function()
     end
 
     -- Add custom themes from config
-    if config.palletes then
-        for name, _ in pairs(config.palletes) do
+    if config.palettes then
+        for name, _ in pairs(config.palettes) do
             --- User provided palette name must be PascalCase (e.g., "DarkPalette")
             if name:match("^%l") then
                 seen[name] = true
