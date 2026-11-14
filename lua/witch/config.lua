@@ -1,40 +1,10 @@
 local type, pairs = type, pairs
 local islist = vim.islist
 
---- @alias CustomPaletteName string
-
---- @class witch.Config.Module
---- @field enabled? boolean Whether the module is enabled.
---- @field build? fun(palette: witch.Palette, palette_name: string): table[] The highlight builder function.
---- @field lazy? boolean If `false`, the module is loaded immediately during setup.
---- @field ft? string|string[] Filetype(s) that trigger loading.
----
---- Event(s) that trigger loading.
---- `event` supports lazy.nvim-style forms:
----   - `"TermOpen"` — single event, default pattern.
----   - `{ "InsertEnter", "CmdlineEnter" }` — multiple events, default pattern.
----   - `{ User = "LazyLoad" }` — event → pattern.
----   - `{ User = { "LazyLoad", "VeryLazy" } }` — event → multiple patterns.
----   - `{ InsertEnter = true }` — non-string/non-table value → default pattern.
---- @field event? string|string[]|table<string, string|string[]>
----
-
---- @class witch.Config
---- @field palette string Active palette name.
---- @field modules table<string, witch.Config.Module> Per-module configuration overrides.
---- @field palletes table<CustomPaletteName, witch.Palette> User-defined custom palettes. the keys must be PascalCase (e.g., "DarkPalette").
---- @field dim witch.Config.Dim Configuration for dimming inactive windows.
-
---- @class witch.Config.Dim
---- @field enabled boolean Whether dimming is active.
---- @field level number Dim level from `0` to `1`.
---- @field excluded table{ filetypes: table<string, boolean>, buftypes: table<string, boolean> } Buffers excluded from dimming.
---- @field fade_bg boolean Whether to also fade background groups.
-
 --- @type witch.Config
 local config = {
     palette = "umber",
-    palletes = {},
+    palettes = {},
     dim = {
         enabled = true,
         level = 0.35,
@@ -52,6 +22,11 @@ local config = {
 
         treesitter = {
             event = "FileType",
+            enabled = true,
+        },
+
+        diagnostic = {
+            event = "DiagnosticChanged",
             enabled = true,
         },
 

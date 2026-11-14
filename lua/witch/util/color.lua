@@ -4,7 +4,6 @@ local bit = bit or require("bit")
 local band, rshift = bit.band, bit.rshift
 
 --- Color utilities: parsing, blending, darkening/lightening and luminance checks.
---- @class witch.util.color
 local M = {}
 
 --- Default background color used by `darken` when none is given.

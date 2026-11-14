@@ -5,7 +5,7 @@ local M = {}
 --- Convert a palette color to the `"#rrggbb"` string lualine expects.
 --- Lualine rejects 24-bit integers (> 255), so integers must be formatted.
 ---
---- @param c integer|string
+--- @param c witch.Color
 --- @return string
 local function hex(c)
 	if type(c) == "number" then
@@ -110,7 +110,7 @@ end
 
 --- Build the theme for a palette by name.
 ---
---- @param palette_name? string Defaults to the active palette.
+--- @param palette_name? witch.PaletteName Defaults to the active palette.
 --- @param opts? witch.lualine.Opts
 --- @return table|nil theme
 M.get = function(palette_name, opts)

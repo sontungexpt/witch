@@ -3,7 +3,7 @@ local M = {}
 
 --- Default LSP Completion Kinds mapped for maximum visual hierarchy and beauty.
 --- Leverages Neovim's fallback mechanism: @lsp.type.* -> @treesitter -> Vim Classic.
---- @type table<string, table>
+--- @type table<string, vim.api.keyset.highlight>
 local default_kinds = {
 	-- Data Structures and Types (Usually Yellow/Teal)
 	Class = { link = "@lsp.type.class" },
