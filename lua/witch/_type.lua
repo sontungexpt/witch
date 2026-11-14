@@ -1,8 +1,36 @@
+-- ============================================================================
+-- PRIMITIVES
+-- ============================================================================
+
 --- A color accepted by this module:
 --- - `string`: a Neovim color name (e.g. `"Red"`), `#rgb`, `#rrggbb`, or `#rrggbbaa` (alpha ignored).
 --- - `integer`: a 24-bit RGB value (e.g. `0xff8800`).
 --- @alias witch.Color string|integer
----
+
+--- @alias witch.BuiltinPaletteName string
+--- @alias witch.CustomPaletteName string
+--- @alias witch.PaletteName witch.BuiltinPaletteName | witch.CustomPaletteName
+
+--- @alias witch.ModuleName
+--- | "core"
+--- | "treesitter"
+--- | "diagnostic"
+--- | "lsp"
+--- | "terminal"
+--- | "markup"
+--- | "blink-cmp"
+--- | "cmp"
+--- | "nvimtree"
+--- | "indentline"
+--- | "bracket"
+--- | "dap"
+--- | "notify"
+--- | "navic"
+
+-- ============================================================================
+-- PALETTE
+-- ============================================================================
+
 --- @class witch.Palette
 ---
 --- ========================================================================
@@ -57,10 +85,10 @@
 ---
 --- Comments and literals
 ---
---- @field comment witch.Color Comments and documentation.
---- @field string  witch.Color String and character literals.
---- @field number  witch.Color Number and floating-point literals.
---- @field boolean witch.Color Boolean literals.
+--- @field comment  witch.Color Comments and documentation.
+--- @field string   witch.Color String and character literals.
+--- @field number   witch.Color Number and floating-point literals.
+--- @field boolean  witch.Color Boolean literals.
 --- @field constant witch.Color Constants and enum members.
 ---
 --- Language structure
@@ -97,6 +125,9 @@
 --- DIAGNOSTICS
 --- ========================================================================
 ---
+--- Diagnostics should primarily use foregrounds, signs and undercurl.
+--- Avoid large, highly saturated diagnostic backgrounds.
+---
 --- @field error       witch.Color LSP ERROR, healthError and SpellBad.
 --- @field warn        witch.Color LSP WARN, healthWarning and SpellCap.
 --- @field info        witch.Color LSP INFO and SpellLocal.
@@ -104,19 +135,16 @@
 --- @field todo        witch.Color TODO, FIXME and related annotations.
 --- @field unnecessary witch.Color Unnecessary code and semantically dimmed content.
 ---
---- Diagnostics should primarily use foregrounds, signs and undercurl.
---- Avoid large, highly saturated diagnostic backgrounds.
----
 --- ========================================================================
 --- SEARCH
 --- ========================================================================
+---
+--- Keep search states distinguishable without excessive luminance.
 ---
 --- @field search           witch.Color Search foreground.
 --- @field search_bg        witch.Color Ordinary search background.
 --- @field search_active    witch.Color Active search foreground.
 --- @field search_active_bg witch.Color Active search background.
----
---- Keep search states distinguishable without excessive luminance.
 ---
 --- ========================================================================
 --- RAW ACCENTS
@@ -164,3 +192,33 @@
 --- @field term_13 witch.Color ANSI bright magenta.
 --- @field term_14 witch.Color ANSI bright cyan.
 --- @field term_15 witch.Color ANSI bright white.
+
+-- ============================================================================
+-- CONFIGURATION
+-- ============================================================================
+
+--- @class witch.Config.Dim
+--- @field enabled   boolean Whether dimming is active.
+--- @field level     number  Dim level from `0` to `1`.
+--- @field excluded  table{ filetypes: table<string, boolean>|string[], buftypes: table<string, boolean>|string[] } Buffers excluded from dimming.
+--- @field fade_bg   boolean Whether to also fade background groups.
+
+--- @class witch.Config.Module
+--- @field enabled? boolean Whether the module is enabled.
+--- @field build?   fun(palette: witch.Palette, palette_name: witch.PaletteName): vim.api.keyset.highlight[]|{[1]: string}[] The highlight builder function.
+--- @field lazy?    boolean If `false`, the module is loaded immediately during setup.
+--- @field ft?      string|string[] Filetype(s) that trigger loading.
+--- @field event?   string|string[]|table<string, string|string[]> Event(s) that trigger loading.
+---
+--- `event` supports lazy.nvim-style forms:
+---   - `"TermOpen"` — single event, default pattern.
+---   - `{ "InsertEnter", "CmdlineEnter" }` — multiple events, default pattern.
+---   - `{ User = "LazyLoad" }` — event → pattern.
+---   - `{ User = { "LazyLoad", "VeryLazy" } }` — event → multiple patterns.
+---   - `{ InsertEnter = true }` — non-string/non-table value → default pattern.
+
+--- @class witch.Config
+--- @field palette  witch.PaletteName Active palette name.
+--- @field modules  table<witch.ModuleName, witch.Config.Module> Per-module configuration overrides.
+--- @field palettes table<witch.CustomPaletteName, witch.Palette> User-defined custom palettes. Keys must be PascalCase (e.g., "DarkPalette").
+--- @field dim      witch.Config.Dim Configuration for dimming inactive windows.

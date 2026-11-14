@@ -1,12 +1,15 @@
+--- A module map from module names to their require paths.
+
 local require, next = require, next
 
 local M = {}
 
---- @type table<string, string>
+--- @type table<witch.ModuleName, string>
 local PATH = {
 	core = "witch.builder.core",
 	treesitter = "witch.builder.core.treesitter",
 	lsp = "witch.builder.core.lsp",
+	diagnostic = "witch.builder.core.diagnostic",
 	terminal = "witch.builder.core.terminal",
 	markup = "witch.builder.core.markup",
 
@@ -27,7 +30,7 @@ local PATH = {
 
 
 --- Require a module by name.
---- @param name string
+--- @param name witch.ModuleName
 --- @return fun()|nil
 M.require = function(name)
 	local path = PATH[name]
@@ -42,7 +45,7 @@ end
 --- Usage:
 ---   for name in M.iter() do ... end
 ---
---- @return fun(): string|nil
+--- @return fun(): witch.ModuleName|nil
 M.names = function()
 	local prev = nil
 	return function()

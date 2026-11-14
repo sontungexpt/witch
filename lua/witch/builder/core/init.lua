@@ -1,5 +1,5 @@
 --- @param palette witch.Palette
---- @param palette_name string
+--- @param palette_name witch.PaletteName
 return function(palette, palette_name)
 	return {
 		-- ====================================================================
@@ -244,12 +244,6 @@ return function(palette, palette_name)
 		-- Defining them is harmless on older versions (no effect).
 		{ "StderrMsg", link = "ErrorMsg" },
 		{ "StdoutMsg", fg = palette.fg_muted },
-
-		-- health* groups were replaced by Diagnostic* groups in Neovim 0.11+.
-		-- The links below are the canonical, version-proof equivalents.
-		{ "DiagnosticError", link = "ErrorMsg" },
-		{ "DiagnosticWarn", link = "WarningMsg" },
-		{ "DiagnosticOk", link = "OkMsg" },
 
 		{ "ModeMsg", fg = palette.fg_muted },
 		{ "MsgArea", link = "Normal" },

@@ -46,7 +46,7 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
 
 ```
 
-Switch palettes anytime with `:Witch light`, `:Witch umber`, or `:Witch parchment`. Tab-completion fuzzy-matches over the built-in palette names — an empty argument lists them all.
+Switch palettes anytime with `:Witch light`, `:Witch umber`, or `:Witch parchment`. Tab-completion fuzzy-matches over available palette names — an empty argument lists them all.
 
 ## Installation
 
@@ -103,11 +103,12 @@ require("witch").setup({
     },
 
     -- Per-module configuration. Enabled by default:
-    -- core, treesitter, lsp, terminal, markup, blink-cmp, bracket, indentline.
+    -- core, treesitter, lsp, diagnostic, terminal, markup, blink-cmp, bracket, indentline.
     modules = {
         core       = { lazy = false, enabled = true },
         treesitter = { event = "FileType", enabled = true },
         lsp        = { event = "LspAttach", enabled = true },
+        diagnostic = { event = "DiagnosticChanged", enabled = true },
         ["blink-cmp"] = { event = { "InsertEnter", "CmdlineEnter" }, enabled = true },
         terminal   = { event = "TermOpen", enabled = true },
         bracket    = { event = "CursorHold", enabled = true },
@@ -147,6 +148,7 @@ All modules below ship with Witch. Each maps to a `build` function under `lua/wi
 | `core`       | Base editor groups — `Normal`, `Comment`, `Visual`, `Search`, `StatusLine`, popups, borders, etc. **Required** — every palette expects it. |
 | `treesitter` | Tree-sitter capture groups — `@function`, `@keyword`, `@variable`, `@type`, `@string`, …                                                   |
 | `lsp`        | LSP semantic tokens and diagnostic groups (`DiagnosticError`, …).                                                                          |
+| `diagnostic` | Diagnostic groups (`DiagnosticError`, `DiagnosticWarn`, `DiagnosticInfo`, `DiagnosticHint`, `DiagnosticOk`, plus virtual text, signs, underlines, and floating windows). |
 | `blink-cmp`  | [blink.cmp](https://github.com/Saghen/blink.cmp) completion menu.                                                                          |
 | `cmp`        | [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) completion menu (alternative to `blink-cmp`).                                              |
 | `terminal`   | `:terminal` buffer groups — `TermCursor`, terminal color table.                                                                            |
@@ -670,6 +672,20 @@ vim.api.nvim_create_autocmd("User", {
 This approach ensures your overrides survive palette switches and lazy-loading.
 
 > **Note:** If you find yourself overriding _too many_ highlight groups, it is highly recommended to create a [Custom module](#custom-modules) instead. Alternatively, if you want to completely replace an existing module's highlights, you can simply override its `build` function directly in your `setup()`. The autocmd override approach is meant for quick, minor tweaks only.
+
+### `WitchPaletteChanged` event
+
+Witch emits a `User WitchPaletteChanged` event every time the palette is switched (via `:Witch <palette>` or `witch.apply_palette(name)`). The event's `data` field holds the new palette name (e.g. `"dark"`). It is also covered by the standard `ColorScheme` autocommand, since Witch sets `g.colors_name = "witch-<palette>"` on each switch.
+
+```lua
+vim.api.nvim_create_autocmd("User", {
+    pattern = "WitchPaletteChanged",
+    callback = function(ev)
+        -- ev.data is the new palette name, e.g. "dark"
+        print("Switched to palette: " .. ev.data)
+    end,
+})
+```
 
 ## API
 

@@ -1,5 +1,5 @@
 --- @param palette witch.Palette
---- @param palette_name string
+--- @param palette_name witch.PaletteName
 return function(palette, palette_name)
 	return {
 		-- RainbowDelimiter

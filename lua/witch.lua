@@ -13,24 +13,25 @@ local modules = config.modules
 --- @class witch.Palette
 --- @field [string] integer|string
 
---- @type table<string, string>
+--- @type table<witch.BuiltinPaletteName, string>
 local BUILTIN_PALETTES = {
-    ["dark"] = "witch.palette.dark",
-    ["light"] = "witch.palette.light",
-    ["umber"] = "witch.palette.umber",
-    ["parchment"] = "witch.palette.parchment",
-    ["nocturne"] = "witch.palette.nocturne",
+    dark = "witch.palette.dark",
+    light = "witch.palette.light",
+    umber = "witch.palette.umber",
+    parchment = "witch.palette.parchment",
+    nocturne = "witch.palette.nocturne",
 }
 local FALLBACK_PALETTE = "dark"
 
+---
 --- Cache for loaded palettes to avoid redundant require calls.
---- @type table<string, witch.Palette>
+--- @type table<witch.PaletteName, witch.Palette>
 local PALETTE_DICT = setmetatable({}, {
     __index = function(t, name)
         local found_path = BUILTIN_PALETTES[name]
         local palette = found_path and require(found_path)
             -- The config palette name must be PascalCase (e.g., "DarkPalette")
-            or config.palletes[name:gsub("^%l", string.upper)]
+            or config.palettes[name:gsub("^%l", string.upper)]
         rawset(t, name, palette)
         return palette
     end,
@@ -39,7 +40,7 @@ local PALETTE_DICT = setmetatable({}, {
 local active_palette_name
 
 --- Get a sorted list of all available theme names (built-in + custom).
---- @return string[]
+--- @return witch.PaletteName[]
 M.available_palette_names = function()
     local seen = {}
     for name, _ in pairs(BUILTIN_PALETTES) do
@@ -47,8 +48,8 @@ M.available_palette_names = function()
     end
 
     -- Add custom themes from config
-    if config.palletes then
-        for name, _ in pairs(config.palletes) do
+    if config.palettes then
+        for name, _ in pairs(config.palettes) do
             --- User provided palette name must be PascalCase (e.g., "DarkPalette")
             if name:match("^%l") then
                 seen[name] = true
@@ -60,7 +61,7 @@ M.available_palette_names = function()
 end
 
 --- Get the name of the currently active palette.
---- @return string
+--- @return witch.PaletteName
 M.active_palette_name = function()
     return active_palette_name or FALLBACK_PALETTE
 end
@@ -72,7 +73,7 @@ M.active_palette = function()
 end
 
 --- Get the palette table for a given palette name.
---- @param name string
+--- @param name witch.PaletteName
 --- @return witch.Palette
 M.palette = function(name)
     return PALETTE_DICT[name]
@@ -85,7 +86,7 @@ local loaded_modules = {}
 --- Load and apply a single theme module by name.
 --- @param name string Module name.
 --- @param palette witch.Palette The active palette.
---- @param palette_name string The active palette name.
+--- @param palette_name witch.PaletteName The active palette name.
 local function load_module_inner(name, palette, palette_name)
     local module = modules[name]
     if not module then
@@ -112,7 +113,7 @@ end
 
 --- Keep this function local to avoid polluting the global namespace.
 --- Ensure a module is loaded only once.
---- @param name string
+--- @param name witch.ModuleName
 M.load_module_once = function(name)
     if loaded_modules[name] then
         return
@@ -284,7 +285,7 @@ local function setup_lazy_modules(augroup)
 end
 
 --- Apply a theme palette by name.
---- @param palette_name string|nil The name of the palette to apply. Defaults to `DEFAULT_PALETTE`.
+--- @param palette_name witch.PaletteName|nil The name of the palette to apply. Defaults to `DEFAULT_PALETTE`.
 M.apply_palette = function(palette_name)
     --- @type string
     palette_name = palette_name or FALLBACK_PALETTE
@@ -308,10 +309,8 @@ M.apply_palette = function(palette_name)
     active_palette_name = palette_name
 
     -- Re-apply highlights for all modules that were already loaded
-    if next(loaded_modules) then
-        for name in pairs(loaded_modules) do
-            load_module_inner(name, active_palette, active_palette_name)
-        end
+    for name in pairs(loaded_modules) do
+        load_module_inner(name, active_palette, active_palette_name)
     end
 
     g.colors_name = PLUG_NAME .. "-" .. active_palette_name
@@ -324,7 +323,7 @@ M.apply_palette = function(palette_name)
 end
 
 --- Set up the Witch plugin.
---- @param opts table|nil User configuration options.
+--- @param opts table|witch.Config|nil User configuration options.
 M.setup = function(opts)
     if opts then
         config(opts)

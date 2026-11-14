@@ -1,5 +1,5 @@
 --- @param palette witch.Palette
---- @param palette_name string
+--- @param palette_name witch.PaletteName
 return function(palette, palette_name)
 	local result = {
 		-- Menu — link to core popup menu groups

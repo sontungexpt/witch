@@ -1,5 +1,5 @@
 --- @param palette witch.Palette
---- @param palette_name string
+--- @param palette_name witch.PaletteName
 return function(palette, palette_name)
 	return {
 		-- ====================================================================
@@ -22,40 +22,6 @@ return function(palette, palette_name)
 		{ "LspCodeLens", fg = palette.comment },
 		{ "LspCodeLensSeparator", fg = palette.border_subtle },
 		{ "LspInfoBorder", link = "FloatBorder" },
-
-		-- ====================================================================
-		-- Diagnostics
-		-- ====================================================================
-
-		{ "DiagnosticError", fg = palette.error },
-		{ "DiagnosticWarn", fg = palette.warn },
-		{ "DiagnosticInfo", fg = palette.info },
-		{ "DiagnosticHint", fg = palette.hint },
-		{ "DiagnosticUnnecessary", fg = palette.unnecessary },
-
-		-- Virtual text.
-		{ "DiagnosticVirtualTextError", link = "DiagnosticError" },
-		{ "DiagnosticVirtualTextWarn", link = "DiagnosticWarn" },
-		{ "DiagnosticVirtualTextInfo", link = "DiagnosticInfo" },
-		{ "DiagnosticVirtualTextHint", link = "DiagnosticHint" },
-
-		-- Undercurl: severity without large colored backgrounds.
-		{ "DiagnosticUnderlineError", undercurl = true, sp = palette.error },
-		{ "DiagnosticUnderlineWarn", undercurl = true, sp = palette.warn },
-		{ "DiagnosticUnderlineInfo", undercurl = true, sp = palette.info },
-		{ "DiagnosticUnderlineHint", undercurl = true, sp = palette.hint },
-
-		-- Floating diagnostics.
-		{ "DiagnosticFloatingError", link = "DiagnosticError" },
-		{ "DiagnosticFloatingWarn", link = "DiagnosticWarn" },
-		{ "DiagnosticFloatingInfo", link = "DiagnosticInfo" },
-		{ "DiagnosticFloatingHint", link = "DiagnosticHint" },
-
-		-- Diagnostic signs.
-		{ "DiagnosticSignError", link = "DiagnosticError" },
-		{ "DiagnosticSignWarn", link = "DiagnosticWarn" },
-		{ "DiagnosticSignInfo", link = "DiagnosticInfo" },
-		{ "DiagnosticSignHint", link = "DiagnosticHint" },
 
 		-- ====================================================================
 		-- LSP semantic tokens
@@ -148,14 +114,5 @@ return function(palette, palette_name)
 
 		-- Unresolved references.
 		{ "@lsp.type.unresolvedReference", link = "DiagnosticUnderlineError" },
-
-		-- ====================================================================
-		-- LspSaga
-		-- ====================================================================
-
-		{ "SagaVirtLine", bg = palette.bg_float, fg = palette.fg_muted },
-
-		{ "CodeActionNumber", fg = palette.purple },
-		{ "DiagnosticShowBorder", link = "FloatBorder" },
 	}
 end
