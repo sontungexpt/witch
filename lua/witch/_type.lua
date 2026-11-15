@@ -218,6 +218,6 @@
 
 --- @class witch.Config
 --- @field palette  witch.PaletteName Active palette name.
---- @field modules  table<witch.ModuleName, witch.Config.Module> Per-module configuration overrides.
+--- @field modules  table<witch.ModuleName | string, witch.Config.Module> Per-module configuration overrides.
 --- @field palettes table<witch.CustomPaletteName, witch.Palette> User-defined custom palettes. Keys must be PascalCase (e.g., "DarkPalette").
 --- @field dim      witch.Config.Dim Configuration for dimming inactive windows.
