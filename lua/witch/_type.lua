@@ -14,7 +14,6 @@
 --- @alias witch.ModuleName
 --- | "core"
 --- | "treesitter"
---- | "diagnostic"
 --- | "lsp"
 --- | "terminal"
 --- | "markup"

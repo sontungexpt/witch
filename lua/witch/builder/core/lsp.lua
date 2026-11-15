@@ -3,6 +3,60 @@
 return function(palette, palette_name)
 	return {
 		-- ====================================================================
+		-- Diagnostics
+		-- ====================================================================
+
+		-- Base severity groups (other groups link to these except Underline)
+		{ "DiagnosticError", fg = palette.error },
+		{ "DiagnosticWarn", fg = palette.warn },
+		{ "DiagnosticInfo", fg = palette.info },
+		{ "DiagnosticHint", fg = palette.hint },
+		{ "DiagnosticOk", fg = palette.green },
+
+		-- Special tags (used directly by the "underline" handler)
+		{ "DiagnosticUnnecessary", fg = palette.unnecessary },
+		{ "DiagnosticDeprecated", fg = palette.unnecessary, strikethrough = true },
+
+		-- Virtual text
+		-- Neovim already links these to the base groups above.
+		-- { "DiagnosticVirtualTextError", link = "DiagnosticError" },
+		-- { "DiagnosticVirtualTextWarn", link = "DiagnosticWarn" },
+		-- { "DiagnosticVirtualTextInfo", link = "DiagnosticInfo" },
+		-- { "DiagnosticVirtualTextHint", link = "DiagnosticHint" },
+		-- { "DiagnosticVirtualTextOk", link = "DiagnosticOk" },
+
+		-- Virtual lines
+		-- Neovim already links these to the base groups above.
+		-- { "DiagnosticVirtualLinesError", link = "DiagnosticError" },
+		-- { "DiagnosticVirtualLinesWarn", link = "DiagnosticWarn" },
+		-- { "DiagnosticVirtualLinesInfo", link = "DiagnosticInfo" },
+		-- { "DiagnosticVirtualLinesHint", link = "DiagnosticHint" },
+		-- { "DiagnosticVirtualLinesOk", link = "DiagnosticOk" },
+
+		-- Underline (not linked by default — set own sp)
+		{ "DiagnosticUnderlineError", undercurl = true, sp = palette.error },
+		{ "DiagnosticUnderlineWarn", undercurl = true, sp = palette.warn },
+		{ "DiagnosticUnderlineInfo", undercurl = true, sp = palette.info },
+		{ "DiagnosticUnderlineHint", undercurl = true, sp = palette.hint },
+		{ "DiagnosticUnderlineOk", undercurl = true, sp = palette.green },
+
+		-- Floating windows
+		-- Neovim already links these to the base groups above.
+		-- { "DiagnosticFloatingError", link = "DiagnosticError" },
+		-- { "DiagnosticFloatingWarn", link = "DiagnosticWarn" },
+		-- { "DiagnosticFloatingInfo", link = "DiagnosticInfo" },
+		-- { "DiagnosticFloatingHint", link = "DiagnosticHint" },
+		-- { "DiagnosticFloatingOk", link = "DiagnosticOk" },
+
+		-- Signs
+		-- Neovim already links these to the base groups above.
+		-- { "DiagnosticSignError", link = "DiagnosticError" },
+		-- { "DiagnosticSignWarn", link = "DiagnosticWarn" },
+		-- { "DiagnosticSignInfo", link = "DiagnosticInfo" },
+		-- { "DiagnosticSignHint", link = "DiagnosticHint" },
+		-- { "DiagnosticSignOk", link = "DiagnosticOk" },
+
+		-- ====================================================================
 		-- LSP references / code lens / signature
 		-- ====================================================================
 

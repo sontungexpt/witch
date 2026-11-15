@@ -25,11 +25,6 @@ local config = {
             enabled = true,
         },
 
-        diagnostic = {
-            event = "DiagnosticChanged",
-            enabled = true,
-        },
-
         lsp = {
             event = "LspAttach",
             enabled = true,

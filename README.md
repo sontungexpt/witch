@@ -83,7 +83,7 @@ require("witch").setup({
 
     -- User-defined custom palettes. Keys must start with an uppercase
     -- letter (e.g., `MyPalette`) and are referenced as `myPalette`.
-    palletes = {},
+    palettes = {},
 
     -- Dim inactive windows.
     dim = {
@@ -91,7 +91,7 @@ require("witch").setup({
         level = 0.35,       -- 0 = no dimming, 1 = fully dimmed
         fade_bg = true,      -- also fade background groups
         excluded = {
-            -- Both format are ok 
+            -- Both formats are ok 
             -- filetypes =  {"NvimTree"} 
             -- or 
             -- filetypes = {NvimTree = true}
@@ -103,12 +103,11 @@ require("witch").setup({
     },
 
     -- Per-module configuration. Enabled by default:
-    -- core, treesitter, lsp, diagnostic, terminal, markup, blink-cmp, bracket, indentline.
+    -- core, treesitter, lsp, terminal, markup, blink-cmp, bracket, indentline.
     modules = {
         core       = { lazy = false, enabled = true },
         treesitter = { event = "FileType", enabled = true },
         lsp        = { event = "LspAttach", enabled = true },
-        diagnostic = { event = "DiagnosticChanged", enabled = true },
         ["blink-cmp"] = { event = { "InsertEnter", "CmdlineEnter" }, enabled = true },
         terminal   = { event = "TermOpen", enabled = true },
         bracket    = { event = "CursorHold", enabled = true },
@@ -148,7 +147,6 @@ All modules below ship with Witch. Each maps to a `build` function under `lua/wi
 | `core`       | Base editor groups — `Normal`, `Comment`, `Visual`, `Search`, `StatusLine`, popups, borders, etc. **Required** — every palette expects it. |
 | `treesitter` | Tree-sitter capture groups — `@function`, `@keyword`, `@variable`, `@type`, `@string`, …                                                   |
 | `lsp`        | LSP semantic tokens and diagnostic groups (`DiagnosticError`, …).                                                                          |
-| `diagnostic` | Diagnostic groups (`DiagnosticError`, `DiagnosticWarn`, `DiagnosticInfo`, `DiagnosticHint`, `DiagnosticOk`, plus virtual text, signs, underlines, and floating windows). |
 | `blink-cmp`  | [blink.cmp](https://github.com/Saghen/blink.cmp) completion menu.                                                                          |
 | `cmp`        | [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) completion menu (alternative to `blink-cmp`).                                              |
 | `terminal`   | `:terminal` buffer groups — `TermCursor`, terminal color table.                                                                            |
@@ -357,11 +355,11 @@ require("witch").load_module_once("notify")
 
 ### Custom
 
-Add your own palette under `palletes`. Keys must start with an uppercase letter; at runtime the palette is referenced by the same name with the first letter lowercased (key `MyPalette` → `myPalette`):
+Add your own palette under `palettes`. Keys must start with an uppercase letter; at runtime the palette is referenced by the same name with the first letter lowercased (key `MyPalette` → `myPalette`):
 
 ```lua
 require("witch").setup({
-    palletes = {
+    palettes = {
         -- Key starts with an uppercase letter; referenced as `myPalette`.
         MyPalette = {
             bg       = "#161f31",
@@ -381,7 +379,7 @@ require("witch").setup({
 local palette = require("witch.palette.umber")
 
 require("witch").setup({
-    palletes = {
+    palettes = {
         MyPalette = vim.tbl_extend("force", palette, {
             comment = "#5c6a7d",   -- override only what you want
             keyword = "#c678dd",
@@ -407,7 +405,7 @@ Each field accepts one of two forms:
 | 24-bit integer | `0x1e1e2e`  | `0xrrggbb` format  |
 
 ```lua
-palletes = {
+palettes = {
     MyPalette = {
         bg = "#1e1e2e",   -- hex string
         fg = 0xcdd6f4,    -- 24-bit integer
@@ -566,7 +564,7 @@ Raw hues for reusable semantic accents. Use only when no dedicated semantic fiel
 local palette = require("witch.palette.umber")
 
 require("witch").setup({
-    palletes = {
+    palettes = {
         MyPalette = vim.tbl_extend("force", palette, {
             unnecessary = "#565f89",  -- e.g. reuse your comment color
         }),
@@ -710,7 +708,7 @@ witch.load_module_once(name)   -- apply a module's highlights once; see Manual l
 | `theme.extras = { bracket = true }` | `modules = { bracket = { enabled = true, lazy = false } }` |
 | `theme.customs = { mod }`           | `modules = { [name] = { build = fn } }`                    |
 | `theme.on_highlight = fn`           | per-module `build` function                                |
-| `more_themes = { X = {} }`          | `palletes = { X = {} }`                                    |
+| `more_themes = { X = {} }`          | `palettes = { X = {} }`                                    |
 | `dim_inactive`                      | `dim` (same fields, plus `fade_bg`)                        |
 | `switcher`                          | removed (`:Witch` is always available)                     |
 | `User WitchHighlightDone`           | `User WitchModuleLoaded`                                   |

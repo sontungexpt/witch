@@ -9,7 +9,6 @@ local PATH = {
 	core = "witch.builder.core",
 	treesitter = "witch.builder.core.treesitter",
 	lsp = "witch.builder.core.lsp",
-	diagnostic = "witch.builder.core.diagnostic",
 	terminal = "witch.builder.core.terminal",
 	markup = "witch.builder.core.markup",
 
