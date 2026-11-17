@@ -6,8 +6,10 @@ local nvim_set_hl, autocmd = api.nvim_set_hl, api.nvim_create_autocmd
 local M = {}
 local PLUG_NAME = "witch"
 
-local builder = require("witch.builder")
-local config = require("witch.config")
+local Builder = require("witch.builder")
+local Config = require("witch.config")
+
+local config = Config.current
 local modules = config.modules
 
 --- @class witch.Palette
@@ -83,7 +85,7 @@ local function load_module_inner(name, palette, palette_name)
 	local module = modules[name]
 	if not module then return end
 
-	local build_func = module.build or builder.require(name)
+	local build_func = module.build or Builder.require(name)
 	if type(build_func) == "function" then
 		local highlights = build_func(palette, palette_name)
 
@@ -297,7 +299,7 @@ end
 --- Set up the Witch plugin.
 --- @param opts table|witch.Config|nil User configuration options.
 M.setup = function(opts)
-	if opts then config(opts) end
+	if opts and next(opts) then Config.config(opts) end
 	vim.o.termguicolors = true
 
 	M.apply_palette(config.palette)
