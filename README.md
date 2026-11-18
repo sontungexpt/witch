@@ -460,7 +460,7 @@ require("witch").setup({
 
 > **Notes for custom palettes:**
 >
-> - `:Witch myPalette` switches to your palette, but custom palettes are **not** suggested by `:Witch`'s tab-completion and have no `:colorscheme witch-<name>` entry — both only cover the five built-in palettes. You can also switch with `require("witch").apply_palette("myPalette")`.
+> - `:Witch myPalette` switches to your palette, but custom palettes have no `:colorscheme witch-<name>` entry. You can also switch with `require("witch").apply_palette("myPalette")`.
 > - Keys in `palettes` must start with an uppercase letter (`MyPalette`); everywhere else the palette is referenced with the first letter lowercased (`myPalette`).
 
 ### Palette schema
@@ -692,7 +692,7 @@ If the builder grows large, move it into its own file and reference it with [`pa
 
 | Command                       | Description                                                                                                                 |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `:Witch <palette>`            | Switch to the given palette. `<Tab>` fuzzy-matches over the five built-in palettes — just type your custom palette's name if it isn't listed. An unknown name is silently ignored. |
+| `:Witch <palette>`            | Switch to the given palette. An unknown name is silently ignored. |
 | `:colorscheme witch-<palette>` | Standard colorscheme entry points for the built-ins only (`witch-dark`, `witch-light`, `witch-umber`, `witch-parchment`, `witch-nocturne`) — equivalent to `:Witch <palette>` after setup. |
 | `:WitchDimToggle`             | Toggle dimming of inactive windows. Only registered when `dim.enabled = true`, on the first `WinNew`.                       |
 
