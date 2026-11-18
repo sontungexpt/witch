@@ -97,8 +97,8 @@ require("witch").setup({
     -- Per-module configuration. Enabled by default:
     -- core, treesitter, lsp, terminal, markup, blink-cmp, bracket, indentline.
     -- User module tables are deep-merged with the built-in defaults (which
-    -- also carry a `path` to each builder file), so omitting `path` / `build`
-    -- here keeps the built-in lazy-loaded builders.
+    -- also carry a `build` string pointing at each builder file), so omitting
+    -- `build` here keeps the built-in lazy-loaded builders.
     modules = {
         core       = { lazy = false, enabled = true },
         treesitter = { event = "FileType", enabled = true },
@@ -160,8 +160,7 @@ modules = {
 ```lua
 --- @class Module
 --- @field enabled? boolean                 Whether the module is enabled. Built-in modules ship their own defaults; a fresh custom module needs `enabled = true` to load.
---- @field build?   fun(palette, palette_name): table[]  Highlight builder.
---- @field path?    string                  Require path to a file that returns the builder function (loaded lazily).
+--- @field build?   string|fun(palette, palette_name): table[]  Highlight builder — a function used directly, or a string require path to a file that returns the builder function (loaded lazily).
 --- @field lazy?    boolean                 If `false`, load during setup.
 --- @field ft?      string|string[]         Filetype(s) that trigger loading.
 --- @field event?   string|string[]|table<string, string|string[]>  Event trigger(s).
@@ -169,7 +168,7 @@ modules = {
 
 ### Built-in modules
 
-All modules below ship with Witch. Each is defined under `lua/witch/builder/core/<name>.lua` or `lua/witch/builder/extra/<name>.lua` as a file that **returns its `build` function**, and the default config points each module's `path` at that file — so a builder file is `require`d only when the module loads, not at startup. You can enable, disable, override triggers, replace its `build`, or point its `path` at your own builder file from `setup`.
+All modules below ship with Witch. Each is defined under `lua/witch/builder/core/<name>.lua` or `lua/witch/builder/extra/<name>.lua` as a file that **returns its builder function**, and the default config points each module's `build` at that file (as a string path) — so a builder file is `require`d only when the module loads, not at startup. You can enable, disable, override triggers, replace its `build`, or point its `build` at your own builder file from `setup`.
 
 | Name         | Highlights                                                                                                                                 |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -240,9 +239,14 @@ require("lualine").setup({
 
 ### `build`
 
-Optional. If omitted, Witch falls back to the module's `path` — the file is `require`d and whatever it returns is used as the builder function. All built-in modules ship with a default `path` (e.g. `core` → `witch.builder.core`), so their builder files are loaded on demand instead of at startup. `build` takes precedence over `path` if both are set. If neither is set, no highlights are applied (the `WitchModuleLoaded` event still fires).
+Optional. `build` is either a **function** or a **string**:
 
-If provided, it **must** create and return the highlight table **inside the function body**:
+- **Function** — called as `build(palette, palette_name)` and must create and return the highlight table inside its body (see below). Use this for inline builders.
+- **String** — a require path to a file that returns the builder function. The file is `require`d only when the module loads, so splitting a bulky builder into its own file keeps startup fast. The referenced file must `return function(palette, palette_name) ... end` directly (not a table, not a `{ build = fn }` wrapper).
+
+All built-in modules ship with a default `build` string (e.g. `core` → `"witch.builder.core"`), so their builder files are loaded on demand instead of at startup. If `build` is omitted entirely, no highlights are applied (the `WitchModuleLoaded` event still fires).
+
+If `build` is a function, it **must** create and return the highlight table **inside the function body**:
 
 ```lua
 build = function(palette, palette_name)
@@ -273,11 +277,9 @@ end
 4. **Palette correctness** — `build` runs again on every `:Witch <palette>`. An outer table holds stale colors and will re-apply them on palette switch.
 5. **No hidden state** — `setup` can be called multiple times; outer tables are captured once and never refresh.
 
-### `path`
+##### String form: lazy-loaded builder file
 
-Optional. A require path to a file that **returns the builder function** — the file itself must `return function(palette, palette_name) ... end`, not a table and not a `{ build = fn }` wrapper. The file is only `require`d the moment the module is loaded, so splitting a bulky builder into its own file keeps startup fast. This is exactly how the built-in modules work: `core` sets `path = "witch.builder.core"`, `blink-cmp` sets `path = "witch.builder.extra.blink-cmp"`, and so on.
-
-For your own modules, create the builder in any runtimepath directory (e.g. `lua/builders/my-highlights.lua` in your Neovim config):
+If `build` is a string, treat it like the old `path`: point it at a builder file in any runtimepath directory (e.g. `lua/builders/my-highlights.lua` in your Neovim config):
 
 ```lua
 -- lua/builders/my-highlights.lua
@@ -289,25 +291,24 @@ return function(palette, palette_name)
 end
 ```
 
-Then point `path` at it (dots instead of slashes, no `.lua` extension):
+Then set `build` to that path (dots instead of slashes, no `.lua` extension):
 
 ```lua
 require("witch").setup({
     modules = {
         ["my-highlights"] = {
             enabled = true,
-            path = "builders.my-highlights",
+            build = "builders.my-highlights",
             event = "InsertEnter",   -- or `lazy = false` to load immediately, or `event = { User = "VeryLazy" }` for lazy.nvim
         },
     },
 })
 ```
 
-Notes:
+Notes for the string form:
 
 - **Lazy by construction** — until the module's trigger fires (or `load_module_once` is called), the file is never `require`d and its code is never executed.
-- **`build` wins** — if a module sets both `build` and `path`, `build` is used and `path` is ignored.
-- **Same rules as `build`** — whatever the file returns is called as `build(palette, palette_name)` on every load and every palette switch, so the returned function must create and return its highlight table inside its body (see [❌ Do not close over an outer table](#-do-not-close-over-an-outer-table)).
+- **Same rules as the function form** — whatever the file returns is called as `build(palette, palette_name)` on every load and every palette switch, so the returned function must create and return its highlight table inside its body (see [❌ Do not close over an outer table](#-do-not-close-over-an-outer-table)).
 - Any require path that Neovim can resolve works — your config's `lua/` directory, a plugin, etc.
 
 ### Lazy-loading rules
@@ -686,7 +687,7 @@ require("witch").setup({
 
 The `build` function is called every time the module is loaded **and** every time the active palette changes (so your groups stay in sync with `:Witch <palette>`).
 
-If the builder grows large, move it into its own file and reference it with [`path`](#path) instead of inlining `build`.
+If the builder grows large, move it into its own file and reference it with a string `build` instead of inlining a function.
 
 ## Commands
 

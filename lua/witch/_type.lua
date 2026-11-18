@@ -205,32 +205,32 @@
 --- @class witch.Config.Module
 --- @field enabled? boolean Whether the module is enabled.
 ---
---- The function responsible for building highlight definitions.
+--- The highlight builder, either a function or a module path.
 ---
---- You can move the build function into a separate module and load it lazily
---- by specifying `path` instead of defining `build` directly.
+--- A function is used directly to build highlight definitions.
+--- A string is treated as a module path and lazily loaded on first access.
 ---
---- The lazy module must return the `build` function itself, not a table
---- containing the function. The module is loaded only when `build` is first accessed.
+--- The referenced module must return the builder function directly,
+--- not a table containing the function.
 ---
---- Example:
---- Instead of defining `build` directly, set:
----   path = "witch.builder.core"
+--- Example (inline builder):
+---   build = function(palette, palette_name)
+---       -- Build and return highlight definitions.
+---   end
 ---
---- The module at `witch.builder.core` should return a function:
+--- Example (lazy-loaded builder):
+---   build = "witch.builder.core"
+---
+--- The module at the specified path must return a function:
 ---   return function(palette, palette_name)
 ---       -- Build and return highlight definitions.
 ---   end
 ---
---- For user configurations, you can organize custom builders in a `builders`
---- directory and reference them by their module path:
----   path = "builders.<module_name>"
+--- For user configurations, custom builders can be organized in a
+--- `builders` directory and referenced by their module path:
+---   build = "builders.<module_name>"
 ---
---- @field build? fun(palette: witch.Palette, palette_name: witch.PaletteName): vim.api.keyset.highlight[]|{[1]: string}[]
----
---- The module path used to lazily load the `build` function.
---- The module must return the build function directly.
---- @field path? string
+--- @field build? string|fun(palette: witch.Palette, palette_name: witch.PaletteName): vim.api.keyset.highlight[]|{[1]: string}[]
 ---
 --- @field lazy?    boolean If `false`, the module is loaded immediately during setup.
 --- @field ft?      string|string[] Filetype(s) that trigger loading.

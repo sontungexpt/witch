@@ -255,14 +255,15 @@ end
 --- Configures the dimming feature without enabling it.
 --- @param excluded witch.dim.Config.Excluded|nil Tables of filetypes and buftypes to exclude.
 --- @param level    number|nil Opacity level (0 = visible, 1 = black).
---- @param bg       boolean|nil Whether to dim background colors.
+--- @param dim_bg   boolean|nil Whether to dim background colors.
 --- @return nil
-M.config = function(excluded, level, bg)
-	if level then
+M.config = function(excluded, level, dim_bg)
+	if type(level) == "number" then
 		config.keep = 1 - level
 	end
-	if bg ~= nil then
-		config.dim_bg = bg
+
+	if dim_bg ~= nil then
+		config.dim_bg = dim_bg
 	end
 
 	if type(excluded) == "table" then

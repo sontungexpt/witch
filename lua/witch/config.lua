@@ -18,17 +18,17 @@ local config = {
         core = {
             lazy = false,
             enabled = true,
-            path = "witch.builder.core",
+            build = "witch.builder.core",
         },
 
         treesitter = {
             event = "FileType",
             enabled = true,
-            path = "witch.builder.core.treesitter",
+            build = "witch.builder.core.treesitter",
         },
 
         lsp = {
-            path = "witch.builder.core.lsp",
+            build = "witch.builder.core.lsp",
             event = "LspAttach",
             enabled = true,
         },
@@ -36,11 +36,11 @@ local config = {
         terminal = {
             enabled = true,
             event = "TermOpen",
-            path = "witch.builder.core.terminal",
+            build = "witch.builder.core.terminal",
         },
 
         markup = {
-            path = "witch.builder.core.markup",
+            build = "witch.builder.core.markup",
             enabled = true,
             ft = {
                 "markdown",
@@ -59,7 +59,7 @@ local config = {
 
         -- Extra
         ["blink-cmp"] = {
-            path = "witch.builder.extra.blink-cmp",
+            build = "witch.builder.extra.blink-cmp",
             enabled = true,
             event = { "InsertEnter", "CmdlineEnter" },
         },
@@ -67,77 +67,82 @@ local config = {
         bracket = {
             enabled = true,
             event = "CursorHold",
-            path = "witch.builder.extra.bracket",
+            build = "witch.builder.extra.bracket",
         },
 
         indentline = {
             enabled = true,
             event = "CursorHold",
-            path = "witch.builder.extra.indentline",
+            build = "witch.builder.extra.indentline",
         },
 
         nvimtree = {
-            path = "witch.builder.extra.nvimtree",
+            build = "witch.builder.extra.nvimtree",
             ft = "NvimTree",
         },
 
         cmp = {
             event = { "InsertEnter", "CmdlineEnter" },
-            path = "witch.builder.extra.cmp",
+            build = "witch.builder.extra.cmp",
         },
 
         dap = {
-            path = "witch.builder.extra.dap",
+            build = "witch.builder.extra.dap",
         },
 
         notify = {
             event = "CursorHold",
-            path = "witch.builder.extra.notify",
+            build = "witch.builder.extra.notify",
         },
 
         noice = {
             event = "CursorHold",
-            path = "witch.builder.extra.noice",
+            build = "witch.builder.extra.noice",
         },
 
         navic = {
             event = "LspAttach",
-            path = "witch.builder.extra.navic",
+            build = "witch.builder.extra.navic",
         },
     },
 }
 
---- Deep-merge `user` into `base`, preserving type consistency.
+--- Deep-merge `user` into `base`.
 ---
---- - If `base` is `nil`, `user` is used as-is (new field).
---- - If `base` and `user` have different types, `base` is kept.
---- - If both are scalars of the same type, `user` overrides `base`.
+--- - If `base` is `nil`, `user` is used as-is.
+--- - If types differ, `user` replaces `base`.
+--- - If both are scalars, `user` replaces `base`.
 --- - If both are arrays, `user` completely replaces `base`.
 --- - If both are maps, they are merged recursively.
 ---
 --- @param base any The base value.
 --- @param user any The value to merge into `base`.
---- @return any merged The merged value.
+--- @return any merged
 local function merge(base, user)
     if base == nil then
         return user
     end
-    if type(base) ~= type(user) then
-        return base
-    end
-    if type(base) ~= "table" then
+
+    local base_type = type(base)
+    if base_type ~= type(user) then
+        return user
+    elseif base_type ~= "table" then
         return user
     end
 
-    -- Array: completely replace
-    if islist(base) and islist(user) then
+    --- @cast base table
+    --- @cast user table
+
+    -- Replace arrays entirely.
+    if islist(base) or islist(user) then
         return user
     end
 
-    -- Map: deep merge
+    -- Recursively merge maps.
     for k, v in pairs(user) do
         base[k] = merge(base[k], v)
     end
+
     return base
 end
 

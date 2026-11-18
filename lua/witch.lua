@@ -82,8 +82,15 @@ local function load_module_inner(name, palette, palette_name)
 	local module = modules[name]
 	if not module then return end
 
-    local build_func = module.build or (module.path and require(module.path))
-	if type(build_func) == "function" then
+    local build_func = module.build
+    local build_func_type = type(build_func)
+
+    if build_func_type == "string" then
+        build_func = require(build_func)
+        build_func_type = type(build_func)
+    end
+
+	if build_func_type == "function" then
 		local highlights = build_func(palette, palette_name)
 
 		if type(highlights) == "table" then
