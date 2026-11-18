@@ -139,7 +139,7 @@ local mt = {
     __newindex = function(_, _, _)
         error("config is read-only")
     end,
-
+    _metatable = false,
     --- Merge user options into the config and return the proxy.
     ---
     --- Calling with `nil` returns the proxy unchanged.
