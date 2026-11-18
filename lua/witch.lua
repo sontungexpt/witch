@@ -6,7 +6,6 @@ local nvim_set_hl, autocmd = api.nvim_set_hl, api.nvim_create_autocmd
 local M = {}
 local PLUG_NAME = "witch"
 
-local builder = require("witch.builder")
 local config = require("witch.config")
 local modules = config.modules
 
@@ -83,7 +82,7 @@ local function load_module_inner(name, palette, palette_name)
 	local module = modules[name]
 	if not module then return end
 
-	local build_func = module.build or builder.require(name)
+    local build_func = module.build or (module.path and require(module.path))
 	if type(build_func) == "function" then
 		local highlights = build_func(palette, palette_name)
 
@@ -306,6 +305,8 @@ M.setup = function(opts)
 	setup_lazy_modules(group)
 
 	-- Register the :Witch command with autocomplete
+	-- This allows switching palettes by name with `:Witch <name>`
+	-- This supports switching between built-in palettes by name and custom palettes too
 	api.nvim_create_user_command("Witch", function(args) M.apply_palette(vim.trim(args.args)) end, {
 		nargs = 1,
 		force = true,

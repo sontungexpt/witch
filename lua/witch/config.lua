@@ -18,14 +18,17 @@ local config = {
         core = {
             lazy = false,
             enabled = true,
+            path = "witch.builder.core",
         },
 
         treesitter = {
             event = "FileType",
             enabled = true,
+            path = "witch.builder.core.treesitter",
         },
 
         lsp = {
+            path = "witch.builder.core.lsp",
             event = "LspAttach",
             enabled = true,
         },
@@ -33,9 +36,11 @@ local config = {
         terminal = {
             enabled = true,
             event = "TermOpen",
+            path = "witch.builder.core.terminal",
         },
 
         markup = {
+            path = "witch.builder.core.markup",
             enabled = true,
             ft = {
                 "markdown",
@@ -52,7 +57,9 @@ local config = {
             },
         },
 
+        -- Extra
         ["blink-cmp"] = {
+            path = "witch.builder.extra.blink-cmp",
             enabled = true,
             event = { "InsertEnter", "CmdlineEnter" },
         },
@@ -60,35 +67,42 @@ local config = {
         bracket = {
             enabled = true,
             event = "CursorHold",
+            path = "witch.builder.extra.bracket",
         },
 
         indentline = {
             enabled = true,
             event = "CursorHold",
+            path = "witch.builder.extra.indentline",
         },
 
-
         nvimtree = {
+            path = "witch.builder.extra.nvimtree",
             ft = "NvimTree",
         },
 
         cmp = {
             event = { "InsertEnter", "CmdlineEnter" },
+            path = "witch.builder.extra.cmp",
         },
 
         dap = {
+            path = "witch.builder.extra.dap",
         },
 
         notify = {
-            event = "CursorHold"
+            event = "CursorHold",
+            path = "witch.builder.extra.notify",
         },
 
         noice = {
-            event = "CursorHold"
+            event = "CursorHold",
+            path = "witch.builder.extra.noice",
         },
 
         navic = {
-            event = "LspAttach"
+            event = "LspAttach",
+            path = "witch.builder.extra.navic",
         },
     },
 }

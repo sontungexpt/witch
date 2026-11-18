@@ -33,47 +33,40 @@ https://github.com/sontungexpt/witch/assets/92097639/ebf730fc-3218-427f-b8a5-ae0
 
 - **Neovim >= 0.10**
 
-## Quick Start
-
-```lua
--- lazy.nvim
-{
-    "sontungexpt/witch",
-    priority = 1000,
-    lazy = false,
-    opts = {}
-}
-
-```
-
-Switch palettes anytime with `:Witch light`, `:Witch umber`, or `:Witch parchment`. Tab-completion fuzzy-matches over available palette names — an empty argument lists them all.
-
 ## Installation
 
 ```lua
 -- lazy.nvim
 {
     "sontungexpt/witch",
-    priority = 1000,
-    lazy = false,
-    opts = {}
+    priority = 1000,   -- load before other plugins so colors apply first
+    lazy = false,      -- required: the colorscheme must load during startup
+    opts = {},         -- passed to require("witch").setup()
 }
-
 ```
 
 ```lua
--- vim.pack
+-- vim.pack (Neovim 0.12+)
+-- Note: unlike lazy.nvim, vim.pack does not call setup() for you.
 vim.pack.add({
     { src = "https://github.com/sontungexpt/witch" },
 })
+require("witch").setup({})
 ```
 
-
+No configuration is required — with `opts = {}` Witch applies the default `umber` palette. Switch palettes anytime with `:Witch light`, `:Witch dark`, `:Witch parchment`, `:Witch nocturne`, or `:Witch umber`. Press `<Tab>` after `:Witch` to fuzzy-match over the built-in palette names.
 
 ## Setup
 
-Minimal setup:
+The smallest working config:
 
+```lua
+require("witch").setup({
+    palette = "umber",   -- "umber" (default) | "dark" | "light" | "parchment" | "nocturne"
+})
+```
+
+All options with their defaults:
 
 ```lua
 require("witch").setup({
@@ -91,10 +84,9 @@ require("witch").setup({
         level = 0.35,       -- 0 = no dimming, 1 = fully dimmed
         fade_bg = true,      -- also fade background groups
         excluded = {
-            -- Both formats are ok 
-            -- filetypes =  {"NvimTree"} 
-            -- or 
-            -- filetypes = {NvimTree = true}
+            -- Both formats work:
+            -- filetypes = { "NvimTree" }
+            -- or
             filetypes = { NvimTree = true },
 
             -- Same with filetypes
@@ -104,6 +96,9 @@ require("witch").setup({
 
     -- Per-module configuration. Enabled by default:
     -- core, treesitter, lsp, terminal, markup, blink-cmp, bracket, indentline.
+    -- User module tables are deep-merged with the built-in defaults (which
+    -- also carry a `path` to each builder file), so omitting `path` / `build`
+    -- here keeps the built-in lazy-loaded builders.
     modules = {
         core       = { lazy = false, enabled = true },
         treesitter = { event = "FileType", enabled = true },
@@ -117,22 +112,56 @@ require("witch").setup({
         -- Disabled by default — add `enabled = true` to use them.
         nvimtree   = { ft = "NvimTree" },
         cmp        = { event = { "InsertEnter", "CmdlineEnter" } },
-        dap        = {},
+        dap        = {},   -- no trigger: load with require("witch").load_module_once("dap")
         notify     = { event = "CursorHold" },
+        noice      = { event = "CursorHold" },
         navic      = { event = "LspAttach" },
     },
 })
 ```
 
+## Dim inactive windows
+
+Enabled by default, dims out-of-focus windows so the buffer you are typing in stands out.
+
+- **Activated lazily** — dimming is set up on the first `WinNew` event, not during `setup`.
+- `level` — dim intensity from `0` (off) to `1` (fully dimmed). Default `0.35`.
+- `fade_bg = true` — also fade background highlight groups. The focused window stays untouched.
+- `excluded.filetypes` / `excluded.buftypes` — never dim matching buffers. Each accepts a list (`{ "NvimTree" }`) or a map (`{ NvimTree = true }`).
+- `:WitchDimToggle` — toggle dimming at runtime. Only registered when `dim.enabled = true` (and only after the first `WinNew`).
+
+```lua
+require("witch").setup({
+    dim = {
+        enabled = true,
+        level = 0.25,                        -- gentler dim
+        fade_bg = false,                     -- keep background colors, dim text only
+        excluded = {
+            filetypes = { "NvimTree", "TelescopePrompt" },
+            buftypes = { "terminal" },
+        },
+    },
+})
+```
+
+Set `dim.enabled = false` to turn the feature off entirely.
 
 ## Modules
 
-Each entry in `modules` is a `Module`:
+Each entry in `modules` is a `Module`. Your table is deep-merged into the built-in defaults, so you only set the fields you want to change:
+
+```lua
+-- Disable a built-in module
+modules = {
+    markup = { enabled = false },
+}
+```
 
 ```lua
 --- @class Module
---- @field enabled? boolean                 Whether the module is enabled. Defaults to false.
+--- @field enabled? boolean                 Whether the module is enabled. Built-in modules ship their own defaults; a fresh custom module needs `enabled = true` to load.
 --- @field build?   fun(palette, palette_name): table[]  Highlight builder.
+--- @field path?    string                  Require path to a file that returns the builder function (loaded lazily).
 --- @field lazy?    boolean                 If `false`, load during setup.
 --- @field ft?      string|string[]         Filetype(s) that trigger loading.
 --- @field event?   string|string[]|table<string, string|string[]>  Event trigger(s).
@@ -140,7 +169,7 @@ Each entry in `modules` is a `Module`:
 
 ### Built-in modules
 
-All modules below ship with Witch. Each maps to a `build` function under `lua/witch/builder/core/<name>.lua` or `lua/witch/builder/extra/<name>.lua`; you can enable, disable, override triggers, or replace its `build` from `setup`.
+All modules below ship with Witch. Each is defined under `lua/witch/builder/core/<name>.lua` or `lua/witch/builder/extra/<name>.lua` as a file that **returns its `build` function**, and the default config points each module's `path` at that file — so a builder file is `require`d only when the module loads, not at startup. You can enable, disable, override triggers, replace its `build`, or point its `path` at your own builder file from `setup`.
 
 | Name         | Highlights                                                                                                                                 |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -156,12 +185,13 @@ All modules below ship with Witch. Each maps to a `build` function under `lua/wi
 | `nvimtree`   | [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) explorer.                                                                      |
 | `dap`        | [nvim-dap](https://github.com/mfussenegger/nvim-dap) + [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui).                             |
 | `notify`     | [nvim-notify](https://github.com/rcarriga/nvim-notify) popups.                                                                             |
+| `noice`      | [noice.nvim](https://github.com/folke/noice.nvim) cmdline and popup groups.                                                                |
 | `navic`      | [nvim-navic](https://github.com/SmiteshP/nvim-navic) breadcrumb icons and text.                                                            |
 
 To list them at runtime:
 
-```lua
-:lua =vim.tbl_keys(require("witch.config").modules)
+```vim
+:lua vim.print(vim.tbl_keys(require("witch.config").modules))
 ```
 
 ### Lualine
@@ -210,7 +240,7 @@ require("lualine").setup({
 
 ### `build`
 
-Optional. If omitted, Witch falls back to `require("witch.builder").require(name)`.
+Optional. If omitted, Witch falls back to the module's `path` — the file is `require`d and whatever it returns is used as the builder function. All built-in modules ship with a default `path` (e.g. `core` → `witch.builder.core`), so their builder files are loaded on demand instead of at startup. `build` takes precedence over `path` if both are set. If neither is set, no highlights are applied (the `WitchModuleLoaded` event still fires).
 
 If provided, it **must** create and return the highlight table **inside the function body**:
 
@@ -242,6 +272,43 @@ end
 3. **Never reused** — `nvim_set_hl` copies colors into Neovim's store; the Lua table is dead weight afterwards.
 4. **Palette correctness** — `build` runs again on every `:Witch <palette>`. An outer table holds stale colors and will re-apply them on palette switch.
 5. **No hidden state** — `setup` can be called multiple times; outer tables are captured once and never refresh.
+
+### `path`
+
+Optional. A require path to a file that **returns the builder function** — the file itself must `return function(palette, palette_name) ... end`, not a table and not a `{ build = fn }` wrapper. The file is only `require`d the moment the module is loaded, so splitting a bulky builder into its own file keeps startup fast. This is exactly how the built-in modules work: `core` sets `path = "witch.builder.core"`, `blink-cmp` sets `path = "witch.builder.extra.blink-cmp"`, and so on.
+
+For your own modules, create the builder in any runtimepath directory (e.g. `lua/builders/my-highlights.lua` in your Neovim config):
+
+```lua
+-- lua/builders/my-highlights.lua
+return function(palette, palette_name)
+    return {
+        { "MyGroup", fg = palette.fg, bg = palette.bg },
+        { "MyOtherGroup", link = "Normal" },
+    }
+end
+```
+
+Then point `path` at it (dots instead of slashes, no `.lua` extension):
+
+```lua
+require("witch").setup({
+    modules = {
+        ["my-highlights"] = {
+            enabled = true,
+            path = "builders.my-highlights",
+            event = "InsertEnter",   -- or `lazy = false` to load immediately, or `event = { User = "VeryLazy" }` for lazy.nvim
+        },
+    },
+})
+```
+
+Notes:
+
+- **Lazy by construction** — until the module's trigger fires (or `load_module_once` is called), the file is never `require`d and its code is never executed.
+- **`build` wins** — if a module sets both `build` and `path`, `build` is used and `path` is ignored.
+- **Same rules as `build`** — whatever the file returns is called as `build(palette, palette_name)` on every load and every palette switch, so the returned function must create and return its highlight table inside its body (see [❌ Do not close over an outer table](#-do-not-close-over-an-outer-table)).
+- Any require path that Neovim can resolve works — your config's `lua/` directory, a plugin, etc.
 
 ### Lazy-loading rules
 
@@ -390,6 +457,11 @@ require("witch").setup({
 ```
 
 > **Tip:** custom palettes have no auto-detected lualine theme file — see [Lualine](#lualine) for the dynamic `theme` function that follows the active palette.
+
+> **Notes for custom palettes:**
+>
+> - `:Witch myPalette` switches to your palette, but custom palettes are **not** suggested by `:Witch`'s tab-completion and have no `:colorscheme witch-<name>` entry — both only cover the five built-in palettes. You can also switch with `require("witch").apply_palette("myPalette")`.
+> - Keys in `palettes` must start with an uppercase letter (`MyPalette`); everywhere else the palette is referenced with the first letter lowercased (`myPalette`).
 
 ### Palette schema
 
@@ -614,12 +686,14 @@ require("witch").setup({
 
 The `build` function is called every time the module is loaded **and** every time the active palette changes (so your groups stay in sync with `:Witch <palette>`).
 
+If the builder grows large, move it into its own file and reference it with [`path`](#path) instead of inlining `build`.
+
 ## Commands
 
 | Command                       | Description                                                                                                                 |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `:Witch <palette>`            | Switch to the given palette. An unknown name is silently ignored. Tab-completion fuzzy-matches over built-in palettes.      |
-| `:colorscheme witch-<palette>` | Standard colorscheme entry points (`witch-dark`, `witch-light`, `witch-umber`, `witch-parchment`, `witch-nocturne`) — equivalent to `:Witch <palette>` after setup. |
+| `:Witch <palette>`            | Switch to the given palette. `<Tab>` fuzzy-matches over the five built-in palettes — just type your custom palette's name if it isn't listed. An unknown name is silently ignored. |
+| `:colorscheme witch-<palette>` | Standard colorscheme entry points for the built-ins only (`witch-dark`, `witch-light`, `witch-umber`, `witch-parchment`, `witch-nocturne`) — equivalent to `:Witch <palette>` after setup. |
 | `:WitchDimToggle`             | Toggle dimming of inactive windows. Only registered when `dim.enabled = true`, on the first `WinNew`.                       |
 
 `g.colors_name` is set to `witch-<palette>` after each palette switch, so `:colorscheme` (no args) reports the active palette. Every switch (via `:Witch <palette>` or `apply_palette`) also emits a `ColorScheme` autocmd with `witch-<palette>` as the pattern, so ecosystem plugins (lualine, nvim-tree, …) pick up the switch.
@@ -691,7 +765,7 @@ vim.api.nvim_create_autocmd("User", {
 local witch = require("witch")
 
 witch.setup(opts)              -- configure + apply
-witch.apply_palette(name)      -- apply a palette programmatically (no-op if the name is unknown)
+witch.apply_palette(name)      -- switch to a palette programmatically
 witch.available_palette_names() -- list of all palette names (built-in + custom)
 witch.active_palette_name()    -- e.g. "dark"
 witch.active_palette()         -- the active palette table
