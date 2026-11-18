@@ -1,8 +1,6 @@
 local type, pairs = type, pairs
 local islist = vim.islist
 
-local M = {}
-
 --- @type witch.Config
 local config = {
     palette = "umber",
@@ -94,7 +92,6 @@ local config = {
         },
     },
 }
-M.current = config
 
 --- Deep-merge `user` into `base`, preserving type consistency.
 ---
@@ -130,18 +127,36 @@ local function merge(base, user)
     return base
 end
 
---- Merge user options into the config and return the updated config.
----
---- @param override table|nil User options to merge.
---- @return witch.Config config The updated config.
-M.config = function (override)
-    if override == nil then
-        return config
-    end
-    for k, v in pairs(override) do
-        config[k] = merge(config[k], v)
-    end
-    return config
-end
+--- @class witch.ConfigMeta
+--- @field __index witch.Config
+--- @field __newindex fun(self: witch.ConfigMeta, key: string, value: any)
+--- @field __call fun(self: witch.ConfigMeta, override: table|nil): witch.ConfigMeta
 
-return M
+--- @type witch.ConfigMeta
+local mt = {
+    __index = config,
+
+    __newindex = function(_, _, _)
+        error("config is read-only")
+    end,
+
+    --- Merge user options into the config and return the proxy.
+    ---
+    --- Calling with `nil` returns the proxy unchanged.
+    --- Calling with a table deep-merges it into the config.
+    ---
+    --- @param self witch.ConfigMeta The proxy table.
+    --- @param override table|nil User options to merge.
+    --- @return witch.ConfigMeta self The proxy table (for chaining).
+    __call = function(self, override)
+        if override == nil then
+            return self
+        end
+        for k, v in pairs(override) do
+            config[k] = merge(config[k], v)
+        end
+        return self
+    end,
+}
+
+return setmetatable({}, mt)
