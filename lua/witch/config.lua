@@ -88,6 +88,7 @@ local config = {
 
         dap = {
             build = "witch.builder.extra.dap",
+            event = "CursorHold",
         },
 
         notify = {
