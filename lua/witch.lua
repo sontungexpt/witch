@@ -109,7 +109,7 @@ end
 
 --- Keep this function local to avoid polluting the global namespace.
 --- Ensure a module is loaded only once.
---- @param name witch.ModuleName
+--- @param name string
 M.load_module_once = function(name)
 	if loaded_modules[name] then return end
 	loaded_modules[name] = true

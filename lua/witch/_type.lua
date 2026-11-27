@@ -7,24 +7,9 @@
 --- - `integer`: a 24-bit RGB value (e.g. `0xff8800`).
 --- @alias witch.Color string|integer
 
---- @alias witch.BuiltinPaletteName string
+--- @alias witch.BuiltinPaletteName "dark" | "light" | "nocturne" | "parchment" | "umber"
 --- @alias witch.CustomPaletteName string
 --- @alias witch.PaletteName witch.BuiltinPaletteName | witch.CustomPaletteName
-
---- @alias witch.ModuleName
---- | "core"
---- | "treesitter"
---- | "lsp"
---- | "terminal"
---- | "markup"
---- | "blink-cmp"
---- | "cmp"
---- | "nvimtree"
---- | "indentline"
---- | "bracket"
---- | "dap"
---- | "notify"
---- | "navic"
 
 -- ============================================================================
 -- PALETTE
@@ -234,7 +219,6 @@
 ---
 --- @field lazy?    boolean If `false`, the module is loaded immediately during setup.
 --- @field ft?      string|string[] Filetype(s) that trigger loading.
---- @field event?   string|string[]|table<string, string|string[]> Event(s) that trigger loading.
 ---
 --- `event` supports lazy.nvim-style forms:
 ---   - `"TermOpen"` — single event, default pattern.
@@ -242,9 +226,27 @@
 ---   - `{ User = "LazyLoad" }` — event → pattern.
 ---   - `{ User = { "LazyLoad", "VeryLazy" } }` — event → multiple patterns.
 ---   - `{ InsertEnter = true }` — non-string/non-table value → default pattern.
+--- @field event?   string|string[]|table<string, string|string[]> Event(s) that trigger loading.
+
+--- @class witch.Config.Modules
+--- Per-module configuration overrides. Keys are module names; extra string keys are custom modules.
+--- @field core?        witch.Config.Module Base editor highlights (required).
+--- @field treesitter?  witch.Config.Module Tree-sitter capture groups.
+--- @field lsp?         witch.Config.Module LSP diagnostics and semantic tokens.
+--- @field terminal?    witch.Config.Module Terminal buffer groups.
+--- @field markup?      witch.Config.Module Markdown/LaTeX/HTML markup groups.
+--- @field blink-cmp?   witch.Config.Module blink.cmp completion menu.
+--- @field cmp?         witch.Config.Module nvim-cmp completion menu.
+--- @field nvimtree?    witch.Config.Module nvim-tree.lua explorer.
+--- @field indentline?  witch.Config.Module Indent guide (ibl) groups.
+--- @field bracket?     witch.Config.Module Rainbow delimiters.
+--- @field dap?         witch.Config.Module nvim-dap + dap-ui.
+--- @field notify?      witch.Config.Module nvim-notify popups.
+--- @field navic?       witch.Config.Module nvim-navic breadcrumbs.
+--- @field [string]?    witch.Config.Module Custom user-defined module.
 
 --- @class witch.Config
 --- @field palette  witch.PaletteName Active palette name.
---- @field modules  table<witch.ModuleName | string, witch.Config.Module> Per-module configuration overrides.
+--- @field modules  witch.Config.Modules Per-module configuration overrides.
 --- @field palettes table<witch.CustomPaletteName, witch.Palette> User-defined custom palettes. Keys must be PascalCase (e.g., "DarkPalette").
 --- @field dim      witch.Config.Dim Configuration for dimming inactive windows.
